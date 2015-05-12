@@ -1,5 +1,15 @@
 <?php
 $_['heading_title']         = 'Omise Payment Gateway';
+
+/**
+ * Dashboard page.
+ *
+ */
+$_['dashboard_page_title'] 			= 'Dashboard | Omise Payment Gateway';
+$_['dashboard_breadcrumb_title'] 	= 'Dashboard';
+$_['dashboard_heading_title'] 		= 'Omise Payment Gateway Dashboard';
+
+
  
 $_['text_enabled']          = 'Enabled';
 $_['text_disabled']         = 'Disabled';

@@ -13,6 +13,89 @@ class ControllerPaymentOmise extends Controller
      *
      * @return void
      */
+    public function dashboard()
+    {
+        /**
+         * Prepare and loading necessary scripts.
+         *
+         */
+        // Load model.
+        $this->load->model('payment/omise');
+
+        // Load language.
+        $this->language->load('payment/omise');
+
+
+        /**
+         * Language setup.
+         *
+         */
+        $this->document->setTitle($this->language->get('dashboard_page_title'));
+
+        // Set form label with language.
+        $this->data['heading_title']        = $this->language->get('dashboard_heading_title');
+        $this->data['back_url']             = $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['back_button_title']    = 'Close';
+
+
+        /**
+         * Page data setup.
+         *
+         */
+        // Retrieve Omise Account.
+        $omise_account = $this->model_payment_omise->getOmiseAccount();
+        if (isset($omise_account['error']))
+            $this->session->data['error'] = 'Omise Account:: '.$omise_account['error'];
+        else {
+            $this->data['omise']['account']['email']    = $omise_account['email'];
+            $this->data['omise']['account']['created']  = $omise_account['created'];
+        }
+
+        // Retrieve Omise Balance.
+        $omise_balance = $this->model_payment_omise->getOmiseBalance();
+        if (isset($omise_balance['error']))
+            $this->session->data['error'] = 'Omise Balance:: '.$omise_balance['error'];
+        else {
+            $this->data['omise']['balance']['livemode']     = $omise_balance['livemode'];
+            $this->data['omise']['balance']['available']    = $omise_balance['available'];
+            $this->data['omise']['balance']['total']        = $omise_balance['total'];
+            $this->data['omise']['balance']['currency']     = $omise_balance['currency'];
+        }
+
+
+        /**
+         * Page setup.
+         *
+         */
+        $this->_setBreadcrumb(array('text'      => $this->language->get('dashboard_breadcrumb_title'),
+                                    'href'      => $this->url->link('payment/omise/dashboard', 'token=' . $this->session->data['token'], 'SSL'),             
+                                    'separator' => ' :: '));
+
+        $this->_getSessionFlash();
+
+        $this->document->addScript(HTTP_SERVER.'/view/javascript/omise/omise-opencart-admin.js');
+
+
+        /**
+         * Template setup.
+         *
+         */
+        // Set template.
+        $this->template = 'payment/omise_dashboard.tpl';
+
+        // Include sub-template.
+        $this->children = array('common/header',
+                                'common/footer');
+
+        // Render output.
+        $this->response->setOutput($this->render());
+    }
+
+    /**
+     * Index
+     *
+     * @return void
+     */
     public function index()
     {
         // Load model.
@@ -95,6 +178,7 @@ class ControllerPaymentOmise extends Controller
         // Set action button.
         $this->data['action']                           = $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL');
         $this->data['cancel']                           = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['install_vqmod']                    = $this->url->link('payment/omise/installvqmod', 'token=' . $this->session->data['token'], 'SSL');
 
         return $this;
     }
@@ -103,7 +187,7 @@ class ControllerPaymentOmise extends Controller
      * Set breadcrumb
      *
      */
-    private function _setBreadcrumb()
+    private function _setBreadcrumb($current = null)
     {
         // Set Breadcrumbs.
         $this->data['breadcrumbs']      = array();
@@ -125,6 +209,10 @@ class ControllerPaymentOmise extends Controller
             'href'      => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),             
             'separator' => ' :: '
         );
+
+        if (!is_null($current)) {
+            $this->data['breadcrumbs'][] = $current;
+        }
 
         return $this;
     }
@@ -174,5 +262,35 @@ class ControllerPaymentOmise extends Controller
     {
         $this->load->model('payment/omise');
         $this->model_payment_omise->uninstall();   
+    }
+
+    /**
+     * Install vQmod library into OpenCart
+     *
+     * @return Json
+     */
+    public function installVQmod()
+    {
+        include_once(DIR_APPLICATION.'../vqmod/install/index.php');
+
+        $error     = array();
+        $response   = array();
+
+        try {
+            $installing = vQmodOmiseEditionInstall();
+
+            if (isset($installing['error']))
+                $error['error'] = $installing['error'];
+
+            if (isset($installing['success']))
+                $error['msg'] = $installing['success'];
+
+        } catch (Exception $e) {
+            $error['error'] = $e->getMessage();
+        }
+
+        $response = array_merge($response, $error);
+
+        echo json_encode($response);
     }
 }

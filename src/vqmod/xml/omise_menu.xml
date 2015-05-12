@@ -10,15 +10,10 @@
             <add><![CDATA[
                 <li id="omise"><a class="top">Omise</a>
                     <ul>
-                        <li><a href="http://www.opencart.com" target="_blank">Dashboard</a></li>
+                        <li><a href="<?php echo $this->url->link('payment/omise/dashboard', 'token=' . $this->session->data['token'], 'SSL'); ?>">Dashboard</a></li>
                     </ul>
                 </li>
             ]]></add>
-        </operation>
-
-        <operation info="Add Omise admin js into admin header.tpl">
-            <search position="before"><![CDATA[</head>]]></search>
-            <add><![CDATA[<script src="view/javascript/omise/omise-opencart-admin.js"></script>]]></add>
         </operation>
    </file>
 </modification>

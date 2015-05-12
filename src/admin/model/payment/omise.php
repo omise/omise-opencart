@@ -62,5 +62,64 @@ class ModelPaymentOmise extends Model
 
         $this->db->query("UPDATE " . DB_PREFIX .  "omise_gateway SET ".$string." WHERE id = 1");
     }
+
+    private function _getOmiseKeys()
+    {
+        // Get Omise configuration.
+        $omise = $this->config->get('Omise');
+        
+        $omise['ori_public_key']        = $omise['public_key'];
+        $omise['ori_secret_key']        = $omise['secret_key'];
+        $omise['ori_public_key_test']   = $omise['public_key_test'];
+        $omise['ori_secret_key_test']   = $omise['secret_key_test'];
+
+        unset($omise['public_key']);
+        unset($omise['secret_key']);
+        unset($omise['public_key_test']);
+        unset($omise['secret_key_test']);
+
+        // If test mode is enable,
+        // replace Omise public and secret key with test key.
+        if ($omise['test_mode']) {
+            $omise['public_key']        = $omise['ori_public_key_test'];
+            $omise['secret_key']        = $omise['ori_secret_key_test'];
+        }
+
+        return $omise;
+    }
+
+    public function getOmiseAccount()
+    {
+        // Load `omise-php` library.
+        $this->load->library('omise/omise-php/lib/Omise');
+
+        // Get Omise Keys.
+        $keys = $this->_getOmiseKeys();
+
+        try {
+            $omise = OmiseAccount::retrieve($keys['public_key'], $keys['secret_key']);
+
+            return $omise;
+        } catch (Exception $e) {
+            return array('error' => $e->getMessage());
+        }
+    }
+
+    public function getOmiseBalance()
+    {
+        // Load `omise-php` library.
+        $this->load->library('omise/omise-php/lib/Omise');
+
+        // Get Omise Keys.
+        $keys = $this->_getOmiseKeys();
+
+        try {
+            $omise = OmiseBalance::retrieve($keys['public_key'], $keys['secret_key']);
+
+            return $omise;
+        } catch (Exception $e) {
+            return array('error' => $e->getMessage());
+        }
+    }
 }
 ?>
