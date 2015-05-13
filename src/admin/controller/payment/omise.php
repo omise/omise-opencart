@@ -36,6 +36,7 @@ class ControllerPaymentOmise extends Controller
         $this->data['heading_title']        = $this->language->get('dashboard_heading_title');
         $this->data['back_url']             = $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL');
         $this->data['back_button_title']    = 'Close';
+        $this->data['transfer_url']         = $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL');
 
 
         /**
@@ -62,6 +63,15 @@ class ControllerPaymentOmise extends Controller
             $this->data['omise']['balance']['currency']     = $omise_balance['currency'];
         }
 
+        // Retrieve Omise Transfer List.
+        $omise_transfer = $this->model_payment_omise->getOmiseTransferList();
+        if (isset($omise_transfer['error']))
+            $this->session->data['error'] = 'Omise Transfer:: '.$omise_transfer['error'];
+        else {
+            $this->data['omise']['transfer']['data']        = array_reverse($omise_transfer['data']);
+            $this->data['omise']['transfer']['total']       = $omise_transfer['total'];
+        }
+        
 
         /**
          * Page setup.
@@ -292,5 +302,33 @@ class ControllerPaymentOmise extends Controller
         $response = array_merge($response, $error);
 
         echo json_encode($response);
+    }
+
+    public function submitTransfer()
+    {
+        /**
+         * Prepare and loading necessary scripts.
+         *
+         */
+        // Load model.
+        $this->load->model('payment/omise');
+
+        // POST request handler.
+        if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+            if (isset($this->request->post['OmiseTransfer']['amount'])) {
+                $transferring = $this->model_payment_omise->createOmiseTransfer($this->request->post['OmiseTransfer']['amount']);
+                if (isset($transferring['error']))
+                    $this->session->data['error'] = 'Omise Transfer:: '.$transferring['error'];
+                else {
+                    $this->session->data['success'] = 'Sent your transfer request already, please waiting for comfirmation from the bank.';
+                }
+            } else {
+                $this->session->data['error'] = 'Please submit your amount yo want to transfer.';
+            }
+        } else {
+            $this->session->data['error'] = 'Wrong to request to transfer your amount.';
+        }
+        
+        $this->redirect($this->url->link('payment/omise/dashboard', 'token=' . $this->session->data['token'], 'SSL'));
     }
 }
