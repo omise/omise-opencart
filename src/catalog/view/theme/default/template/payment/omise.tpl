@@ -53,7 +53,7 @@
                     // Token was created. Then, charge a card with token.
                     var posting = $.post("<?php echo $checkout_url; ?>", {
                         "omise_token": response.id,
-                        "amount": "<?php echo $orderamount; ?>",
+                        "amount": "<?php echo str_replace('.', '', $orderamount); ?>",
                         "description": "Charge a card from OpenCart that order id is <?php echo $orderid; ?> from <?php echo $billemail; ?>"
                     });
 
@@ -104,7 +104,7 @@
         <div class="input-group clearfix">
             <div class="left"><label>Card Holder Name</label></div>
             <div class="right">
-                <input type="text" data-omise="holder_name" value="NT" class="input-omise-collect-holder-name">
+                <input type="text" data-omise="holder_name" value="" class="input-omise-collect-holder-name">
             </div>
         </div>
         
@@ -112,7 +112,7 @@
         <div class="input-group clearfix">
             <div class="left"><label>Card Number</label></div>
             <div class="right">
-                <input type="text" data-omise="number" value="4242424242424242" class="input-omise-collect-number">
+                <input type="text" data-omise="number" value="" class="input-omise-collect-number">
             </div>
         </div>
         
@@ -120,8 +120,8 @@
         <div class="input-group clearfix">
             <div class="left"><label>Expire Date</label></div>
             <div class="right">
-                <input type="text" data-omise="expiration_month" size="4" style="width: 10%;" placeholder="dd" value="12" class="input-omise-collect-expiration-month"> /
-                <input type="text" data-omise="expiration_year" size="8" style="width: 10%;" placeholder="YYYY" value="2020" class="input-omise-collect-expiration-year">
+                <input type="text" data-omise="expiration_month" size="4" style="width: 10%;" placeholder="dd" value="" class="input-omise-collect-expiration-month"> /
+                <input type="text" data-omise="expiration_year" size="8" style="width: 10%;" placeholder="YYYY" value="" class="input-omise-collect-expiration-year">
             </div>
         </div>
         
@@ -129,7 +129,7 @@
         <div class="input-group clearfix">
             <div class="left"><label>Security Code</label></div>
             <div class="right">
-                <input type="password" data-omise="security_code" size="8" value="123" class="input-omise-collect-security-code">
+                <input type="password" data-omise="security_code" size="8" value="" class="input-omise-collect-security-code">
             </div>
         </div>
     </div>

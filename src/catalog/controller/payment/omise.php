@@ -3,8 +3,8 @@
 class ControllerPaymentOmise extends Controller
 {
     /**
-     * Checkout process
-     *
+     * Checkout orders and charge a card process
+     * @return string(Json)
      */
     public function checkout()
     {
@@ -40,7 +40,7 @@ class ControllerPaymentOmise extends Controller
                     $omise['secret_key']
                 );
 
-                if (is_null($omise_charge['failure_code']) && is_null($omise_charge['failure_code']) && captured)
+                if (is_null($omise_charge['failure_code']) && is_null($omise_charge['failure_code']) && $omise_charge['captured'])
                     $this->model_checkout_order->update($this->session->data['order_id'], 15);
                 else
                     $this->model_checkout_order->update($this->session->data['order_id'], 10);
@@ -63,19 +63,8 @@ class ControllerPaymentOmise extends Controller
     }
 
     /**
-     * This method 
-     *
+     * Omise card information form
      * @return void
-     */
-    public function success()
-    {
-        // Redirect to success page.
-        $this->redirect($this->url->link('checkout/success'));
-    }
-
-    /**
-     * Omise collec a customer's card form
-     *
      */
     protected function index()
     {
@@ -97,7 +86,7 @@ class ControllerPaymentOmise extends Controller
 
         $this->data['button_confirm']   = $this->language->get('button_confirm');
         $this->data['checkout_url']     = $this->url->link('payment/omise/checkout');
-        $this->data['success_url']      = $this->url->link('payment/omise/success');
+        $this->data['success_url']      = $this->url->link('checkout/success');
 
         $this->load->model('checkout/order');
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);

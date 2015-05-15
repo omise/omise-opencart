@@ -9,8 +9,7 @@ class ControllerPaymentOmise extends Controller
     private $error = array();
 
     /**
-     * Show Omise dashboard page
-     *
+     * Render Omise Payment Gateway dashboard page
      * @return void
      */
     public function dashboard()
@@ -49,33 +48,34 @@ class ControllerPaymentOmise extends Controller
         if (!$this->config->get('omise_status')) {
             $this->session->data['error'] = $this->language->get('error_extension_disabled');
         } else {
-            // Retrieve Omise Account.
-            $omise_account = $this->model_payment_omise->getOmiseAccount();
-            if (isset($omise_account['error']))
-                $this->session->data['error'] = 'Omise Account:: '.$omise_account['error'];
-            else {
+            try {
+                // Retrieve Omise Account.
+                $omise_account = $this->model_payment_omise->getOmiseAccount();
+                if (isset($omise_account['error']))
+                    throw new Exception('Omise Account:: '.$omise_account['error'], 1);
+
                 $this->data['omise']['account']['email']    = $omise_account['email'];
                 $this->data['omise']['account']['created']  = $omise_account['created'];
-            }
 
-            // Retrieve Omise Balance.
-            $omise_balance = $this->model_payment_omise->getOmiseBalance();
-            if (isset($omise_balance['error']))
-                $this->session->data['error'] = 'Omise Balance:: '.$omise_balance['error'];
-            else {
+                // Retrieve Omise Balance.
+                $omise_balance = $this->model_payment_omise->getOmiseBalance();
+                if (isset($omise_balance['error']))
+                    throw new Exception('Omise Balance:: '.$omise_balance['error'], 1);
+
                 $this->data['omise']['balance']['livemode']     = $omise_balance['livemode'];
                 $this->data['omise']['balance']['available']    = $omise_balance['available'];
                 $this->data['omise']['balance']['total']        = $omise_balance['total'];
                 $this->data['omise']['balance']['currency']     = $omise_balance['currency'];
-            }
 
-            // Retrieve Omise Transfer List.
-            $omise_transfer = $this->model_payment_omise->getOmiseTransferList();
-            if (isset($omise_transfer['error']))
-                $this->session->data['error'] = 'Omise Transfer:: '.$omise_transfer['error'];
-            else {
+                // Retrieve Omise Transfer List.
+                $omise_transfer = $this->model_payment_omise->getOmiseTransferList();
+                if (isset($omise_transfer['error']))
+                    throw new Exception('Omise Transfer:: '.$omise_transfer['error'], 1);
+
                 $this->data['omise']['transfer']['data']        = array_reverse($omise_transfer['data']);
                 $this->data['omise']['transfer']['total']       = $omise_transfer['total'];
+            } catch (Exception $e) {
+                $this->session->data['error'] = $e->getMessage();
             }
         }
 
@@ -109,8 +109,7 @@ class ControllerPaymentOmise extends Controller
     }
 
     /**
-     * Index
-     *
+     * Render Omise Payment Gateway extension setting page
      * @return void
      */
     public function index()
@@ -153,6 +152,33 @@ class ControllerPaymentOmise extends Controller
 
 
         /**
+         * Language setup.
+         *
+         */
+        $this->document->setTitle('Omise Payment Gateway Configuration');
+
+        // Set form label with language.
+        $this->data['heading_title']                    = $this->language->get('heading_title');
+        $this->data['button_save']                      = $this->language->get('text_button_save');
+        $this->data['button_cancel']                    = $this->language->get('text_button_cancel');
+        $this->data['entry_order_status']               = $this->language->get('entry_order_status');
+        $this->data['text_enabled']                     = $this->language->get('text_enabled');
+        $this->data['text_disabled']                    = $this->language->get('text_disabled');
+        $this->data['entry_status']                     = $this->language->get('entry_status');
+
+        // Set Omise setting label with language.
+        $this->data['omise_key_test_public_label']      = $this->language->get('omise_key_test_public_label');
+        $this->data['omise_key_test_secret_label']      = $this->language->get('omise_key_test_secret_label');
+        $this->data['omise_test_mode_label']            = $this->language->get('omise_test_mode_label');
+        $this->data['omise_key_public_label']           = $this->language->get('omise_key_public_label');
+        $this->data['omise_key_secret_label']           = $this->language->get('omise_key_secret_label');
+
+        // Set action button.
+        $this->data['action']                           = $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['cancel']                           = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
+
+
+        /**
          * Page data setup.
          *
          */
@@ -166,8 +192,7 @@ class ControllerPaymentOmise extends Controller
          * Page setup.
          *
          */
-        $this->_setPageLabel()
-             ->_setBreadcrumb()
+        $this->_setBreadcrumb()
              ->_getSessionFlash();
 
         
@@ -187,41 +212,8 @@ class ControllerPaymentOmise extends Controller
     }
 
     /**
-     * Set page label
-     *
-     */
-    private function _setPageLabel()
-    {
-        $this->document->setTitle('Omise Payment Gateway Configuration');
-
-        // Set form label with language.
-        $this->data['heading_title']                    = $this->language->get('heading_title');
-        $this->data['entry_text_config_one']            = $this->language->get('text_config_one');
-        $this->data['entry_text_config_two']            = $this->language->get('text_config_two');
-        $this->data['button_save']                      = $this->language->get('text_button_save');
-        $this->data['button_cancel']                    = $this->language->get('text_button_cancel');
-        $this->data['entry_order_status']               = $this->language->get('entry_order_status');
-        $this->data['text_enabled']                     = $this->language->get('text_enabled');
-        $this->data['text_disabled']                    = $this->language->get('text_disabled');
-        $this->data['entry_status']                     = $this->language->get('entry_status');
-
-        // Set Omise setting label with language.
-        $this->data['omise_key_test_public_label']      = $this->language->get('omise_key_test_public_label');
-        $this->data['omise_key_test_secret_label']      = $this->language->get('omise_key_test_secret_label');
-        $this->data['omise_test_mode_label']            = $this->language->get('omise_test_mode_label');
-        $this->data['omise_key_public_label']           = $this->language->get('omise_key_public_label');
-        $this->data['omise_key_secret_label']           = $this->language->get('omise_key_secret_label');
-
-        // Set action button.
-        $this->data['action']                           = $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL');
-        $this->data['cancel']                           = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
-
-        return $this;
-    }
-
-    /**
-     * Set breadcrumb
-     *
+     * Set page breadcrumb
+     * @return self
      */
     private function _setBreadcrumb($current = null)
     {
@@ -254,8 +246,8 @@ class ControllerPaymentOmise extends Controller
     }
 
     /**
-     * $error
-     *
+     * Get session flash from session variable and unset it
+     * @return self
      */
     private function _getSessionFlash()
     {
@@ -277,34 +269,33 @@ class ControllerPaymentOmise extends Controller
     }
 
     /**
-     * This method will fire when user click `install` button from `extension/payment` page.
+     * This method will fire when user click `install` button from `extension/payment` page
      * It will call `model/payment/omise.php` file and run `install` method for installl something
-     * that necessary to use in Omise Payment Gateway module. 
-     *
+     * that necessary to use in Omise Payment Gateway module
      * @return void
      */
     public function install()
     {
+        /**
+         * Prepare and loading necessary scripts.
+         *
+         */
+        // Load model.
+        $this->load->model('payment/omise');
+
+        // Load language.
+        $this->language->load('payment/omise');
+
         try {
-            /**
-             * Prepare and loading necessary scripts.
-             *
-             */
-            // Load model.
-            $this->load->model('payment/omise');
-
-            // Load language.
-            $this->language->load('payment/omise');
-
-            // Install Omise table.
+            // Create new table for contain Omise Keys.
             if (!$this->model_payment_omise->install())
                 throw new Exception($this->language->get('error_omise_table_install_failed'), 1);
                 
             // If done. Next, install vQmod library.
             // So, if it had vQmod in OpenCart project already,
-            // just copy omise_menu.xml into vqmod/xml/ without installing again.
+            // just copy omise.xml into vqmod/xml/ without installing again.
             if (file_exists(DIR_APPLICATION.'../vqmod')) {
-                $file = DIR_APPLICATION.'../omise-opencart/vqmod/xml/omise_menu.xml';
+                $file = DIR_APPLICATION.'../omise-opencart/vqmod/xml/omise.xml';
                 $dest = DIR_APPLICATION.'../vqmod/xml/';
 
                 // Check file exists and writable.
@@ -319,12 +310,13 @@ class ControllerPaymentOmise extends Controller
                     throw new Exception($dest.' '.$this->language->get('error_file_not_writable'), 1);
 
                 // Make a copy.
-                if (!copy($file, $dest.'/omise_menu.xml')) 
-                    throw new Exception($file.' - '.$dest.' '.$this->language->get('error_can_not_copy_file'), 1);
+                if (!copy($file, $dest.'/omise.xml')) 
+                    throw new Exception($file.' '.$this->language->get('error_can_not_copy_file'), 1);
             } else {
                 // If it had not, install it.
-                $file = DIR_APPLICATION.'../omise-opencart/vqmod';
-                $dest = DIR_APPLICATION.'..';
+                $file   = DIR_APPLICATION.'../omise-opencart/vqmod';
+                $dest   = DIR_APPLICATION.'..';
+                $backup = DIR_APPLICATION.'../omise-opencart/backup';
 
                 // Check file exists and writable.
                 if (!file_exists($file))
@@ -332,6 +324,30 @@ class ControllerPaymentOmise extends Controller
 
                 if (!is_writable($dest))
                     throw new Exception($dest.' '.$this->language->get('error_file_not_writable'), 1);
+
+                // Create 
+                if (!file_exists($backup)) {
+                    if (!mkdir($backup))
+                        throw new Exception($backup.' '.$this->language->get('error_file_permission_denied'), 1);
+
+                    mkdir($backup.'/admin');
+
+                    $bak_catalog_index   = DIR_APPLICATION.'../index.php';
+                    $bak_admin_index     = DIR_APPLICATION.'../admin/index.php';
+                    // Make a copy catalog's index file.
+                    if (!copy($bak_catalog_index, $backup.'/index.php')) 
+                        throw new Exception($bak_catalog_index.' '.$this->language->get('error_can_not_copy_file'), 1);
+
+                    if (!chmod($backup.'/index.php', 0755)) 
+                        throw new Exception($bak_catalog_index.' '.$this->language->get('error_can_not_copy_file'), 1);
+
+                    // Make a copy admin's index file.
+                    if (!copy($bak_admin_index, $backup.'/admin/index.php')) 
+                        throw new Exception($bak_admin_index.' '.$this->language->get('error_can_not_copy_file'), 1);
+
+                    if (!chmod($backup.'/admin/index.php', 0755)) 
+                        throw new Exception($bak_catalog_index.' '.$this->language->get('error_can_not_copy_file'), 1);
+                }
 
                 // Make a copy.
                 exec('cp -R '.$file.' '.$dest.' 2>&1', $output);
@@ -341,11 +357,19 @@ class ControllerPaymentOmise extends Controller
                 // Make an install.
                 include_once(DIR_APPLICATION.'../vqmod/install/omise-install.php');
                 $installing = vQmodOmiseEditionInstall();
-                if (isset($installing['error']))
-                    throw new Exception($installing['error'], 1);
+                if (isset($installing['error'])) {
+                    exec('rm -R '.DIR_APPLICATION.'../vqmod 2>&1', $output);
+                    if ($output) throw new Exception($output[0], 1);
 
-                if (!isset($installing['success']))
-                    throw new Exception($this->language->get('error_somethung_wrong'), 1);
+                    throw new Exception($installing['error'], 1);
+                }
+
+                if (!isset($installing['success'])) {
+                    exec('rm -R '.DIR_APPLICATION.'../vqmod 2>&1', $output);
+                    if ($output) throw new Exception($output[0], 1);
+
+                    throw new Exception('CODE [acpoL365]'.$this->language->get('error_general_error'), 1);
+                }
             }
 
             // Set `success` session if it completely done.
@@ -358,7 +382,7 @@ class ControllerPaymentOmise extends Controller
             $this->model_setting_extension->uninstall('payment', 'omise');
             $this->model_setting_setting->deleteSetting('omise');
 
-            $file = DIR_APPLICATION.'../vqmod/xml/omise_menu.xml';
+            $file = DIR_APPLICATION.'../vqmod/xml/omise.xml';
             if (file_exists($file))
                 unlink($file);
 
@@ -369,50 +393,24 @@ class ControllerPaymentOmise extends Controller
     }
 
     /**
-     * This method will fire when user click `Uninstall` button from `extension/payment` page.
+     * This method will fire when user click `Uninstall` button from `extension/payment` page
      * Uninstall anything about Omise Payment Gateway module that installed.
-     *
+     * @return void
      */
     public function uninstall()
     {
-        $file = DIR_APPLICATION.'../vqmod/xml/omise_menu.xml';
+        $file = DIR_APPLICATION.'../vqmod/xml/omise.xml';
         if (file_exists($file))
             unlink($file);
 
         $this->load->model('payment/omise');
-        $this->model_payment_omise->uninstall();   
+        $this->model_payment_omise->uninstall();;
     }
 
     /**
-     * Install vQmod library into OpenCart
-     *
-     * @return Json
+     * Submit a `transfer` request to Omise server
+     * @return void
      */
-    public function installVQmod()
-    {
-        include_once(DIR_APPLICATION.'../vqmod/install/omise-install.php');
-
-        $error     = array();
-        $response   = array();
-
-        try {
-            $installing = vQmodOmiseEditionInstall();
-
-            if (isset($installing['error']))
-                $error['error'] = $installing['error'];
-
-            if (isset($installing['success']))
-                $error['msg'] = $installing['success'];
-
-        } catch (Exception $e) {
-            $error['error'] = $e->getMessage();
-        }
-
-        $response = array_merge($response, $error);
-
-        echo json_encode($response);
-    }
-
     public function submitTransfer()
     {
         /**
@@ -425,22 +423,21 @@ class ControllerPaymentOmise extends Controller
         // Load language.
         $this->language->load('payment/omise');
 
-        // POST request handler.
-        if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
-            if (isset($this->request->post['OmiseTransfer']['amount'])) {
+        try {
+            // POST request handler.
+            if (!$this->request->server['REQUEST_METHOD'] == 'POST')
+                throw new Exception($this->language->get('error_needed_post_request'), 1);
 
-                // var_dump($this->request->post['OmiseTransfer']['amount']); exit;
-                $transferring = $this->model_payment_omise->createOmiseTransfer($this->request->post['OmiseTransfer']['amount']);
-                if (isset($transferring['error']))
-                    $this->session->data['error'] = 'Omise Transfer:: '.$transferring['error'];
-                else {
-                    $this->session->data['success'] = 'Sent your transfer request already, please waiting for comfirmation from the bank.';
-                }
-            } else {
-                $this->session->data['error'] = 'Please submit your amount yo want to transfer.';
-            }
-        } else {
-            $this->session->data['error'] = 'Wrong to request to transfer your amount.';
+            if (!isset($this->request->post['OmiseTransfer']['amount']))
+                throw new Exception($this->language->get('error_need_amount_value'), 1);
+
+            $transferring = $this->model_payment_omise->createOmiseTransfer($this->request->post['OmiseTransfer']['amount']);
+            if (isset($transferring['error']))
+                throw new Exception('Omise Transfer:: '.$transferring['error'], 1);
+            else
+                $this->session->data['success'] = $this->language->get('api_transfer_success');
+        } catch (Exception $e) {
+            $this->session->data['error'] = $e->getMessage();
         }
         
         $this->redirect($this->url->link('payment/omise/dashboard', 'token=' . $this->session->data['token'], 'SSL'));
