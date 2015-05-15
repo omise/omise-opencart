@@ -11,6 +11,7 @@
                 <li id="omise"><a class="top">Omise</a>
                     <ul>
                         <li><a href="<?php echo $this->url->link('payment/omise/dashboard', 'token=' . $this->session->data['token'], 'SSL'); ?>">Dashboard</a></li>
+                        <li><a href="<?php echo $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'); ?>">Setting</a></li>
                     </ul>
                 </li>
             ]]></add>
