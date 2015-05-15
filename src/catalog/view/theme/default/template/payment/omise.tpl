@@ -2,9 +2,7 @@
 <link rel="stylesheet" type="text/css" href="catalog/view/stylesheet/omise/omise.css">
 
 <!-- Include Omise's javascript -->
-<script type="text/javascript" src="catalog/view/javascript/omise/omise-checkout.js"></script>
 <script type="text/javascript">
-
     $.getScript("https://cdn.omise.co/omise.js", function() {
         Omise.setPublicKey("<?php echo $omise['public_key']; ?>");
 
@@ -38,24 +36,36 @@
             // * Note that the response could be an error and this needs to be handled
             // * within the callback.
             Omise.createToken("card", card, function (statusCode, response) {
+                // If has an error (can not create a card's token).
                 if (response.object == "error") {
                     // Display an error message.
-                    alertError.html("Omise "+response.message).addClass('show');
+                    alertError.html("Omise Response: "+response.message).addClass('show');
+
+                    // Re-enable the submit button.
+                    form.find("input[type=submit]").prop("disabled", false);
+                } else if (typeof response.card != 'undefined' && !response.card.security_code_check) {
+                    // Display an error message.
+                    alertError.html("Omise Response: Card authorization failure.").addClass('show');
 
                     // Re-enable the submit button.
                     form.find("input[type=submit]").prop("disabled", false);
                 } else {
-                    var posting = $.post("<?php echo $checkout_url; ?>", { omise_token: response.id, amount: "<?php echo $orderamount; ?>", description: "Charge a card from OpenCart that order id is <?php echo $orderid; ?> from <?php echo $billemail; ?>"});
+                    // Token was created. Then, charge a card with token.
+                    var posting = $.post("<?php echo $checkout_url; ?>", {
+                        "omise_token": response.id,
+                        "amount": "<?php echo $orderamount; ?>",
+                        "description": "Charge a card from OpenCart that order id is <?php echo $orderid; ?> from <?php echo $billemail; ?>"
+                    });
 
                     posting
                         .done(function(resp) {
                             resp = JSON.parse(resp);
 
                             if (typeof resp.error != "undefined") {
-                                alertError.html("Omise "+resp.error).addClass('show');
+                                alertError.html("Omise Response: "+resp.error).addClass('show');
                                 form.find("input[type=submit]").prop("disabled", false);
                             } else if (resp.failure_code != null) {
-                                alertError.html("Bank "+resp.failure_message).addClass('show');
+                                alertError.html("Bank Response: "+resp.failure_message).addClass('show');
                                 form.find("input[type=submit]").prop("disabled", false);
                             } else {
                                 alertSuccess.html("Succeed").addClass('show');
@@ -75,7 +85,6 @@
         });
     });
 </script>
-
 
 <!-- Omise's checkout form -->
 <form id="omise-form-checkout" method="post" action="<?php echo $success_url; ?>">

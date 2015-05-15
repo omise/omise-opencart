@@ -1,4 +1,4 @@
 <?php
-$_['text_title'] 		= 'Omise Payment Gateway';
+$_['text_title'] 		= 'Credit Card (Powered by Omise)';
 $_['button_confirm'] 	= 'Confirm Order';
 ?>

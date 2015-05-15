@@ -3,80 +3,58 @@
 class ControllerPaymentOmise extends Controller
 {
     /**
-     * Public Key.
-     *
-     */
-    private $_public_key;
-
-    /**
-     * Secret Key.
-     *
-     */
-    private $_secret_key;
-
-    /**
-     *
-     * @return void
-     */
-    private function _getOmiseKey()
-    {
-        // Get Omise configuration.
-        $omise = $this->config->get('Omise');
-        
-        // If test mode is enable,
-        // replace Omise public and secret key with test key.
-        if ($omise['test_mode']) {
-            $omise['public_key'] = $omise['public_key_test'];
-            $omise['secret_key'] = $omise['secret_key_test'];
-        }
-
-        $this->_public_key = $omise['public_key'];
-        $this->_secret_key = $omise['secret_key'];
-    }
-
-    public function success()
-    {
-        $this->load->model('checkout/order');
-
-        $this->model_checkout_order->confirm($this->session->data['order_id'], 2);
-
-        $this->redirect($this->url->link('checkout/success', 'token=' . $this->session->data['token'], 'SSL'));
-    }
-    /**
      * Checkout process
      *
      */
     public function checkout()
     {
-        // Get Omise's Key that config from admin page.
-        $this->_getOmiseKey();
-        
         // If has a `post['omise_token']` request.
         if (isset($this->request->post['omise_token'])) {
-
             // Load `omise-php` library.
             $this->load->library('omise/omise-php/lib/Omise');
+
+            // Get Omise configuration.
+            $omise = $this->config->get('Omise');
+
+            // If test mode was enabled,
+            // replace Omise live key with test key.
+            if (isset($omise['test_mode']) && $omise['test_mode']) {
+                $omise['public_key'] = $omise['public_key_test'];
+                $omise['secret_key'] = $omise['secret_key_test'];
+            }
+
+            // Create a order history with `Processing` status
+            $this->load->model('checkout/order');
+            $this->model_checkout_order->confirm($this->session->data['order_id'], 2);
 
             try {
                 // Try to create a charge and capture it.
                 $omise_charge = OmiseCharge::create(
                     array(
-                        "amount"        => 100025,
+                        "amount"        => $this->request->post['amount'],
                         "currency"      => "thb",
-                        "description"   => "Order-345678",
+                        "description"   => $this->request->post['description'],
                         "card"          => $this->request->post['omise_token']
                     ),
-                    $this->_public_key,
-                    $this->_secret_key
+                    $omise['public_key'],
+                    $omise['secret_key']
                 );
+
+                if (is_null($omise_charge['failure_code']) && is_null($omise_charge['failure_code']) && captured)
+                    $this->model_checkout_order->update($this->session->data['order_id'], 15);
+                else
+                    $this->model_checkout_order->update($this->session->data['order_id'], 10);
+
                 echo json_encode(
                     array(
                         'failure_code'      => $omise_charge['failure_code'],
                         'failure_message'   => $omise_charge['failure_message'],
                         'captured'          => $omise_charge['captured'],
+                        'omise'             => $omise_charge
                     )
                 );
             } catch (Exception $e) {
+                $this->model_checkout_order->update($this->session->data['order_id'], 10);
                 echo json_encode(array('error' => $e->getMessage()));
             }
         } else {
@@ -85,11 +63,26 @@ class ControllerPaymentOmise extends Controller
     }
 
     /**
+     * This method 
+     *
+     * @return void
+     */
+    public function success()
+    {
+        // Redirect to success page.
+        $this->redirect($this->url->link('checkout/success'));
+    }
+
+    /**
      * Omise collec a customer's card form
      *
      */
     protected function index()
     {
+        /**
+         * Prepare and loading necessary scripts.
+         *
+         */
         // Load language.
         $this->language->load('payment/omise');
 
@@ -97,14 +90,14 @@ class ControllerPaymentOmise extends Controller
         $omise = $this->config->get('Omise');
         
         // If test mode was enabled, replace Omise public and secret key with test key.
-        if ($omise['test_mode']) {
+        if (isset($omise['test_mode']) && $omise['test_mode']) {
             $omise['public_key'] = $omise['public_key_test'];
             $omise['secret_key'] = $omise['secret_key_test'];
         }
 
         $this->data['button_confirm']   = $this->language->get('button_confirm');
-        $this->data['checkout_url']     = $this->url->link('payment/omise/checkout', 'token=' . $this->session->data['token'], 'SSL');
-        $this->data['success_url']      = $this->url->link('payment/omise/success', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['checkout_url']     = $this->url->link('payment/omise/checkout');
+        $this->data['success_url']      = $this->url->link('payment/omise/success');
 
         $this->load->model('checkout/order');
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -142,27 +135,6 @@ class ControllerPaymentOmise extends Controller
             }
             
             $this->render();
-        }
-    }
-
-    public function callback()
-    {
-        if (isset($this->request->post['orderid'])) {
-            $order_id = trim(substr(($this->request->post['orderid']), 6));
-        } else {
-            die('Illegal Access');
-        }
-      
-        $this->load->model('checkout/order');
-        $order_info = $this->model_checkout_order->getOrder($order_id);
-      
-        if ($order_info) {
-            $data = array_merge($this->request->post,$this->request->get);
-      
-            //payment was made successfully
-            if ($data['status'] == 'Y' || $data['status'] == 'y') {
-                // update the order status accordingly
-            }
         }
     }
 }
