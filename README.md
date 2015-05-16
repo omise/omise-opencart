@@ -11,7 +11,7 @@
 ## Installation
 The steps for installing **omise-opencart** are as follows:
 
-1. Download this repository and unzip it into your `local machine`(or directly to your server)
+1. Download this repository and unzip it into your `local machine` (or directly to your server)
 
 Download links:
 

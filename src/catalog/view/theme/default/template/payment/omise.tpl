@@ -3,7 +3,7 @@
 
 <!-- Include Omise's javascript -->
 <script type="text/javascript">
-    $.getScript("https://cdn.omise.co/omise.js", function() {
+    $.getScript("https://cdn.omise.co/omise.min.js.gz", function() {
         Omise.setPublicKey("<?php echo $omise['public_key']; ?>");
 
         $("#omise-form-checkout").submit(function() {
