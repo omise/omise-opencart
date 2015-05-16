@@ -350,24 +350,20 @@ class ControllerPaymentOmise extends Controller
                 }
 
                 // Make a copy.
-                exec('cp -R '.$file.' '.$dest.' 2>&1', $output);
-                if ($output)
-                    throw new Exception($output[0], 1);
+                $this->copyRecursively($file, $dest.'/vqmod');
 
                 // Make an install.
                 include_once(DIR_APPLICATION.'../vqmod/install/omise-install.php');
                 $installing = vQmodOmiseEditionInstall();
                 if (isset($installing['error'])) {
-                    exec('rm -R '.DIR_APPLICATION.'../vqmod 2>&1', $output);
-                    if ($output) throw new Exception($output[0], 1);
+                    $this->rmdirRecursively(DIR_APPLICATION.'../vqmod');
 
                     throw new Exception($installing['error'], 1);
                 }
 
                 if (!isset($installing['success'])) {
-                    exec('rm -R '.DIR_APPLICATION.'../vqmod 2>&1', $output);
-                    if ($output) throw new Exception($output[0], 1);
-
+                    $this->rmdirRecursively(DIR_APPLICATION.'../vqmod');
+                    
                     throw new Exception('CODE [acpoL365]'.$this->language->get('error_general_error'), 1);
                 }
             }
@@ -442,4 +438,55 @@ class ControllerPaymentOmise extends Controller
         
         $this->redirect($this->url->link('payment/omise/dashboard', 'token=' . $this->session->data['token'], 'SSL'));
     }
+
+    /**
+     * This's a snippet code for recursively copy files
+     * from one directory to another (used in `install` method only).
+     * @param String $src       Source of files being moved
+     * @param String $dest      Destination of files being moved
+     * @return boolean|void
+     */
+    public function copyRecursively($src, $dest)
+    {
+        // If the destination directory does not exist create it
+        if(!is_dir($dest)) { 
+            if(!mkdir($dest)) {
+                // If the destination directory could not be created stop processing
+                return false;
+            }    
+        }
+
+        // Open the source directory to read in files
+        $i = new DirectoryIterator($src);
+        foreach($i as $f) {
+            if($f->isFile()) {
+                copy($f->getRealPath(), "$dest/" . $f->getFilename());
+            } else if(!$f->isDot() && $f->isDir()) {
+                $this->copyRecursively($f->getRealPath(), "$dest/$f");
+            }
+        }
+    }
+
+    /**
+     * This's a snippet code for recursively remove files (used in `install` method only).
+     * @param String $dir  Directory that you need to remove
+     * @return void|boolean
+     */
+    public function rmdirRecursively($dir)
+    {
+        try {
+            if (is_dir($dir)) { 
+                $objects = scandir($dir); 
+                foreach ($objects as $object) { 
+                    if ($object != "." && $object != "..") { 
+                        if (filetype($dir."/".$object) == "dir") $this->rmdirRecursively($dir."/".$object); else unlink($dir."/".$object); 
+                    } 
+                } 
+                reset($objects); 
+                rmdir($dir); 
+            }    
+        } catch (Exception $e) {
+            return false;            
+        }
+     }
 }
