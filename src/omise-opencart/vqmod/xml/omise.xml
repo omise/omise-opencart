@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>Replace the css property in heading title in Home page</id>
+    <version>1.0</version>
+    <vqmver>2.X</vqmver>
+    <author>Omise</author>
+    <file name="admin/view/template/common/header.tpl">
+        <operation info="Add Omise menu into admin menu bar">
+            <search position="after"><![CDATA[<ul class="right" style="display: none;">]]></search>
+            <add><![CDATA[
+                <li id="omise"><a class="top">Omise</a>
+                    <ul>
+                        <li><a href="<?php echo $this->url->link('payment/omise/dashboard', 'token=' . $this->session->data['token'], 'SSL'); ?>">Dashboard</a></li>
+                        <li><a href="<?php echo $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'); ?>">Setting</a></li>
+                    </ul>
+                </li>
+            ]]></add>
+        </operation>
+   </file>
+</modification>
