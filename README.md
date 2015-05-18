@@ -1,4 +1,4 @@
-# omise-opencart
+![Omise-OpenCart](https://omise-cdn.s3.amazonaws.com/artwork/opencart_omise_bodered.png)
 
 ## OpenCart Version Compatibility
 - OpenCart 1.5.6.4
