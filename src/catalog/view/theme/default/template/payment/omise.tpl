@@ -88,7 +88,7 @@
 
 <!-- Omise's checkout form -->
 <form id="omise-form-checkout" method="post" action="<?php echo $success_url; ?>">
-
+    <img src="catalog/view/theme/default/image/secured_by_omise.png" width="200">
     <!-- Collect a customer's card -->
     <div class="omise-payment">
         <h3>Card Information</h3>
