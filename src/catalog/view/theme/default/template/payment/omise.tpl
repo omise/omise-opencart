@@ -120,8 +120,16 @@
         <div class="input-group clearfix">
             <div class="left"><label>Expire Date</label></div>
             <div class="right">
-                <input type="text" data-omise="expiration_month" size="4" style="width: 10%;" placeholder="dd" value="" class="input-omise-collect-expiration-month"> /
-                <input type="text" data-omise="expiration_year" size="8" style="width: 10%;" placeholder="YYYY" value="" class="input-omise-collect-expiration-year">
+                <select data-omise="expiration_month" class="input-omise-collect-expiration-month"> >
+                <?php foreach ($this->getMonths() as $k=>$v): ?>
+                    <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
+                <?php endforeach ?>
+                </select>
+                <select data-omise="expiration_year" class="input-omise-collect-expiration-year">
+                <?php foreach ($this->getYears() as $k=>$v): ?>
+                    <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
+                <?php endforeach ?>
+                </select>
             </div>
         </div>
         
