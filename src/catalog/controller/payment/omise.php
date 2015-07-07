@@ -32,7 +32,7 @@ class ControllerPaymentOmise extends Controller
                 $omise_charge = OmiseCharge::create(
                     array(
                         "amount"        => $this->request->post['amount'],
-                        "currency"      => "thb",
+                        "currency"      => $this->currency->getCode(),
                         "description"   => $this->request->post['description'],
                         "card"          => $this->request->post['omise_token']
                     ),
