@@ -1,7 +1,7 @@
 ![Omise-OpenCart](https://omise-cdn.s3.amazonaws.com/artwork/opencart_omise_bodered.png)
 
 ## OpenCart Version Compatibility
-- OpenCart 1.5.6.4
+- OpenCart 1.5.x
 
 ## Dependencies
 - [omise-php](https://github.com/omise/omise-php) (v2.1.2)
