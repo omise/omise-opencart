@@ -24,7 +24,6 @@ class ControllerPaymentOmise extends Controller
         // Load language.
         $this->language->load('payment/omise');
 
-
         /**
          * Language setup.
          *
@@ -32,17 +31,17 @@ class ControllerPaymentOmise extends Controller
         $this->document->setTitle($this->language->get('dashboard_page_title'));
 
         // Set page's component label with language.
-        $this->data['heading_title']            = $this->language->get('dashboard_heading_title');
-        $this->data['setting_url']              = $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL');
-        $this->data['setting_button_title']     = $this->language->get('text_button_setting');
-        $this->data['transfer_url']             = $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL');
+        $data['heading_title']            = $this->language->get('dashboard_heading_title');
+        $data['setting_url']              = $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL');
+        $data['setting_button_title']     = $this->language->get('text_button_setting');
+        $data['transfer_url']             = $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL');
 
 
         /**
          * Page data setup.
          *
          */
-        $this->data['omise'] = array();
+        $data['omise'] = array();
 
         // Check Omise extension is enabled.
         if (!$this->config->get('omise_status')) {
@@ -54,26 +53,26 @@ class ControllerPaymentOmise extends Controller
                 if (isset($omise_account['error']))
                     throw new Exception('Omise Account:: '.$omise_account['error'], 1);
 
-                $this->data['omise']['account']['email']    = $omise_account['email'];
-                $this->data['omise']['account']['created']  = $omise_account['created'];
+                $data['omise']['account']['email']    = $omise_account['email'];
+                $data['omise']['account']['created']  = $omise_account['created'];
 
                 // Retrieve Omise Balance.
                 $omise_balance = $this->model_payment_omise->getOmiseBalance();
                 if (isset($omise_balance['error']))
                     throw new Exception('Omise Balance:: '.$omise_balance['error'], 1);
 
-                $this->data['omise']['balance']['livemode']     = $omise_balance['livemode'];
-                $this->data['omise']['balance']['available']    = $omise_balance['available'];
-                $this->data['omise']['balance']['total']        = $omise_balance['total'];
-                $this->data['omise']['balance']['currency']     = $omise_balance['currency'];
+                $data['omise']['balance']['livemode']     = $omise_balance['livemode'];
+                $data['omise']['balance']['available']    = $omise_balance['available'];
+                $data['omise']['balance']['total']        = $omise_balance['total'];
+                $data['omise']['balance']['currency']     = $omise_balance['currency'];
 
                 // Retrieve Omise Transfer List.
                 $omise_transfer = $this->model_payment_omise->getOmiseTransferList();
                 if (isset($omise_transfer['error']))
                     throw new Exception('Omise Transfer:: '.$omise_transfer['error'], 1);
 
-                $this->data['omise']['transfer']['data']        = array_reverse($omise_transfer['data']);
-                $this->data['omise']['transfer']['total']       = $omise_transfer['total'];
+                $data['omise']['transfer']['data']        = array_reverse($omise_transfer['data']);
+                $data['omise']['transfer']['total']       = $omise_transfer['total'];
             } catch (Exception $e) {
                 $this->session->data['error'] = $e->getMessage();
             }
@@ -84,28 +83,23 @@ class ControllerPaymentOmise extends Controller
          * Page setup.
          *
          */
-        $this->_setBreadcrumb(array('text'      => $this->language->get('dashboard_breadcrumb_title'),
-                                    'href'      => $this->url->link('payment/omise/dashboard', 'token=' . $this->session->data['token'], 'SSL'),             
-                                    'separator' => ' :: '));
-
-        $this->_getSessionFlash();
+        $data['breadcrumbs'] = $this->_setBreadcrumb();
+        $data['success'] = $this->_getSessionFlashSuccess();
+        $data['error'] = $this->_getSessionFlashError();
 
         $this->document->addScript(HTTP_SERVER.'/view/javascript/omise/omise-opencart-admin.js');
-
 
         /**
          * Template setup.
          *
          */
         // Set template.
-        $this->template = 'payment/omise_dashboard.tpl';
-
-        // Include sub-template.
-        $this->children = array('common/header',
-                                'common/footer');
+        $data['header'] = $this->load->controller('common/header');
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['footer'] = $this->load->controller('common/footer');
 
         // Render output.
-        $this->response->setOutput($this->render());
+        $this->response->setOutput($this->load->view('payment/omise_dashboard.tpl', $data));
     }
 
     /**
@@ -131,23 +125,11 @@ class ControllerPaymentOmise extends Controller
          *
          */
         if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+
             $this->model_setting_setting->editSetting('omise', $this->request->post);
 
-            if (isset($this->request->post['Omise'])) {
-                $update                 = $this->request->post['Omise'];
-                $update['test_mode']    = isset($update['test_mode']) ? 1 : 0;
-
-                $this->model_payment_omise->updateConfig($update);
-
-                foreach ($update as $key => $value)
-                    $this->data[$key] = $value;
-
-                // Set error.
-                $this->data['input_error']          = array();
-            }
-
             $this->session->data['success'] = $this->language->get('text_session_save');
-            $this->redirect($this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
+            $this->response->redirect($this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
         }
 
 
@@ -158,42 +140,43 @@ class ControllerPaymentOmise extends Controller
         $this->document->setTitle('Omise Payment Gateway Configuration');
 
         // Set form label with language.
-        $this->data['heading_title']                    = $this->language->get('heading_title');
-        $this->data['button_save']                      = $this->language->get('text_button_save');
-        $this->data['button_cancel']                    = $this->language->get('text_button_cancel');
-        $this->data['entry_order_status']               = $this->language->get('entry_order_status');
-        $this->data['text_enabled']                     = $this->language->get('text_enabled');
-        $this->data['text_disabled']                    = $this->language->get('text_disabled');
-        $this->data['entry_status']                     = $this->language->get('entry_status');
+        $data['heading_title']                    = $this->language->get('heading_title');
+        
+        $data['button_save']                      = $this->language->get('text_button_save');
+        $data['button_cancel']                    = $this->language->get('text_button_cancel');
+        $data['entry_order_status']               = $this->language->get('entry_order_status');
+        $data['text_enabled']                     = $this->language->get('text_enabled');
+        $data['text_disabled']                    = $this->language->get('text_disabled');
+        $data['entry_status']                     = $this->language->get('entry_status');
 
         // Set Omise setting label with language.
-        $this->data['omise_key_test_public_label']      = $this->language->get('omise_key_test_public_label');
-        $this->data['omise_key_test_secret_label']      = $this->language->get('omise_key_test_secret_label');
-        $this->data['omise_test_mode_label']            = $this->language->get('omise_test_mode_label');
-        $this->data['omise_key_public_label']           = $this->language->get('omise_key_public_label');
-        $this->data['omise_key_secret_label']           = $this->language->get('omise_key_secret_label');
+        $data['omise_key_test_public_label']      = $this->language->get('omise_key_test_public_label');
+        $data['omise_key_test_secret_label']      = $this->language->get('omise_key_test_secret_label');
+        $data['omise_test_mode_label']            = $this->language->get('omise_test_mode_label');
+        $data['omise_key_public_label']           = $this->language->get('omise_key_public_label');
+        $data['omise_key_secret_label']           = $this->language->get('omise_key_secret_label');
 
         // Set action button.
-        $this->data['action']                           = $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL');
-        $this->data['cancel']                           = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
-
+        $data['action']                           = $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL');
+        $data['cancel']                           = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
 
         /**
          * Page data setup.
          *
          */
-        $this->data['omise_status'] = $this->config->get('omise_status');
+        $data['omise_status'] = $this->config->get('omise_status');
         $omise_config = $this->model_payment_omise->getConfig();
         foreach ($omise_config as $key => $value)
-            $this->data[$key] = $value;
+            $data[$key] = $value;
 
 
         /**
          * Page setup.
          *
          */
-        $this->_setBreadcrumb()
-             ->_getSessionFlash();
+        $data['breadcrumbs'] = $this->_setBreadcrumb();
+        $data['success'] = $this->_getSessionFlashSuccess();
+        $data['error'] = $this->_getSessionFlashError();
 
         
         /**
@@ -201,14 +184,12 @@ class ControllerPaymentOmise extends Controller
          *
          */
         // Set template.
-        $this->template = 'payment/omise_setting.tpl';
-
-        // Include sub-template.
-        $this->children = array('common/header',
-                                'common/footer');
+        $data['header'] = $this->load->controller('common/header');
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['footer'] = $this->load->controller('common/footer');
 
         // Render output.
-        $this->response->setOutput($this->render());
+        $this->response->setOutput($this->load->view('payment/omise_setting.tpl', $data));
     }
 
     /**
@@ -218,54 +199,64 @@ class ControllerPaymentOmise extends Controller
     private function _setBreadcrumb($current = null)
     {
         // Set Breadcrumbs.
-        $this->data['breadcrumbs']      = array();
+        $breadcrumbs     = array();
 
-        $this->data['breadcrumbs'][]    = array(
+        $breadcrumbs[]    = array(
             'text'      => $this->language->get('text_home'),
             'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => false
         );
 
-        $this->data['breadcrumbs'][] = array(
+        $breadcrumbs[] = array(
             'text'      => $this->language->get('text_payment'),
             'href'      => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => ' :: '
         );
 
-        $this->data['breadcrumbs'][] = array(
+        $breadcrumbs[] = array(
             'text'      => $this->language->get('heading_title'),
             'href'      => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),             
             'separator' => ' :: '
         );
 
         if (!is_null($current)) {
-            $this->data['breadcrumbs'][] = $current;
+            $breadcrumbs[] = $current;
         }
 
-        return $this;
+        return $breadcrumbs;
     }
 
     /**
-     * Get session flash from session variable and unset it
+     * Get session flash from session variable and unset it for success
      * @return self
      */
-    private function _getSessionFlash()
+    private function _getSessionFlashSuccess()
     {
-        $this->data['success'] = '';
+        $success = '';
         if (isset($this->session->data['success'])) {
-            $this->data['success'] = $this->session->data['success'];
+            $success = $this->session->data['success'];
 
             unset($this->session->data['success']);
         }
 
-        $this->data['error'] = '';
+        return $success;
+    }
+
+    /**
+     * Get session flash from session variable and unset it for error
+     * @return self
+     */
+    private function _getSessionFlashError()
+    {
+
+        $error = '';
         if (isset($this->session->data['error'])) {
-            $this->data['error'] = $this->session->data['error'];
+            $error = $this->session->data['error'];
 
             unset($this->session->data['error']);
         }
 
-        return $this;
+        return $error;
     }
 
     /**
@@ -436,7 +427,8 @@ class ControllerPaymentOmise extends Controller
             $this->session->data['error'] = $e->getMessage();
         }
         
-        $this->redirect($this->url->link('payment/omise/dashboard', 'token=' . $this->session->data['token'], 'SSL'));
+        $this->response->redirect($this->url->link('payment/omise/dashboard', 'token=' . $this->session->data['token'], 'SSL'));
+        
     }
 
     /**
