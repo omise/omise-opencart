@@ -22,7 +22,6 @@ echo $header; ?><?php echo $column_left; ?>
             </ul>
         </div>
     </div>
-
     <div class="container-fluid">
         <?php if ($success) echo '<div class="alert alert-success">'.$success.'</div>'; ?>
         <?php if ($error) echo '<div class="alert alert-warning">'.$error.'</div>'; ?>
