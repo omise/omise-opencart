@@ -127,6 +127,12 @@ class ControllerPaymentOmise extends Controller
         if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
 
             $this->model_setting_setting->editSetting('omise', $this->request->post);
+            $data['public_key_test']      = $this->request->post['omise_public_key_test'];
+            $data['secret_key_test']      = $this->request->post['omise_secret_key_test'];
+            $data['test_mode']            = $this->request->post['omise_test_mode'];
+            $data['public_key']           = $this->request->post['omise_public_key'];
+            $data['secret_key']           = $this->request->post['omise_secret_key'];
+
 
             $this->session->data['success'] = $this->language->get('text_session_save');
             $this->response->redirect($this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
@@ -166,8 +172,11 @@ class ControllerPaymentOmise extends Controller
          */
         $data['omise_status'] = $this->config->get('omise_status');
         $omise_config = $this->model_payment_omise->getConfig();
-        foreach ($omise_config as $key => $value)
-            $data[$key] = $value;
+        $data['public_key_test']      = $this->config->get('omise_public_key_test');
+        $data['secret_key_test']      = $this->config->get('omise_secret_key_test');
+        $data['test_mode']            = $this->config->get('omise_test_mode');
+        $data['public_key']           = $this->config->get('omise_public_key');
+        $data['secret_key']           = $this->config->get('omise_secret_key');
 
 
         /**
