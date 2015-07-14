@@ -129,7 +129,7 @@ class ControllerPaymentOmise extends Controller
             $this->model_setting_setting->editSetting('omise', $this->request->post);
             $data['public_key_test']      = $this->request->post['omise_public_key_test'];
             $data['secret_key_test']      = $this->request->post['omise_secret_key_test'];
-            $data['test_mode']            = $this->request->post['omise_test_mode'];
+            $data['test_mode']            = isset($update['omise_test_mode']) ? 1 : 0;
             $data['public_key']           = $this->request->post['omise_public_key'];
             $data['secret_key']           = $this->request->post['omise_secret_key'];
 
