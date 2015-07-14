@@ -48,7 +48,7 @@ echo $header; ?><?php echo $column_left; ?>
                 <div class="omise-balance omise-clearfix">
                     <div class="left"><span class="omise-number"><?php echo number_format(($omise['balance']['total']/100), 2); ?></span><br/>Total Balance</div>
                     <div class="right"><span class="omise-number"><?php echo number_format(($omise['balance']['available']/100), 2); ?></span><br/>Transferable Balance</div>
-                </div><br />
+                </div>
 
                 <!-- Transfer History -->
                 <div class="omise-transfer-history"><h3>Transfer History</h3></div>
