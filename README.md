@@ -25,13 +25,13 @@ Follow these steps to install **omise-opencart**:
 3. Open your **OpenCart website**, then go to `/admin` page  
 
 4. Go to `Extensions` > `Payments` (from the left menu), in the payment extension list page
-![Payments Menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/installation4-uninstall2.png)
+![Payments Menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-02.png)
   
 5. Look for `Omise Payment Gateway` and click **Install**  
 ![Install Omise Payment Gateway extension menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/installation5.png)
 
 If the everything went fine, the `Omise` menu will appear on the right side of your admin page. Otherwise, please check **Frequent Problems**
-![Omise Menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/installation6.png)
+![Omise Menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-04.png)
 
 #### Frequent Problems
 
