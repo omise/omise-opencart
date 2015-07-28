@@ -69,13 +69,13 @@ After setting up your *Omise keys*, you can checkout with *Omise Payment Gateway
 4. The form allows you to fill in your credit card details. You can use a test credit card number from [our documentation](https://docs.omise.co/api/tests/).)  
 ![Collect a Customer Card](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/checkout4.png)
 
-5. Once done, submit your order with the `Confirm Order` button. If you want to know how we collect and process your card, please check our documentation: [Collecting Cards](https://docs.omise.co/collecting-card-information/) and [Charging Cards](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/checkout5.png))
+5. Once done, submit your order with the `Confirm Order` button. If you want to know how we collect and process your card, please check our documentation: [Collecting Cards](https://docs.omise.co/collecting-card-information/) and [Charging Cards](https://docs.omise.co/charging-cards/))
 
 6. Once completed, you get redirected your website `processed page`.
-![Checkout processed done](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/checkout6.png)
+![Checkout processed done](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/checkout5.png)
 
 7. If you go back to your **admin dashboard** you will see your order with `Processed` status.  
-![Admin Dashboard](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/checkout7.png)  
+![Admin Dashboard](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/opencart-dashboard.png)  
 Note: During the short period of authorization, the status will be marked as `Processing`
 
 ## Uninstalling Omise
@@ -92,7 +92,7 @@ Because we can not automatically check that `vQmod` library is used by other ext
 ![Payments menu](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/installation4%20&%20uninstall2.png)
  
 3. Look for `Omise Payment Gateway` row and click **Uninstall**  
-![Uninstall Omise Payment Gateway extension menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/uninstall3.png)
+![Uninstall Omise Payment Gateway extension menu](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/uninstall3.png)
 
 Once uninstalled, `Omise` will not appear in the top right menu of your admin page anymore.
 
