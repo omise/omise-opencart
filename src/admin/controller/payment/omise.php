@@ -286,11 +286,12 @@ class ControllerPaymentOmise extends Controller
         // Load language.
         $this->language->load('payment/omise');
 
+                
         try {
             // Create new table for contain Omise Keys.
             if (!$this->model_payment_omise->install())
                 throw new Exception($this->language->get('error_omise_table_install_failed'), 1);
-                
+            
             // If done. Next, install vQmod library.
             // So, if it had vQmod in OpenCart project already,
             // just copy omise.xml into vqmod/xml/ without installing again.
@@ -312,6 +313,7 @@ class ControllerPaymentOmise extends Controller
                 // Make a copy.
                 if (!copy($file, $dest.'/omise.xml')) 
                     throw new Exception($file.' '.$this->language->get('error_can_not_copy_file'), 1);
+                
             } else {
                 // If it had not, install it.
                 $file   = DIR_APPLICATION.'../omise-opencart/vqmod';
@@ -348,12 +350,13 @@ class ControllerPaymentOmise extends Controller
                     if (!chmod($backup.'/admin/index.php', 0755)) 
                         throw new Exception($bak_catalog_index.' '.$this->language->get('error_can_not_copy_file'), 1);
                 }
-
+                
                 // Make a copy.
                 $this->copyRecursively($file, $dest.'/vqmod');
 
                 // Make an install.
                 include_once(DIR_APPLICATION.'../vqmod/install/omise-install.php');
+                
                 $installing = vQmodOmiseEditionInstall();
                 if (isset($installing['error'])) {
                     $this->rmdirRecursively(DIR_APPLICATION.'../vqmod');
@@ -367,15 +370,15 @@ class ControllerPaymentOmise extends Controller
                     throw new Exception('CODE [acpoL365]'.$this->language->get('error_general_error'), 1);
                 }
             }
-
+            
             // Set `success` session if it completely done.
             $this->session->data['success'] = "Installed";
         } catch (Exception $e) {
             // Uninstall Omise extension if it failed to install.
-            $this->load->model('setting/extension');
+            $this->load->model('extension/extension');
             $this->load->model('setting/setting');
 
-            $this->model_setting_extension->uninstall('payment', 'omise');
+            $this->model_extension_extension->uninstall('payment', 'omise');
             $this->model_setting_setting->deleteSetting('omise');
 
             $file = DIR_APPLICATION.'../vqmod/xml/omise.xml';
