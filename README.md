@@ -1,7 +1,7 @@
 ![Omise-OpenCart](https://omise-cdn.s3.amazonaws.com/artwork/opencart_omise_bodered.png)
 
 ## OpenCart Version Compatibility
-- OpenCart 1.5.x
+- OpenCart 2.0.x
 
 ## Dependencies (Already included in Omise-OpenCart)
 - [omise-php](https://github.com/omise/omise-php) (v2.4.0)
@@ -24,13 +24,13 @@ Follow these steps to install **omise-opencart**:
 
 3. Open your **OpenCart website**, then go to `/admin` page  
 
-4. Go to `Extensions` > `Payments` (from the top menu), in the payment extension list page
+4. Go to `Extensions` > `Payments` (from the left menu), in the payment extension list page
 ![Payments Menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-02.png)
   
 5. Look for `Omise Payment Gateway` and click **Install**  
 ![Install Omise Payment Gateway extension menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-03.png)
 
-If the everything went fine, the `Omise` menu will appear on the right side of your admin page.
+If the everything went fine, the `Omise` menu will appear on the right side of your admin page. Otherwise, please check **Frequent Problems**
 ![Omise Menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-04.png)
 
 #### Frequent Problems
@@ -38,6 +38,7 @@ If the everything went fine, the `Omise` menu will appear on the right side of y
 Permissions must be set so that **omise-opencart** can overwrite the following files:
 - `your-opencart(root)/index.php`
 - `your-opencart(root)/admin/index.php`
+- `your-opencart(root)/omise-opencart`
 
 It also creates new folders and files on your `your-opencart(root)/` directory for the first installation.  
 Ensure these 2 files and folder have appropriate `write` permissions (usually `755`).
