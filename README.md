@@ -25,7 +25,7 @@ Follow these steps to install **omise-opencart**:
 3. Open your **OpenCart website**, then go to `/admin` page  
 
 4. Go to `Extensions` > `Payments` (from the left menu), in the payment extension list page
-![Payments Menu](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/installation4%20&%20uninstall2.png)
+![Payments Menu](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/installation4-uninstall2.png)
   
 5. Look for `Omise Payment Gateway` and click **Install**  
 ![Install Omise Payment Gateway extension menu](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/installation5.png)
@@ -89,7 +89,7 @@ Because we can not automatically check that `vQmod` library is used by other ext
 1. Open your **OpenCart website**, then go to `/admin` page  
 
 2. Go to `Extensions` > `Payments` (from the left menu)  
-![Payments menu](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/installation4%20&%20uninstall2.png)
+![Payments menu](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/installation4-uninstall2.png )
  
 3. Look for `Omise Payment Gateway` row and click **Uninstall**  
 ![Uninstall Omise Payment Gateway extension menu](http://omise-cdn.s3.amazonaws.com/assets/omise-opencart/v2.x/uninstall3.png)
