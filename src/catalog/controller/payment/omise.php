@@ -32,7 +32,7 @@ class ControllerPaymentOmise extends Controller
                 $omise_charge = OmiseCharge::create(
                     array(
                         "amount"        => $this->request->post['amount'],
-                        "currency"      => "thb",
+                        "currency"      => $this->currency->getCode(),
                         "description"   => $this->request->post['description'],
                         "card"          => $this->request->post['omise_token']
                     ),
@@ -62,6 +62,38 @@ class ControllerPaymentOmise extends Controller
         }
     }
 
+    /**
+     * Retrieve list of months translation
+     *
+     * @return array
+     */
+    public function getMonths()
+    {
+        $months = array();
+        for ($index=1; $index <= 12; $index++) {
+            $month = ($index < 10) ? '0'.$index : $index;
+            $months[$month] = $month;
+        }
+        return $months;
+    }
+
+    /**
+     * Retrieve array of available years
+     *
+     * @return array
+     */
+    public function getYears()
+    {
+        $years = array();
+        $first = date("Y");
+
+        for ($index=0; $index <= 10; $index++) {
+            $year = $first + $index;
+            $years[$year] = $year;
+        }
+        return $years;
+    }
+    
     /**
      * Omise card information form
      * @return void
