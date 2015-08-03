@@ -214,7 +214,7 @@ class OmiseApiResource extends OmiseObject {
         // Set the request method.
         CURLOPT_CUSTOMREQUEST => $requestMethod,
         // Set the user agent.
-        CURLOPT_USERAGENT => "OmiseOpenCart/1.0 OmisePHP/".OMISE_PHP_LIB_VERSION." OmiseAPI/".OMISE_API_VERSION,
+        CURLOPT_USERAGENT => "OmiseOpenCart/1.5.0.1 OmisePHP/".OMISE_PHP_LIB_VERSION." OmiseAPI/".OMISE_API_VERSION,
         // Make php-curl returns the data as string.
         CURLOPT_RETURNTRANSFER => true,
         // Do not include the header in the output.
