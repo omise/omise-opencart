@@ -1,5 +1,7 @@
 # Omise PHP Client
 
+`omise-php` is Omise API library written in PHP.
+
 ## Requirements
 
 * PHP 5.3 and above.
@@ -56,6 +58,24 @@ Please see usage section below for usage examples.
 
 ## Usage
 
+### 1. Flow
+
+The following flow is recommended in order to comply with the PCI Security Standards.
+You should never transmit card data through your servers unless you have a valid PCI certificate.
+
+### Flow using Omise.js
+1. User enters the credit card information on a form on your site, completely white-label (user never sees Omise).
+2. The card is sent directly from the browser to Omise server via HTTPS using our Javascript (Omise.js).
+3. Omise returns a Token that identifies the card and if the card passed the authorization `card.security_code_check`
+4. Your page will send this token to your server to finally make the charge capture.
+
+### Notes:
+In step 3, if `card.security_code_check` is `false`, the card failed the authorization process, probably because of a wrong CVV, wrong expire date or wrong card number. In this case you should display an error message and ask user to enter card again.
+
+In step 4, Omise will make the final capture of the amount. If this fails, but token was authorized, it can be due to card having no funds required for the charge.
+
+### The Code
+
 Add the following to your PHP script and **replace the keys by the one given in Omise dashboard**:
 
 ```php
@@ -86,14 +106,14 @@ For full usage, please refer to [API documentation](https://docs.omise.co/). You
 
 ## Testing
 
-To run an automated test suite, first replace your keys in `tests/omise/TestConfig.php`:
+To run an automated test suite, make sure you already have a [PHPUnit](https://phpunit.de/) in your local machine.
+Then run the PHPUnit:
 
-```php
-define('OMISE_PUBLIC_KEY', 'pkey_XXXXXXXXXXXXXXXXX');
-define('OMISE_SECRET_KEY', 'skey_XXXXXXXXXXXXXXXXX');
+```
+phpunit omise-php/tests
 ```
 
-Then run the PHPUnit:
+If you want to run with a specific test, let's try
 
 ```
 phpunit omise-php/tests/omise/AccountTest
