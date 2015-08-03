@@ -3,8 +3,8 @@
 ## OpenCart Version Compatibility
 - OpenCart 1.5.x
 
-## Dependencies
-- [omise-php](https://github.com/omise/omise-php) (v2.1.2)
+## Dependencies (Already included in Omise-OpenCart)
+- [omise-php](https://github.com/omise/omise-php) (v2.3.1)
 - [Jquery](https://github.com/jquery/jquery) (v1.7.1 from OpenCart (v1.5.6.4)'s dependency)
 - [vQmod](https://github.com/vqmod/vqmod) (v2.5.1 with OpenCart integration edition)
 
@@ -14,8 +14,8 @@ Follow these steps to install **omise-opencart**:
 1. Download this repository and unzip it into your `local machine` (or directly to your server)
 
   Download links: 
-  [omise-opencart-v1.0.zip](https://github.com/omise/omise-opencart/archive/v1.0.zip) or 
-  [omise-opencart-v1.0.tar.gz](https://github.com/omise/omise-opencart/archive/v1.0.tar.gz)
+  [omise-opencart-v1.5.0.1.zip](https://github.com/omise/omise-opencart/archive/v1.5.0.1.zip) or 
+  [omise-opencart-v1.5.0.1.tar.gz](https://github.com/omise/omise-opencart/archive/v1.5.0.1.tar.gz)
 
   ![omise-opencart Folder Structure](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-01.png)
 
