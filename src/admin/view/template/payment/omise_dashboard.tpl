@@ -98,3 +98,6 @@ echo $header; ?><?php echo $column_left; ?>
 
 <!-- Include Omise's stylesheet -->
 <link rel="stylesheet" type="text/css" href="view/stylesheet/omise/omise-admin.css">
+
+<!-- Include Omise's javascript -->
+<script type="text/javascript" src="view/javascript/omise/omise-dashboard.js"></script>
