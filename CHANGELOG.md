@@ -7,6 +7,7 @@ An [unreleased] version is not available on `master` branch and is subject to ch
 ------------
 #### Updates
 - *`Updated`* Updated checkout display, add `secured by Omise` logo into checkout form.
+- *`Updated`* Upgrade `omise-php` library from 2.3.1 to 2.4.0.
 
 [1.5.0.1] 2015-08-03
 ----------------------

@@ -53,7 +53,6 @@
                     // Token was created. Then, charge a card with token.
                     var posting = $.post("<?php echo $checkout_url; ?>", {
                         "omise_token": response.id,
-                        "amount": "<?php echo str_replace('.', '', $orderamount); ?>",
                         "description": "Charge a card from OpenCart that order id is <?php echo $orderid; ?> from <?php echo $billemail; ?>"
                     });
 
