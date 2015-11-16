@@ -9,6 +9,18 @@ if(!defined('OMISE_API_VERSION'))
 
 class ModelPaymentOmise extends Model
 {
+
+    public function __construct($params) {
+        parent::__construct($params);
+
+        // Load `omise-php` library.
+        $this->load->library('omise/omise-php/lib/Omise');
+
+        // Load language.
+        $this->language->load('payment/omise');
+
+    }
+
     /**
      * @var string  Omise table name
      */
@@ -99,14 +111,14 @@ class ModelPaymentOmise extends Model
         $omise = array();
 
         if ($this->config->get('omise_status')) {
-            // Get Omise configuration.
-            $omise = $this->getConfig();
-
-            // If test mode is enable,
-            // replace Omise live key with test key.
-            if ($omise['test_mode']) {
-                $omise['public_key'] = $omise['public_key_test'];
-                $omise['secret_key'] = $omise['secret_key_test'];
+            
+            $omise['public_key']    = $this->config->get('omise_public_key');
+            $omise['secret_key']    = $this->config->get('omise_secret_key');
+            $omise['test_mode']     = $this->config->get('omise_test_mode');
+            // If test mode was enabled, replace Omise public and secret key with test key.
+            if (isset($omise['test_mode']) && $omise['test_mode']) {
+                $omise['public_key'] = $this->config->get('omise_public_key_test');
+                $omise['secret_key'] = $this->config->get('omise_secret_key_test');
             }
         }
 
@@ -119,12 +131,6 @@ class ModelPaymentOmise extends Model
      */
     public function getOmiseAccount()
     {
-        // Load `omise-php` library.
-        $this->load->library('omise/omise-php/lib/Omise');
-
-        // Load language.
-        $this->language->load('payment/omise');
-
         // Get Omise Keys.
         if ($keys = $this->_getOmiseKeys()) {
             try {
@@ -145,12 +151,6 @@ class ModelPaymentOmise extends Model
      */
     public function getOmiseBalance()
     {
-        // Load `omise-php` library.
-        $this->load->library('omise/omise-php/lib/Omise');
-
-        // Load language.
-        $this->language->load('payment/omise');
-
         // Get Omise Keys.
         if ($keys = $this->_getOmiseKeys()) {
             try {
@@ -171,12 +171,6 @@ class ModelPaymentOmise extends Model
      */
     public function getOmiseTransactionList()
     {
-        // Load `omise-php` library.
-        $this->load->library('omise/omise-php/lib/Omise');
-
-        // Load language.
-        $this->language->load('payment/omise');
-
         // Get Omise Keys.
         if ($keys = $this->_getOmiseKeys()) {
             try {
@@ -197,12 +191,6 @@ class ModelPaymentOmise extends Model
      */
     public function getOmiseTransferList()
     {
-        // Load `omise-php` library.
-        $this->load->library('omise/omise-php/lib/Omise');
-
-        // Load language.
-        $this->language->load('payment/omise');
-
         // Get Omise Keys.
         if ($keys = $this->_getOmiseKeys()) {
             try {
@@ -223,12 +211,6 @@ class ModelPaymentOmise extends Model
      */
     public function createOmiseTransfer($amount)
     {
-        // Load `omise-php` library.
-        $this->load->library('omise/omise-php/lib/Omise');
-
-        // Load language.
-        $this->language->load('payment/omise');
-        
         // Get Omise Keys.
         if ($keys = $this->_getOmiseKeys()) {
             try {

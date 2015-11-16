@@ -41,3 +41,5 @@ button.button                       	{ cursor: pointer; border: 0; text-decorati
 
 .testmode-label                     	{ color: #d1002a; }
 .livemode-label                     	{ color: #7CA91F; }
+
+.omise-transfer-history					{ margin-top: 20px; }

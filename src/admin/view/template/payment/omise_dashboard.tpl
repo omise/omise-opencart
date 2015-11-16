@@ -3,35 +3,27 @@
  * Include header.
  *
  */
-echo $header; ?>
-
-<!-- Include Omise's stylesheet -->
-<link rel="stylesheet" type="text/css" href="view/stylesheet/omise/omise-admin.css">
+echo $header; ?><?php echo $column_left; ?>
 
 <div id="content">
-    <!-- Breadcrumb -->
-    <div class="breadcrumb">
-        <?php
-        foreach ($breadcrumbs as $breadcrumb):
-            echo $breadcrumb['separator'];
-            echo '<a href="'.$breadcrumb['href'].'">'.$breadcrumb['text'].'</a>';
-        endforeach;
-        ?>
-    </div> <!-- /END .breadcrumb -->
+    <div class="page-header">
+        <div class="container-fluid">
+            <h1><?php echo $heading_title; ?></h1>
+            <ul class="breadcrumb">
+                <?php foreach ($breadcrumbs as $breadcrumb) { ?>
+                    <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
 
-    <!-- Session flash box -->
-    <?php if ($success) echo '<div class="success">'.$success.'</div>'; ?>
-    <?php if ($error) echo '<div class="warning">'.$error.'</div>'; ?>
+    <div class="container-fluid">
+    <?php if ($success) echo '<div class="alert alert-success">'.$success.'</div>'; ?>
+    <?php if ($error) echo '<div class="alert alert-warning">'.$error.'</div>'; ?>
 
     <?php if ($omise): ?>
         <!-- Content -->
         <div class="box">
-            <div class="heading">
-                <h1><img src="view/image/payment.png" alt="" /> <?php echo $heading_title; ?></h1>
-                <div class="buttons">
-                    <a href="<?php echo $setting_url; ?>" class="button"><?php echo $setting_button_title; ?></a>
-                </div>
-            </div> <!-- /END .heading -->
 
             <div class="content">
 
@@ -61,7 +53,7 @@ echo $header; ?>
                 <!-- Transfer History -->
                 <div class="omise-transfer-history"><h3>Transfer History</h3></div>
                 <form id="omise-transfer" method="post" action="<?php echo $transfer_url; ?>">
-                    <table class="list">
+                    <table class="table list">
                         <thead>
                             <tr>
                                 <td class="left">Amount</td>
@@ -84,7 +76,7 @@ echo $header; ?>
                                 </tr>
                             <?php endforeach; ?>
                             <tr>
-                                <td colspan="5" class="right"><input style="width: 20%" min="0" type="number" name="OmiseTransfer[amount]" placeholder="Transfer amount (number only)"></td>
+                                <td colspan="5" class="right"><input style="width: 20%;float:right;" class="form-control" min="0" type="number" name="OmiseTransfer[amount]" placeholder="Transfer amount (number only)"></td>
                                 <td style="text-align: center;"><button class="button btn-transfer">CREATE TRANSFER</button></td>
                             </tr>
                         </tbody>
@@ -93,6 +85,7 @@ echo $header; ?>
             </div> <!-- /END .content -->
         </div> <!-- /END .box -->
     <?php endif; ?>
+    </div>
 </div>
 
 <?php
@@ -101,3 +94,10 @@ echo $header; ?>
  *
  */
  echo $footer; ?>
+
+
+<!-- Include Omise's stylesheet -->
+<link rel="stylesheet" type="text/css" href="view/stylesheet/omise/omise-admin.css">
+
+<!-- Include Omise's javascript -->
+<script type="text/javascript" src="view/javascript/omise/omise-dashboard.js"></script>

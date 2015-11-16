@@ -1,5 +1,3 @@
-<!-- Include Omise's stylesheet -->
-<link rel="stylesheet" type="text/css" href="catalog/view/stylesheet/omise/omise.css">
 
 <!-- Include Omise's javascript -->
 <script type="text/javascript">

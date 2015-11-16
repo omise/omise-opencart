@@ -3,119 +3,107 @@
  * Include header.
  *
  */
-echo $header; ?>
+echo $header; ?><?php echo $column_left; ?>
 
 <!-- Include Omise's stylesheet -->
-<link rel="stylesheet" type="text/css" href="view/stylesheet/omise/omise-admin.css">
 
 <div id="content">
-    <!-- Breadcrumb -->
-    <div class="breadcrumb">
-        <?php
-        foreach ($breadcrumbs as $breadcrumb):
-            echo $breadcrumb['separator'];
-            echo '<a href="'.$breadcrumb['href'].'">'.$breadcrumb['text'].'</a>';
-        endforeach;
-        ?>
-    </div> <!-- /END .breadcrumb -->
-
-    <!-- Session flash box -->
-    <?php if ($success) echo '<div class="success">'.$success.'</div>'; ?>
-    <?php if ($error) echo '<div class="warning">'.$error.'</div>'; ?>
-
-    <!-- Content -->
-    <div class="box">
-        <div class="heading">
-            <h1><img src="view/image/payment.png" alt="" /> <?php echo $heading_title; ?></h1>
-            <div class="buttons">
-                <a onclick="$('#form').submit();" class="button"><?php echo $button_save; ?></a><!--
-                --><a href="<?php echo $cancel; ?>" class="button"><?php echo $button_cancel; ?></a>
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" onclick="$('#form').submit();" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
             </div>
-        </div> <!-- /END .heading -->
-
-        <div class="content">
-            <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
-
-                <!-- Omise Test Key config -->
-                <h3>Test Keys</h3>
-                <table class="form">
-
+            <h1><?php echo $heading_title; ?></h1>
+            <ul class="breadcrumb">
+                <?php foreach ($breadcrumbs as $breadcrumb) { ?>
+                    <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <?php if ($success) echo '<div class="alert alert-success">'.$success.'</div>'; ?>
+        <?php if ($error) echo '<div class="alert alert-warning">'.$error.'</div>'; ?>
+        
+        <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
+            <!-- test mode -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> Test Keys</h3>
+                </div>
+                <div class="panel-body">
                     <!-- o_public_key_test -->
-                    <tr>
-                        <td><?php echo $omise_key_test_public_label; ?></td>
-                        <td>
-                            <input type="password" name="Omise[public_key_test]" value="<?php echo $public_key_test; ?>" />
-                            <?php if (isset($input_error['public_key_test'])) echo '<span class="error">'.$input_error['public_key_test'].'</span>'; ?>
-                        </td>
-                    </tr>
+                    <div class="form-group required">
+                      <label class="col-sm-2 control-label" for="omise_payments_public_key_test"><?php echo $omise_key_test_public_label; ?></label>
+                      <div class="col-sm-10">
+                        <input size="40" type="password" name="omise_public_key_test" value="<?php echo $public_key_test; ?>" id="omise_payments_public_key_test" class="form-control" />
+                      </div>
+                    </div>
 
                     <!-- o_secret_key_test -->
-                    <tr>
-                        <td><?php echo $omise_key_test_secret_label; ?></td>
-                        <td>
-                            <input type="password" name="Omise[secret_key_test]" value="<?php echo $secret_key_test; ?>" />
-                            <?php if (isset($input_error['secret_key_test'])) echo '<span class="error">'.$input_error['secret_key_test'].'</span>'; ?>
-                        </td>
-                    </tr>
+                    <div class="form-group required">
+                      <label class="col-sm-2 control-label" for="omise_payments_secret_key_test"><?php echo $omise_key_test_secret_label; ?></label>
+                      <div class="col-sm-10">
+                        <input size="40" type="password" name="omise_secret_key_test" value="<?php echo $secret_key_test; ?>" id="omise_payments_secret_key_test" class="form-control" />
+                      </div>
+                    </div>
 
                     <!-- o_test_mode -->
-                    <tr>
-                        <td><?php echo $omise_test_mode_label; ?></td>
-                        <td>
-                            <input type="checkbox" name="Omise[test_mode]" value="1" <?php echo $test_mode ? 'checked' : ''; ?> />
-                            <?php if (isset($input_error['test_mode'])) echo '<span class="error">'.$input_error['test_mode'].'</span>'; ?>
-                        </td>
-                    </tr>
-                </table>
+                    <div class="form-group required">
+                      <label class="col-sm-2 control-label" for="omise_payments_test_modet"><?php echo $omise_test_mode_label; ?></label>
+                      <div class="col-sm-10">
+                        <input type="checkbox" name="omise_test_mode" value="1" <?php echo $test_mode ? 'checked' : ''; ?> class="form-control" />
+                      </div>
+                    </div>        
+                </div>
+            </div>
 
-                <!-- Omise Live Key config -->
-                <h3>Live Keys</h3>
-                <table class="form">
+            <!-- live mode -->
 
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> Live Keys</h3>
+                </div>
+                <div class="panel-body">
                     <!-- o_public_key -->
-                    <tr>
-                        <td><span class="required">*</span> <?php echo $omise_key_public_label; ?></td>
-                        <td>
-                            <input type="password" name="Omise[public_key]" value="<?php echo $public_key; ?>" />
-                            <?php if (isset($input_error['public_key'])) echo '<span class="error">'.$input_error['public_key'].'</span>'; ?>
-                        </td>
-                    </tr>
+                    <div class="form-group required">
+                      <label class="col-sm-2 control-label" for="omise_payments_public_key"><?php echo $omise_key_public_label; ?></label>
+                      <div class="col-sm-10">
+                        <input size="40" type="password" name="omise_public_key" value="<?php echo $public_key; ?>" id="omise_payments_public_key" class="form-control" />
+                      </div>
+                    </div>
 
                     <!-- o_secret_key -->
-                    <tr>
-                        <td><span class="required">*</span> <?php echo $omise_key_secret_label; ?></td>
-                        <td>
-                            <input type="password" name="Omise[secret_key]" value="<?php echo $secret_key; ?>" />
-                            <?php if (isset($input_error['secret_key'])) echo '<span class="error">'.$input_error['secret_key'].'</span>'; ?>
-                        </td>
-                    </tr>
-                </table>
+                    <div class="form-group required">
+                      <label class="col-sm-2 control-label" for="omise_payments_secret_key"><?php echo $omise_key_secret_label; ?></label>
+                      <div class="col-sm-10">
+                        <input size="40" type="password" name="omise_secret_key" value="<?php echo $secret_key; ?>" id="omise_payments_secret_key" class="form-control" />
+                      </div>
+                    </div>
 
-                <!-- Module config -->
-                <h3>Mudule config</h3>
-                <table class="form">
-                    <tr>
-                        <td><?php echo $entry_status; ?></td>
-                        <td>
-                            <select name="omise_status">
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> Module Config</h3>
+                </div>
+                <div class="panel-body">
+
+                    <!-- o_test_mode -->
+                    <div class="form-group required">
+                      <label class="col-sm-2 control-label" for="omise_payments_test_modet"><?php echo $omise_test_mode_label; ?></label>
+                      <div class="col-sm-10">
+                            <select name="omise_status" class="form-control">
                                 <option value="1" <?php echo $omise_status ? 'selected="selected"' : ''; ?>><?php echo $text_enabled; ?></option>
                                 <option value="0" <?php echo !$omise_status ? 'selected="selected"' : ''; ?>><?php echo $text_disabled; ?></option>
                             </select>
-                        </td>
-                    </tr>
-                </table>
-            </form>
-
-            <div class="text-right" style="margin-top: 40px;">
-                <a href="<?php echo $cancel; ?>" class="button">Back</a>
+                      </div>
+                    </div>        
+                </div>
             </div>
-        </div> <!-- /END .content -->
-    </div> <!-- /END .box -->
+        </form>
+    </div>
 </div>
-
-<?php
-/**
- * Include footer.
- *
- */
- echo $footer; ?>
+<?php echo $footer; ?>

@@ -7,6 +7,7 @@ class ModelPaymentOmise extends Model
      
         $method_data = array(   'code'          => 'omise',
                                 'title'         => $this->language->get('text_title'),
+								'terms'      => '',
                                 'sort_order'    => $this->config->get('custom_sort_order'));
      
        return $method_data;
