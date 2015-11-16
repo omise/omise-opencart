@@ -8,6 +8,14 @@ class ControllerPaymentOmise extends Controller
      */
     public function checkout()
     {
+        // Define 'OMISE_USER_AGENT_SUFFIX'
+        if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
+            define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.5.0.2 OpenCart/'.VERSION);
+
+        // Define 'OMISE_API_VERSION'
+        if(!defined('OMISE_API_VERSION'))
+            define('OMISE_API_VERSION', '2014-07-27');
+
         // If has a `post['omise_token']` request.
         if (isset($this->request->post['omise_token'])) {
             // Load `omise-php` library.
@@ -25,43 +33,85 @@ class ControllerPaymentOmise extends Controller
 
             // Create a order history with `Processing` status
             $this->load->model('checkout/order');
-            $this->model_checkout_order->confirm($this->session->data['order_id'], 2);
+            $order_id       = $this->session->data['order_id'];
+            $order_info     = $this->model_checkout_order->getOrder($order_id);
+            $order_total    = number_format($order_info['total'], 2, '', '');
 
-            try {
-                // Try to create a charge and capture it.
-                $omise_charge = OmiseCharge::create(
-                    array(
-                        "amount"        => $this->request->post['amount'],
-                        "currency"      => "thb",
-                        "description"   => $this->request->post['description'],
-                        "card"          => $this->request->post['omise_token']
-                    ),
-                    $omise['public_key'],
-                    $omise['secret_key']
-                );
+            if ($order_info) {
+                try {
+                    // Try to create a charge and capture it.
+                    $omise_charge = OmiseCharge::create(
+                        array(
+                            "amount"        => $order_total,
+                            "currency"      => 'thb',
+                            "description"   => $this->request->post['description'],
+                            "card"          => $this->request->post['omise_token']
+                        ),
+                        $omise['public_key'],
+                        $omise['secret_key']
+                    );
 
-                if (is_null($omise_charge['failure_code']) && is_null($omise_charge['failure_code']) && $omise_charge['captured'])
-                    $this->model_checkout_order->update($this->session->data['order_id'], 15);
-                else
+                    if (is_null($omise_charge['failure_code']) && is_null($omise_charge['failure_code']) && $omise_charge['captured']) {
+                        // Status: processed.
+                        $this->model_checkout_order->confirm($order_id, 15);
+                    } else {
+                        // Status: failed.
+                        $this->model_checkout_order->update($order_id, 10);
+                    }
+
+                    echo json_encode(
+                        array(
+                            'failure_code'      => $omise_charge['failure_code'],
+                            'failure_message'   => $omise_charge['failure_message'],
+                            'captured'          => $omise_charge['captured'],
+                            'omise'             => $omise_charge
+                        )
+                    );
+                } catch (Exception $e) {
+                    // Status: failed.
                     $this->model_checkout_order->update($this->session->data['order_id'], 10);
-
-                echo json_encode(
-                    array(
-                        'failure_code'      => $omise_charge['failure_code'],
-                        'failure_message'   => $omise_charge['failure_message'],
-                        'captured'          => $omise_charge['captured'],
-                        'omise'             => $omise_charge
-                    )
-                );
-            } catch (Exception $e) {
-                $this->model_checkout_order->update($this->session->data['order_id'], 10);
-                echo json_encode(array('error' => $e->getMessage()));
+                    echo json_encode(array('error' => $e->getMessage()));
+                }
+            } else {
+                echo json_encode(array('error' => 'Cannot find your order, please try again.'));
             }
         } else {
             return 'not authorized';
         }
     }
 
+    /**
+     * Retrieve list of months translation
+     *
+     * @return array
+     */
+    public function getMonths()
+    {
+        $months = array();
+        for ($index=1; $index <= 12; $index++) {
+            $month = ($index < 10) ? '0'.$index : $index;
+            $months[$month] = $month;
+        }
+        return $months;
+    }
+
+    /**
+     * Retrieve array of available years
+     *
+     * @return array
+     */
+    public function getYears()
+    {
+        $years = array();
+        $first = date("Y");
+
+        for ($index=0; $index <= 10; $index++) {
+            $year = $first + $index;
+            $years[$year] = $year;
+        }
+        return $years;
+    }
+    
     /**
      * Omise card information form
      * @return void

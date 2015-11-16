@@ -53,7 +53,6 @@
                     // Token was created. Then, charge a card with token.
                     var posting = $.post("<?php echo $checkout_url; ?>", {
                         "omise_token": response.id,
-                        "amount": "<?php echo str_replace('.', '', $orderamount); ?>",
                         "description": "Charge a card from OpenCart that order id is <?php echo $orderid; ?> from <?php echo $billemail; ?>"
                     });
 
@@ -88,7 +87,7 @@
 
 <!-- Omise's checkout form -->
 <form id="omise-form-checkout" method="post" action="<?php echo $success_url; ?>">
-
+    <img src="catalog/view/theme/default/image/secured_by_omise.png" width="200">
     <!-- Collect a customer's card -->
     <div class="omise-payment">
         <h3>Card Information</h3>
@@ -120,8 +119,16 @@
         <div class="input-group clearfix">
             <div class="left"><label>Expire Date</label></div>
             <div class="right">
-                <input type="text" data-omise="expiration_month" size="4" style="width: 10%;" placeholder="dd" value="" class="input-omise-collect-expiration-month"> /
-                <input type="text" data-omise="expiration_year" size="8" style="width: 10%;" placeholder="YYYY" value="" class="input-omise-collect-expiration-year">
+                <select data-omise="expiration_month" class="input-omise-collect-expiration-month"> >
+                <?php foreach ($this->getMonths() as $k=>$v): ?>
+                    <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
+                <?php endforeach ?>
+                </select>
+                <select data-omise="expiration_year" class="input-omise-collect-expiration-year">
+                <?php foreach ($this->getYears() as $k=>$v): ?>
+                    <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
+                <?php endforeach ?>
+                </select>
             </div>
         </div>
         
