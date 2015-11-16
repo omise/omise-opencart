@@ -10,7 +10,7 @@ class ControllerPaymentOmise extends Controller
     {
         // Define 'OMISE_USER_AGENT_SUFFIX'
         if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
-            define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.5.0.1 OpenCart/'.VERSION);
+            define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.5.0.2 OpenCart/'.VERSION);
 
         // Define 'OMISE_API_VERSION'
         if(!defined('OMISE_API_VERSION'))

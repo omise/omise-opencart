@@ -14,8 +14,8 @@ Follow these steps to install **omise-opencart**:
 1. Download this repository and unzip it into your `local machine` (or directly to your server)
 
   Download links: 
-  [omise-opencart-v1.5.0.1.zip](https://github.com/omise/omise-opencart/archive/v1.5.0.1.zip) or 
-  [omise-opencart-v1.5.0.1.tar.gz](https://github.com/omise/omise-opencart/archive/v1.5.0.1.tar.gz)
+  [omise-opencart-v1.5.0.2.zip](https://github.com/omise/omise-opencart/archive/v1.5.0.2.zip) or
+  [omise-opencart-v1.5.0.2.tar.gz](https://github.com/omise/omise-opencart/archive/v1.5.0.2.tar.gz)
 
   ![omise-opencart Folder Structure](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-01.png)
 

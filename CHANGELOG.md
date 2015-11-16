@@ -1,13 +1,13 @@
 Change Log
 ==========
 
-An [unreleased] version is not available on `master` branch and is subject to changes and must not be considered final. Elements of unreleased list may be edited or removed at any time.
-
-[unreleased]
-------------
+[1.5.0.2] 2015-11-16
+----------------------
 #### Updates
+- *`Added`* Added `OMISE_USER_AGENT_SUFFIX` and `OMISE_API_VERSION` into the `user-agent` when request to the OMISE APIs
 - *`Updated`* Updated checkout display, add `secured by Omise` logo into checkout form.
 - *`Updated`* Upgrade `omise-php` library from 2.3.1 to 2.4.0.
+- *`Fixed`* Improved the checkout process.
 
 [1.5.0.1] 2015-08-03
 ----------------------
