@@ -373,10 +373,10 @@ class ControllerPaymentOmise extends Controller
             $this->session->data['success'] = "Installed";
         } catch (Exception $e) {
             // Uninstall Omise extension if it failed to install.
-            $this->load->model('extension/extension');
+            $this->load->model('setting/extension');
             $this->load->model('setting/setting');
 
-            $this->model_extension_extension->uninstall('payment', 'omise');
+            $this->model_setting_extension->uninstall('payment', 'omise');
             $this->model_setting_setting->deleteSetting('omise');
 
             $file = DIR_APPLICATION.'../vqmod/xml/omise.xml';

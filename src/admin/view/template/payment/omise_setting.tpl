@@ -27,6 +27,25 @@ echo $header; ?><?php echo $column_left; ?>
         <?php if ($error) echo '<div class="alert alert-warning">'.$error.'</div>'; ?>
         
         <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> Module Config</h3>
+                </div>
+                <div class="panel-body">
+
+                    <!-- o_test_mode -->
+                    <div class="form-group required">
+                      <label class="col-sm-2 control-label" for="omise_payments_test_modet"><?php echo $omise_test_mode_label; ?></label>
+                      <div class="col-sm-10">
+                            <select name="omise_status" class="form-control">
+                                <option value="1" <?php echo $omise_status ? 'selected="selected"' : ''; ?>><?php echo $text_enabled; ?></option>
+                                <option value="0" <?php echo !$omise_status ? 'selected="selected"' : ''; ?>><?php echo $text_disabled; ?></option>
+                            </select>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- test mode -->
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -60,7 +79,6 @@ echo $header; ?><?php echo $column_left; ?>
             </div>
 
             <!-- live mode -->
-
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-pencil"></i> Live Keys</h3>
@@ -82,25 +100,6 @@ echo $header; ?><?php echo $column_left; ?>
                       </div>
                     </div>
 
-                </div>
-            </div>
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-pencil"></i> Module Config</h3>
-                </div>
-                <div class="panel-body">
-
-                    <!-- o_test_mode -->
-                    <div class="form-group required">
-                      <label class="col-sm-2 control-label" for="omise_payments_test_modet"><?php echo $omise_test_mode_label; ?></label>
-                      <div class="col-sm-10">
-                            <select name="omise_status" class="form-control">
-                                <option value="1" <?php echo $omise_status ? 'selected="selected"' : ''; ?>><?php echo $text_enabled; ?></option>
-                                <option value="0" <?php echo !$omise_status ? 'selected="selected"' : ''; ?>><?php echo $text_disabled; ?></option>
-                            </select>
-                      </div>
-                    </div>        
                 </div>
             </div>
         </form>
