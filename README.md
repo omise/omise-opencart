@@ -4,7 +4,7 @@
 - OpenCart 1.5.x
 
 ## Dependencies (Already included in Omise-OpenCart)
-- [omise-php](https://github.com/omise/omise-php) (v2.3.1)
+- [omise-php](https://github.com/omise/omise-php) (v2.4.0)
 - [Jquery](https://github.com/jquery/jquery) (v1.7.1 from OpenCart (v1.5.6.4)'s dependency)
 - [vQmod](https://github.com/vqmod/vqmod) (v2.5.1 with OpenCart integration edition)
 
