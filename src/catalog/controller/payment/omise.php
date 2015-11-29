@@ -8,30 +8,23 @@ class ControllerPaymentOmise extends Controller
      */
     public function checkout()
     {
-        // Define 'OMISE_USER_AGENT_SUFFIX'
-        if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
-            define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.5.0.2 OpenCart/'.VERSION);
-
-        // Define 'OMISE_API_VERSION'
-        if(!defined('OMISE_API_VERSION'))
-            define('OMISE_API_VERSION', '2014-07-27');
+        $this->load->library('omise');
 
         // If has a `post['omise_token']` request.
         if (isset($this->request->post['omise_token'])) {
             // Load `omise-php` library.
-            $this->load->library('omise/omise-php/lib/Omise');
+            $this->load->library('omise-php/lib/Omise');
 
             // Get Omise configuration.
             $omise = array();
-            $omise['public_key']    = $this->config->get('omise_public_key');
-            $omise['secret_key']    = $this->config->get('omise_secret_key');
-            $omise['test_mode']     = $this->config->get('omise_test_mode');
-            // If test mode was enabled, replace Omise public and secret key with test key.
-            if (isset($omise['test_mode']) && $omise['test_mode']) {
-                $omise['public_key'] = $this->config->get('omise_public_key_test');
-                $omise['secret_key'] = $this->config->get('omise_secret_key_test');
+            if ($this->config->get('omise_test_mode')) {
+                $omise['public_key'] = $this->config->get('omise_pkey_test');
+                $omise['secret_key'] = $this->config->get('omise_skey_test');
+            } else {
+                $omise['public_key']    = $this->config->get('omise_pkey');
+                $omise['secret_key']    = $this->config->get('omise_skey');
             }
-
+            
             // Create a order history with `Processing` status
             $this->load->model('checkout/order');
             $order_id       = $this->session->data['order_id'];
@@ -127,13 +120,13 @@ class ControllerPaymentOmise extends Controller
 
         // Get Omise configuration.
         $omise = array();
-        $omise['public_key']    = $this->config->get('omise_public_key');
-        $omise['secret_key']    = $this->config->get('omise_secret_key');
+        $omise['public_key']    = $this->config->get('omise_pkey');
+        $omise['secret_key']    = $this->config->get('omise_skey');
         $omise['test_mode']     = $this->config->get('omise_test_mode');
         // If test mode was enabled, replace Omise public and secret key with test key.
         if (isset($omise['test_mode']) && $omise['test_mode']) {
-            $omise['public_key'] = $this->config->get('omise_public_key_test');
-            $omise['secret_key'] = $this->config->get('omise_secret_key_test');
+            $omise['public_key'] = $this->config->get('omise_pkey_test');
+            $omise['secret_key'] = $this->config->get('omise_skey_test');
         }
 
         $data['button_confirm']   = $this->language->get('button_confirm');
