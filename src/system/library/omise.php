@@ -3,6 +3,12 @@
 if (!defined('OMISE_OPENCART_VERSION'))
     define('OMISE_OPENCART_VERSION', '2.0.0.0');
 
+// Just mockup
+$datetime = new DateTime('now');
+$datetime->format('Y-m-d\TH:i:s\Z'); 
+if (!defined('OMISE_OPENCART_RELEASED_DATE')) 
+    define('OMISE_OPENCART_RELEASED_DATE', $datetime->format('Y-m-d\TH:i:s\Z'));
+
 $opencart_version = defined('VERSION') ? " OpenCart/".VERSION : "";
 
 // Define 'OMISE_USER_AGENT_SUFFIX'

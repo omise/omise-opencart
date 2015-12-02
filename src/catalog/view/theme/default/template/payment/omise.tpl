@@ -1,4 +1,3 @@
-
 <!-- Include Omise's javascript -->
 <script type="text/javascript">
     $.getScript("https://cdn.omise.co/omise.min.js.gz", function() {
@@ -118,12 +117,12 @@
             <div class="left"><label>Expire Date</label></div>
             <div class="right">
                 <select data-omise="expiration_month" class="input-omise-collect-expiration-month"> >
-                <?php foreach ($this->getMonths() as $k=>$v): ?>
+                <?php foreach ($loop_months as $k=>$v): ?>
                     <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
                 <?php endforeach ?>
                 </select>
                 <select data-omise="expiration_year" class="input-omise-collect-expiration-year">
-                <?php foreach ($this->getYears() as $k=>$v): ?>
+                <?php foreach ($loop_years as $k=>$v): ?>
                     <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
                 <?php endforeach ?>
                 </select>

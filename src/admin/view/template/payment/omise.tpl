@@ -37,6 +37,13 @@ echo $header; ?><?php echo $column_left; ?>
     <ul class="nav nav-tabs">
       <li class="active"><a href="#tab-dashboard" data-toggle="tab">Dashboard</a></li>
       <li><a href="#tab-setting" data-toggle="tab">Setting</a></li>
+      <li>
+        <a href="#tab-update" data-toggle="tab">Update
+          <i style="display: none;" id="tab-update-spin" class="fa fa-spinner fa-spin"></i>
+          <span id="tab-has-update" style="display: none;" class="text-danger">(<i class="fa fa-bell"></i> 1)</span>
+          <span id="tab-up-to-date" style="display: none;" class="text-success">(<i class="fa fa-check"></i>)</span>
+        </a>
+      </li>
     </ul>
 
     <div class="tab-content">
@@ -70,8 +77,8 @@ echo $header; ?><?php echo $column_left; ?>
 
               <!-- Balance -->
               <div class="omise-balance omise-clearfix">
-                <div class="left"><span class="omise-number"><?php echo number_format(($omise_dashboard['balance']['total']/100), 2); ?></span><br/>Total Balance</div>
-                <div class="right"><span class="omise-number"><?php echo number_format(($omise_dashboard['balance']['available']/100), 2); ?></span><br/>Transferable Balance</div>
+                <div class="left"><span class="omise-number"><?php echo number_format(($omise_dashboard['balance']['total']/100), 2); ?> ฿</span><br/>Total Balance</div>
+                <div class="right"><span class="omise-number"><?php echo number_format(($omise_dashboard['balance']['available']/100), 2); ?> ฿</span><br/>Transferable Balance</div>
               </div>
 
               <!-- Transfer History -->
@@ -86,6 +93,7 @@ echo $header; ?><?php echo $column_left; ?>
                       <table class="table table-bordered table-hover">
                         <thead>
                           <tr>
+                            <td class="text-left">No.</td>
                             <td class="text-left">Amount</td>
                             <td class="text-left">Transfer Id</td>
                             <td class="text-left">Sent</td>
@@ -97,7 +105,8 @@ echo $header; ?><?php echo $column_left; ?>
                         <tbody>
                           <?php foreach ($omise_dashboard['transfer']['data'] as $key => $value): $date = new \DateTime($value['created']); ?>
                             <tr>
-                              <td class="left"><?php echo number_format(($value['amount']/100), 2); ?></td>
+                              <td class="left"><?php echo $omise_dashboard['transfer']['total'] -$key; ?></td>
+                              <td class="left"><?php echo number_format(($value['amount']/100), 2); ?> ฿</td>
                               <td class="left"><?php echo $value['id']; ?></td>
                               <td class="left"><?php echo $value['sent'] ? 'Yes' : 'No'; ?></td>
                               <td class="left"><?php echo $value['paid'] ? 'Yes' : 'No'; ?></td>
@@ -143,8 +152,16 @@ echo $header; ?><?php echo $column_left; ?>
                 </div>
               </div> <!-- /END Module config (.form-group) -->
 
+              <!-- Test public key -->
               <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-username"></label>
+                <label class="col-sm-2 control-label" for="omise_payment_title"><?php echo $label_omise_payment_title; ?></label>
+                <div class="col-sm-10">
+                  <input type="text" name="omise_payment_title" value="<?php echo $omise_payment_title; ?>" id="omise_payment_title" class="form-control" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for=""></label>
                 <div class="col-sm-10">
                   <label class="radio-inline">
                     <input type="radio" name="omise_test_mode" <?php echo $omise_test_mode == 1 ? 'checked="checked"' : ''; ?> value="1" />
@@ -216,6 +233,20 @@ echo $header; ?><?php echo $column_left; ?>
           </div>
         </form>
       </div>
+
+      <!-- Update tab -->
+      <div class="tab-pane fade" id="tab-update">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-cog"></i> Update</h3>
+          </div>
+
+          <div class="panel-body text-center">
+            <p id="omise-opencart-update-label">Version checking...</p>
+            <div style="display: none;" id="omise-update-instruction"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     
@@ -224,6 +255,43 @@ echo $header; ?><?php echo $column_left; ?>
 
 <!-- Include Omise's stylesheet -->
 <link rel="stylesheet" type="text/css" href="view/stylesheet/omise.css">
+<script>
+  var url = '<?php echo $versioncheckup_url; ?>';
+      url = url.replace('&amp;', '&');
+
+  $.ajax({
+    url: url,
+    type: 'GET',
+    beforeSend: function() {
+      $("#tab-update-spin").show();
+    },
+    success: function(data, textStatus, jqXHR) {
+      $("#tab-update-spin").hide();
+
+      data = $.parseJSON(data);
+
+      if (data.has_update) {
+        $("#tab-has-update").show();
+        $("#omise-opencart-update-label")
+          .addClass('text-danger')
+          .html('Your Omise-OpenCart version (v'+data.current_version+') is too old.');
+
+        $("#omise-update-instruction")
+          .html('\
+            <div><a href="'+data.released.zipball_url+'" class="btn btn-primary">Download ZIP</a>&nbsp;<a href="'+data.released.tarball_url+'" class="btn btn-primary">Download TAR.GZ</a></div>\
+            <div style="margin-top: 15px;">see more information: <a href="'+data.released.html_url+'">'+data.released.html_url+'</a></div>\
+          ')
+          .show();
+
+      } else {
+        $("#tab-up-to-date").show();
+        $("#omise-opencart-update-label")
+          .addClass('text-success')
+          .html('Your Omise-OpenCart version (v'+data.current_version+') is up to date.');
+      }
+    }
+  });
+</script>
 
 <?php echo $footer; ?>
 

@@ -2,16 +2,20 @@
 $_['heading_title'] = 'Omise Payment Gateway';
 
 // Breadcrumb menu.
-$_['text_home']      = 'Home';
-$_['text_payment']   = 'Payments';
+$_['text_home']          = 'Home';
+$_['text_payment']       = 'Payments';
 
 // Extension status
-$_['entry_status']   = 'Module Status:';
+$_['entry_status']       = 'Module Status:';
 
 // Action buttons
-$_['button_save']    = 'Save';
-$_['button_cancel']  = 'Cancel';
-$_['button_setting'] = 'Setting';
+$_['button_save']        = 'Save';
+$_['button_cancel']      = 'Cancel';
+$_['button_setting']     = 'Setting';
+
+// Session message
+$_['text_session_save']  = 'Saved.';
+$_['text_session_error'] = 'Something wrong.';
 
 
 /**
@@ -21,21 +25,22 @@ $_['button_setting'] = 'Setting';
  * - 3. Transfer API Response
  */
 // 1. Message in the setting page
-$_['text_form']             = 'Module Config';
-$_['text_enabled']          = 'Enabled';
-$_['text_disabled']         = 'Disabled';
+$_['text_form']                 = 'Module Config';
+$_['text_enabled']              = 'Enabled';
+$_['text_disabled']             = 'Disabled';
 
 // 2. Omise text.
-$_['label_omise_pkey_test'] = 'Public Key for test';
-$_['label_omise_skey_test'] = 'Secret Key for test';
-$_['label_omise_mode_test'] = 'Enable test mode';
-$_['label_omise_mode_live'] = 'Enable live mode';
-$_['label_omise_pkey']      = 'Public Key';
-$_['label_omise_skey']      = 'Secret Key';
-$_['label_omise_3ds']       = 'Enable 3D-Secure';
+$_['label_omise_pkey_test']     = 'Public Key for test';
+$_['label_omise_skey_test']     = 'Secret Key for test';
+$_['label_omise_mode_test']     = 'Enable test mode';
+$_['label_omise_mode_live']     = 'Enable live mode';
+$_['label_omise_pkey']          = 'Public Key';
+$_['label_omise_skey']          = 'Secret Key';
+$_['label_omise_3ds']           = 'Enable 3D-Secure';
+$_['label_omise_payment_title'] = 'Payment method title';
 
 // 3. Transfer API Response
-$_['api_transfer_success']  = 'Sent your transfer request already, please waiting for comfirmation from the bank.';
+$_['api_transfer_success']      = 'Sent your transfer request already, please waiting for comfirmation from the bank.';
 
 
 /**

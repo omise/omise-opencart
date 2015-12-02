@@ -78,13 +78,14 @@ class ControllerPaymentOmise extends Controller {
 
         // Page data. Setting tab
         $data = array_merge($data, array(
-            'omise_status'    => $this->config->get('omise_status'),
-            'omise_test_mode' => $this->config->get('omise_test_mode'),
-            'omise_3ds'       => $this->config->get('omise_3ds'),
-            'omise_pkey_test' => $this->config->get('omise_pkey_test'),
-            'omise_skey_test' => $this->config->get('omise_skey_test'),
-            'omise_pkey'      => $this->config->get('omise_pkey'),
-            'omise_skey'      => $this->config->get('omise_skey')
+            'omise_status'        => $this->config->get('omise_status'),
+            'omise_test_mode'     => $this->config->get('omise_test_mode'),
+            'omise_3ds'           => $this->config->get('omise_3ds'),
+            'omise_pkey_test'     => $this->config->get('omise_pkey_test'),
+            'omise_skey_test'     => $this->config->get('omise_skey_test'),
+            'omise_pkey'          => $this->config->get('omise_pkey'),
+            'omise_skey'          => $this->config->get('omise_skey'),
+            'omise_payment_title' => $this->config->get('omise_payment_title')
         ));
 
         // Page data. Dashboard tab
@@ -122,7 +123,7 @@ class ControllerPaymentOmise extends Controller {
                 if (isset($omise_transfer['error']))
                     throw new Exception('Omise Transfer:: '.$omise_transfer['error'], 1);
 
-                $data['omise_dashboard']['transfer']['data']     = array_reverse($omise_transfer['data']);
+                $data['omise_dashboard']['transfer']['data']     = $omise_transfer['data'];
                 $data['omise_dashboard']['transfer']['total']    = $omise_transfer['total'];
             } catch (Exception $e) {
                 $data['omise_dashboard']['error_warning'] = $e->getMessage();
@@ -132,23 +133,25 @@ class ControllerPaymentOmise extends Controller {
 
         // Page labels
         $data = array_merge($data, array(
-            'heading_title'         => $this->language->get('heading_title'),
-            'button_save'           => $this->language->get('button_save'),
-            'action'                => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
-            'button_cancel'         => $this->language->get('button_cancel'),
-            'cancel'                => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
-            'text_form'             => $this->language->get('text_form'),
-            'entry_status'          => $this->language->get('entry_status'),
-            'text_enabled'          => $this->language->get('text_enabled'),
-            'text_disabled'         => $this->language->get('text_disabled'),
-            'transfer_url'          => $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL'),
-            'label_omise_pkey_test' => $this->language->get('label_omise_pkey_test'),
-            'label_omise_skey_test' => $this->language->get('label_omise_skey_test'),
-            'label_omise_pkey'      => $this->language->get('label_omise_pkey'),
-            'label_omise_skey'      => $this->language->get('label_omise_skey'),
-            'label_omise_mode_test' => $this->language->get('label_omise_mode_test'),
-            'label_omise_mode_live' => $this->language->get('label_omise_mode_live'),
-            'label_omise_3ds'       => $this->language->get('label_omise_3ds'),
+            'heading_title'             => $this->language->get('heading_title'),
+            'button_save'               => $this->language->get('button_save'),
+            'action'                    => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
+            'button_cancel'             => $this->language->get('button_cancel'),
+            'cancel'                    => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
+            'text_form'                 => $this->language->get('text_form'),
+            'entry_status'              => $this->language->get('entry_status'),
+            'text_enabled'              => $this->language->get('text_enabled'),
+            'text_disabled'             => $this->language->get('text_disabled'),
+            'label_omise_pkey_test'     => $this->language->get('label_omise_pkey_test'),
+            'label_omise_skey_test'     => $this->language->get('label_omise_skey_test'),
+            'label_omise_pkey'          => $this->language->get('label_omise_pkey'),
+            'label_omise_skey'          => $this->language->get('label_omise_skey'),
+            'label_omise_mode_test'     => $this->language->get('label_omise_mode_test'),
+            'label_omise_mode_live'     => $this->language->get('label_omise_mode_live'),
+            'label_omise_3ds'           => $this->language->get('label_omise_3ds'),
+            'label_omise_payment_title' => $this->language->get('label_omise_payment_title'),
+            'transfer_url'              => $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL'),
+            'versioncheckup_url'        => $this->url->link('payment/omise/versioncheckup', 'token=' . $this->session->data['token'], 'SSL'),
         ));
 
         // Page templates
@@ -223,5 +226,49 @@ class ControllerPaymentOmise extends Controller {
         }
 
         return $breadcrumbs;
+    }
+
+    public function versionCheckup() {
+        $this->load->library('omise');
+
+        $ch = curl_init('https://api.github.com/repos/omise/omise-opencart/releases');
+        curl_setopt_array($ch, array(
+            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST  => 'GET',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER         => false,
+            CURLINFO_HEADER_OUT    => true,
+            CURLOPT_AUTOREFERER    => true,
+            CURLOPT_USERAGENT      => OMISE_USER_AGENT_SUFFIX
+        ));
+
+        // Make a request or thrown an exception.
+        if(($result = curl_exec($ch)) === false) {
+            $error = curl_error($ch);
+            curl_close($ch);
+
+            throw new Exception($error);
+        }
+
+        // Close.
+        curl_close($ch);
+
+        $current = strtotime(OMISE_OPENCART_RELEASED_DATE);
+        $data    = null;
+        $result  = json_decode($result);
+        if (!empty($result)) {
+            foreach ($result as $key => $value) {
+                if ($current < strtotime($value->created_at)) {
+                    $current = strtotime($value->created_at);
+                    $data = $value;
+                }
+            }
+        }
+
+        echo json_encode(array(
+            'has_update'      => strtotime(OMISE_OPENCART_RELEASED_DATE) != $current ? true : false,
+            'released'        => $data,
+            'current_version' => OMISE_OPENCART_VERSION
+        ));
     }
 }
