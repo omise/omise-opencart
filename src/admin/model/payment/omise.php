@@ -11,23 +11,19 @@ class ModelPaymentOmise extends Model {
      * @return boolean
      */
     public function install() {
-        try {
-            $this->load->model('setting/setting');
-            $this->model_setting_setting->editSetting($this->_group, array(
-                'omise_status'        => 0,
-                'omise_pkey'          => '',
-                'omise_skey'          => '',
-                'omise_pkey_test'     => '',
-                'omise_skey_test'     => '',
-                'omise_test_mode'     => 0,
-                'omise_3ds'           => 0,
-                'omise_payment_title' => 'Credit Card (Powered by Omise)'
-            ));
+        $this->load->model('setting/setting');
+        $this->model_setting_setting->editSetting($this->_group, array(
+            'omise_status'        => 0,
+            'omise_pkey'          => '',
+            'omise_skey'          => '',
+            'omise_pkey_test'     => '',
+            'omise_skey_test'     => '',
+            'omise_test_mode'     => 0,
+            'omise_3ds'           => 0,
+            'omise_payment_title' => 'Credit Card (Powered by Omise)'
+        ));
 
-            return true;
-        } catch (Exception $e) {
-            return false;
-        }
+        return true;
     }
 
     /**
@@ -35,14 +31,7 @@ class ModelPaymentOmise extends Model {
      * @return boolean
      */
     public function uninstall() {
-        try {
-            $this->load->model('setting/setting');
-            $this->model_setting_setting->deleteSetting($this->_group);
-        } catch (Exception $e) {
-            return false;
-        }
-
-        return true;
+        // ...
     }
 
     /**

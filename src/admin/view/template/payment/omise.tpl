@@ -24,7 +24,13 @@ echo $header; ?><?php echo $column_left; ?>
 
   <div class="container-fluid">
     <?php if ($error_warning) { ?>
-      <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
+      <div class="alert alert-danger">
+        <i class="fa fa-exclamation-circle"></i>
+        <?php if (is_array($error_warning)) {
+          foreach ($error_warning as $key => $value) { echo $value; }
+        } else {
+          echo $error_warning;
+        } ?>
         <button type="button" class="close" data-dismiss="alert">&times;</button>
       </div>
     <?php } ?>
@@ -50,9 +56,21 @@ echo $header; ?><?php echo $column_left; ?>
       <!-- Dashboard tab -->
       <div class="tab-pane active in" id="tab-dashboard">
         <?php if ($omise_dashboard['error_warning']) { ?>
-          <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $omise_dashboard['error_warning']; ?>
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-          </div>
+          <?php if (is_array($omise_dashboard['error_warning'])) { ?>
+              <?php foreach ($omise_dashboard['error_warning'] as $key => $value) { ?>
+                <div class="alert alert-danger">
+                  <i class="fa fa-exclamation-circle"></i>
+                  <?php echo $value; ?>
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+              <?php } ?>
+          <?php } else { ?>
+            <div class="alert alert-danger">
+              <i class="fa fa-exclamation-circle"></i>
+              <?php echo $omise_dashboard['error_warning']; ?>
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+          <?php } ?>
         <?php } ?>
 
         <?php if ($omise_dashboard['enabled'] && !$omise_dashboard['error_warning']) { ?>

@@ -13,17 +13,14 @@ class ControllerPaymentOmise extends Controller {
      */
     public function install() {
         $this->load->model('payment/omise');
-        $this->load->language('payment/omise');
 
         try {
-            // Create new table for contain Omise Keys.
+            // Install the extension
             if (!$this->model_payment_omise->install())
-                throw new Exception($this->language->get('error_omise_table_install_failed'), 1);
+                throw new Exception('', 1);
         } catch (Exception $e) {
-            // Uninstall Omise extension if it failed to install.
+            // Uninstall
             $this->load->controller('extension/payment/uninstall');
-
-            $this->session->data['error'] = $e->getMessage();
         }
     }
 
@@ -33,15 +30,15 @@ class ControllerPaymentOmise extends Controller {
      * @return void
      */
     public function uninstall() {
-        $this->load->model('payment/omise');
-        $this->model_payment_omise->uninstall();;
+        //
     }
 
     public function index() {
         $this->load->model('payment/omise');
         $this->load->model('setting/setting');
+        $this->load->model('localisation/currency');
         $this->load->language('payment/omise');
-        $this->document->setTitle('Omise Payment Gateway Configuration');
+        $this->document->setTitle($this->language->get('heading_title'));
         
         $data = array();
 
@@ -97,7 +94,7 @@ class ControllerPaymentOmise extends Controller {
         ));
 
         if (!$data['omise_dashboard']['enabled']) {
-            $data['omise_dashboard']['error_warning'] = $this->language->get('error_extension_disabled');
+            $data['omise_dashboard']['error_warning'][] = $this->language->get('error_extension_disabled');
         } else {
             try {
                 // Retrieve Omise Account.
@@ -126,9 +123,17 @@ class ControllerPaymentOmise extends Controller {
                 $data['omise_dashboard']['transfer']['data']     = $omise_transfer['data'];
                 $data['omise_dashboard']['transfer']['total']    = $omise_transfer['total'];
             } catch (Exception $e) {
-                $data['omise_dashboard']['error_warning'] = $e->getMessage();
+                $data['omise_dashboard']['error_warning'][] = $e->getMessage();
             }
-            
+        }
+
+        // Check currency supported
+        if (empty($this->model_localisation_currency->getCurrencyByCode('THB'))) {
+            $data['omise_dashboard']['error_warning'][] = $this->language->get('error_currency_thb_not_found').' <a href="'.$this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL').'">Setup here</a>';
+        }
+
+        if (strtolower($this->config->get('config_currency')) !== 'thb') {
+            $data['omise_dashboard']['error_warning'][] = $this->language->get('error_currency_no_support').' Your default currency is <strong>'.$this->config->get('config_currency').'</strong>.'.' <a href="'.$this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL').'">Setup here</a>';
         }
 
         // Page labels

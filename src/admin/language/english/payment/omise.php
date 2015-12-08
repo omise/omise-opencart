@@ -2,7 +2,6 @@
 $_['heading_title'] = 'Omise Payment Gateway';
 $_['text_omise']    = '<a href="https://www.omise.co" target="_blank" style="border: 1px solid #EEEEEE; padding: 2px; width: 94px; max-height:25px; display: inline-block;" alt="Omise Payment Gateway"" title="Omise Payment Gateway"><img src="view/image/payment/omise-payment.png" alt="Omise Payment Gateway"" title="Omise Payment Gateway" style="max-height:18px;" /></a>';
 
-
 // Breadcrumb menu.
 $_['text_home']          = 'Home';
 $_['text_payment']       = 'Payments';
@@ -50,7 +49,9 @@ $_['api_transfer_success']      = 'Sent your transfer request already, please wa
  *
  */
 $_['error_omise_table_install_failed']  = 'Can not create Omise table now, something wrong.';
-$_['error_extension_disabled']          = 'Please enable Omise Payment Gateway extension before (check \'Setting\' tab).';
+$_['error_extension_disabled']          = 'Please enable Omise Payment Gateway extension (check \'Setting\' tab).';
+$_['error_currency_thb_not_found']      = 'Thai Baht (THB) currency was not found.';
+$_['error_currency_no_support']         = 'Currently, we only support Thai Baht (THB).';
 // $_['error_omise_menu_xml_not_exists']   = 'omise_menu.xml not found in install folder, please check.';
 // $_['error_vqmod_xml_not_exists']        = 'vQmod\'s xml folder does not exists.';
 // $_['error_file_not_writable']           = 'File not writable, please give it the writable permission.';
