@@ -15,4 +15,29 @@ class ModelPaymentOmise extends Model {
             'sort_order' => $this->config->get('custom_sort_order')
         );
     }
+
+    /**
+     * Get Omise keys from table that set in Omise setting page
+     * @return array
+     */
+    public function retrieveOmiseKeys() {
+        if ($this->config->get('omise_status') && $this->config->get('omise_test_mode')) {
+            $keys = array(
+                'pkey' => $this->config->get('omise_pkey_test'),
+                'skey' => $this->config->get('omise_skey_test')
+            );
+        } else if ($this->config->get('omise_status')) {
+            $keys = array(
+                'pkey' => $this->config->get('omise_pkey'),
+                'skey' => $this->config->get('omise_skey')
+            );
+        } else {
+            $keys = array(
+                'pkey' => '',
+                'skey' => ''
+            );
+        }
+
+        return $keys;
+    }
 }

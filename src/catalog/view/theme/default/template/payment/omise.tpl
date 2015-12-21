@@ -1,7 +1,7 @@
 <!-- Include Omise's javascript -->
 <script type="text/javascript">
     $.getScript("https://cdn.omise.co/omise.min.js.gz", function() {
-        Omise.setPublicKey("<?php echo $omise['public_key']; ?>");
+        Omise.setPublicKey("<?php echo $omise['pkey']; ?>");
 
         $("#omise-form-checkout").submit(function() {
             var form            = $(this),
@@ -12,12 +12,12 @@
             // Show loading overlay.
             overlay.addClass('show');
 
-            // Disable the submit button to avoid repeated click.
-            form.find("input[type=submit]").prop("disabled", true);
-
             // Hidden alert box
             alertError.removeClass('show');
             alertSuccess.removeClass('show');
+
+            // Disable the submit button to avoid repeated click.
+            form.find("input[type=submit]").prop("disabled", true);
 
             // Serialize the form fields into a valid card object.
             var card = {
@@ -84,7 +84,6 @@
 
 <!-- Omise's checkout form -->
 <form id="omise-form-checkout" method="post" action="<?php echo $success_url; ?>">
-    <img src="catalog/view/theme/default/image/secured_by_omise.png" width="200">
     <!-- Collect a customer's card -->
     <div class="omise-payment">
         <h3>Card Information</h3>

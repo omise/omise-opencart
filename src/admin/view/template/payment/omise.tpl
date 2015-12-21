@@ -46,8 +46,9 @@ echo $header; ?><?php echo $column_left; ?>
       <li>
         <a href="#tab-update" data-toggle="tab">Update
           <i style="display: none;" id="tab-update-spin" class="fa fa-spinner fa-spin"></i>
-          <span id="tab-has-update" style="display: none;" class="text-danger">(<i class="fa fa-bell"></i> 1)</span>
-          <span id="tab-up-to-date" style="display: none;" class="text-success">(<i class="fa fa-check"></i>)</span>
+          <span id="icon-has-update" style="display: none;" class="text-danger">(<i class="fa fa-bell"></i> 1)</span>
+          <span id="icon-up-to-date" style="display: none;" class="text-success">(<i class="fa fa-check"></i>)</span>
+          <span id="icon-has-error" style="display: none;" class="text-danger"><i class="fa fa-exclamation"></i></span>
         </a>
       </li>
     </ul>
@@ -260,7 +261,7 @@ echo $header; ?><?php echo $column_left; ?>
           </div>
 
           <div class="panel-body text-center">
-            <p id="omise-opencart-update-label">Version checking...</p>
+            <p id="box-label">Version checking...</p>
             <div style="display: none;" id="omise-update-instruction"></div>
           </div>
         </div>
@@ -277,6 +278,34 @@ echo $header; ?><?php echo $column_left; ?>
   var url = '<?php echo $versioncheckup_url; ?>';
       url = url.replace('&amp;', '&');
 
+  var hasUpdate = function(data) {
+    $("#icon-has-update").show();
+    $("#box-label")
+      .addClass('text-danger')
+      .html('Your Omise-OpenCart version (v'+data.current_version+') is too old.');
+
+    $("#omise-update-instruction")
+      .html('\
+        <div><a href="'+data.released.zipball_url+'" class="btn btn-primary">Download ZIP</a>&nbsp;<a href="'+data.released.tarball_url+'" class="btn btn-primary">Download TAR.GZ</a></div>\
+        <div style="margin-top: 15px;">see more information: <a href="'+data.released.html_url+'">'+data.released.html_url+'</a></div>\
+      ')
+      .show();
+  }
+
+  var isUpToDate = function(data) {
+    $("#icon-up-to-date").show();
+    $("#box-label")
+      .addClass('text-success')
+      .html('Your Omise-OpenCart version (v'+data.current_version+') is up to date.');
+  }
+
+  var isFailed = function(data) {
+    $("#icon-has-error").show();
+    $("#box-label")
+      .addClass('text-danger')
+      .html(data.error_messsage);
+  }
+
   $.ajax({
     url: url,
     type: 'GET',
@@ -288,25 +317,21 @@ echo $header; ?><?php echo $column_left; ?>
 
       data = $.parseJSON(data);
 
-      if (data.has_update) {
-        $("#tab-has-update").show();
-        $("#omise-opencart-update-label")
-          .addClass('text-danger')
-          .html('Your Omise-OpenCart version (v'+data.current_version+') is too old.');
+      if (data.status === "connected" && data.has_update) {
+        hasUpdate(data);
 
-        $("#omise-update-instruction")
-          .html('\
-            <div><a href="'+data.released.zipball_url+'" class="btn btn-primary">Download ZIP</a>&nbsp;<a href="'+data.released.tarball_url+'" class="btn btn-primary">Download TAR.GZ</a></div>\
-            <div style="margin-top: 15px;">see more information: <a href="'+data.released.html_url+'">'+data.released.html_url+'</a></div>\
-          ')
-          .show();
+      } else if (data.status === "connected") {
+        isUpToDate(data);
 
-      } else {
-        $("#tab-up-to-date").show();
-        $("#omise-opencart-update-label")
-          .addClass('text-success')
-          .html('Your Omise-OpenCart version (v'+data.current_version+') is up to date.');
+      } else if (data.status === "failed") {
+        isFailed(data);
       }
+    },
+    error: function(data, textStatus, jqXHR) {
+      $("#icon-has-error").show();
+      $("#box-label")
+          .addClass('text-danger')
+          .html('Failed to connect to the server for get an update.');
     }
   });
 </script>

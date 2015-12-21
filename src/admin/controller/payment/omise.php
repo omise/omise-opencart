@@ -156,7 +156,7 @@ class ControllerPaymentOmise extends Controller {
             'label_omise_3ds'           => $this->language->get('label_omise_3ds'),
             'label_omise_payment_title' => $this->language->get('label_omise_payment_title'),
             'transfer_url'              => $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL'),
-            'versioncheckup_url'        => $this->url->link('payment/omise/versioncheckup', 'token=' . $this->session->data['token'], 'SSL'),
+            'versioncheckup_url'        => $this->url->link('payment/omise/ajaxversioncheckup', 'token=' . $this->session->data['token'], 'SSL'),
         ));
 
         // Page templates
@@ -233,7 +233,11 @@ class ControllerPaymentOmise extends Controller {
         return $breadcrumbs;
     }
 
-    public function versionCheckup() {
+    /**
+     * Get the latest version number of Omise-OpenCart from Github.
+     * @return Json
+     */
+    public function ajaxVersionCheckup() {
         $this->load->library('omise');
 
         $ch = curl_init('https://api.github.com/repos/omise/omise-opencart/releases');
@@ -247,33 +251,41 @@ class ControllerPaymentOmise extends Controller {
             CURLOPT_USERAGENT      => OMISE_USER_AGENT_SUFFIX
         ));
 
-        // Make a request or thrown an exception.
-        if(($result = curl_exec($ch)) === false) {
-            $error = curl_error($ch);
+        try {
+            // Make a request or thrown an exception.
+            if(($result = curl_exec($ch)) === false) {
+                $error = curl_error($ch);
+                curl_close($ch);
+
+                throw new Exception($error);
+            }
+
+            // Close.
             curl_close($ch);
 
-            throw new Exception($error);
-        }
-
-        // Close.
-        curl_close($ch);
-
-        $current = strtotime(OMISE_OPENCART_RELEASED_DATE);
-        $data    = null;
-        $result  = json_decode($result);
-        if (!empty($result)) {
-            foreach ($result as $key => $value) {
-                if ($current < strtotime($value->created_at)) {
-                    $current = strtotime($value->created_at);
-                    $data = $value;
+            $current = strtotime(OMISE_OPENCART_RELEASED_DATE);
+            $data    = null;
+            $result  = json_decode($result);
+            if (!empty($result)) {
+                foreach ($result as $key => $value) {
+                    if ($current < strtotime($value->created_at)) {
+                        $current = strtotime($value->created_at);
+                        $data = $value;
+                    }
                 }
             }
-        }
 
-        echo json_encode(array(
-            'has_update'      => strtotime(OMISE_OPENCART_RELEASED_DATE) != $current ? true : false,
-            'released'        => $data,
-            'current_version' => OMISE_OPENCART_VERSION
-        ));
+            echo json_encode(array(
+                'status'          => 'connected',
+                'has_update'      => strtotime(OMISE_OPENCART_RELEASED_DATE) != $current ? true : false,
+                'released'        => $data,
+                'current_version' => OMISE_OPENCART_VERSION
+            ));
+        } catch (Exception $e) {
+            echo json_encode(array(
+                'status'          => 'failed',
+                'error_messsage'  => $e->getMessage()
+            ));
+        }
     }
 }

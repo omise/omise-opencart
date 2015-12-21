@@ -5,6 +5,7 @@ class ControllerPaymentOmise extends Controller {
 	 * @return string(Json)
 	 */
 	public function checkout() {
+        $this->load->model('payment/omise');
 		$this->load->library('omise');
 
 		// If has a `post['omise_token']` request.
@@ -106,22 +107,10 @@ class ControllerPaymentOmise extends Controller {
 	 */
 	public function index() {
 		$this->load->model('checkout/order');
-		$this->language->load('payment/omise');
+		$this->load->model('payment/omise');
+		$this->load->language('payment/omise');
 
 		$data = array();
-
-		// Get Omise configuration.
-		if ($this->config->get('omise_test_mode')) {
-			$omise_keys = array(
-				'public_key' => $this->config->get('omise_pkey_test'),
-				'secret_key' => $this->config->get('omise_skey_test')
-			);
-		} else {
-			$omise_keys = array(
-				'public_key' => $this->config->get('omise_pkey'),
-				'secret_key' => $this->config->get('omise_skey')
-			);
-		}
 
 		// Retrieve order information
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -154,7 +143,7 @@ class ControllerPaymentOmise extends Controller {
 				'deliverypost'     => html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8'),
 				'loop_months'      => $this->getMonths(),
 				'loop_years'       => $this->getYears(),
-				'omise'            => $omise_keys
+				'omise'            => $this->model_payment_omise->retrieveOmiseKeys()
 			));
 
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise.tpl')) {
