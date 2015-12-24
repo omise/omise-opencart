@@ -100,52 +100,97 @@ echo $header; ?><?php echo $column_left; ?>
                 <div class="right"><span class="omise-number"><?php echo number_format(($omise_dashboard['balance']['available']/100), 2); ?> ฿</span><br/>Transferable Balance</div>
               </div>
 
-              <!-- Transfer History -->
+              <!-- Charge History -->
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <h3 class="panel-title"><i class="fa fa-list"></i> Transfer History</h3>
+                  <h3 class="panel-title"><i class="fa fa-list"></i> Transactions history</h3>
                 </div>
                 <div class="panel-body">
-                  <form id="omise-transfer" method="post" action="<?php echo $transfer_url; ?>">
-                    
-                    <div class="table-responsive">
-                      <table class="table table-bordered table-hover">
-                        <thead>
-                          <tr>
-                            <td class="text-left">No.</td>
-                            <td class="text-left">Amount</td>
-                            <td class="text-left">Transfer Id</td>
-                            <td class="text-left">Sent</td>
-                            <td class="text-left">Paid</td>
-                            <td class="text-left">Failure Message</td>
-                            <td class="text-center" width="15%">Created</td>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php foreach ($omise_dashboard['transfer']['data'] as $key => $value): $date = new \DateTime($value['created']); ?>
-                            <tr>
-                              <td class="left"><?php echo $omise_dashboard['transfer']['total'] -$key; ?></td>
-                              <td class="left"><?php echo number_format(($value['amount']/100), 2); ?> ฿</td>
-                              <td class="left"><?php echo $value['id']; ?></td>
-                              <td class="left"><?php echo $value['sent'] ? 'Yes' : 'No'; ?></td>
-                              <td class="left"><?php echo $value['paid'] ? 'Yes' : 'No'; ?></td>
-                              <td class="left"><?php echo $value['failure_code'] ? '('.$value['failure_code'].') '.$value['failure_code'] : '-'; ?></td>
-                              <td class="left" style="text-align: center;"><?php echo $date->format('M d, Y H:i'); ?></td>
-                            </tr>
-                          <?php endforeach; ?>
-                          <tr>
-                            <td colspan="5" class="right"><input style="width: 25%;float:right;" class="form-control" min="0" type="number" name="transfer_amount" placeholder="Transfer amount (number only)"></td>
-                            <td style="text-align: center;">
-                              <button type="submit" id="button-transfer" class="btn btn-primary pull-right">Create transfer&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab-charge-history" data-toggle="tab">Charge</a></li>
+                    <li><a href="#tab-transfer-history" data-toggle="tab">Transfer</a></li>
+                  </ul>
+
+                  <div class="tab-content">
+                    <!-- Tab Charge -->
+                    <div class="tab-pane active in" id="tab-charge-history">
+                      <form id="omise-transfer" method="post" action="<?php echo $transfer_url; ?>">
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                              <tr>
+                                <td>No.</td>
+                                <td>Amount</td>
+                                <td>Charge Id</td>
+                                <td width="8%">Authorized</td>
+                                <td width="8%">Paid</td>
+                                <td>Failure Message</td>
+                                <td class="text-center" width="15%">Created</td>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <?php foreach ($omise_dashboard['charge']['data'] as $key => $value): $date = new \DateTime($value['created']); ?>
+                                <tr>
+                                  <td><?php echo $omise_dashboard['charge']['total'] -$key; ?></td>
+                                  <td><strong class="<?php echo ($value['failure_code']) ? 'text-danger' : ((!$value['authorized'] || !$value['captured']) ? 'text-warning' : 'text-success'); ?>"><?php echo number_format(($value['amount']/100), 2); ?> ฿</strong></td>
+                                  <td><a href="https://dashboard.omise.co/<?php echo $value['livemode'] ? 'live' : 'test'; ?>/charges/<?php echo $value['id']; ?>"><?php echo $value['id']; ?></a></td>
+                                  <td><?php echo $value['authorized'] ? '<strong class="text-success">Yes</strong>' : 'No'; ?></td>
+                                  <td><?php echo $value['captured'] ? '<strong class="text-success">Yes</strong>' : 'No'; ?></td>
+                                  <td><?php echo $value['failure_code'] ? '('.$value['failure_code'].') '.$value['failure_code'] : '-'; ?></td>
+                                  <td class="text-center"><?php echo $date->format('M d, Y H:i'); ?></td>
+                                </tr>
+                              <?php endforeach; ?>
+                            </tbody>
+                          </table>
+                        </div>
+                      </form>
                     </div>
 
-                  </form>
+                    <!-- Tab Transfer -->
+                    <div class="tab-pane fade" id="tab-transfer-history">
+                      <form id="omise-transfer" method="post" action="<?php echo $transfer_url; ?>">
+
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                              <tr>
+                                <td>No.</td>
+                                <td>Amount</td>
+                                <td>Transfer Id</td>
+                                <td>Sent</td>
+                                <td>Paid</td>
+                                <td>Failure Message</td>
+                                <td class="text-center" width="15%">Created</td>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <?php foreach ($omise_dashboard['transfer']['data'] as $key => $value): $date = new \DateTime($value['created']); ?>
+                                <tr>
+                                  <td><?php echo $omise_dashboard['transfer']['total'] -$key; ?></td>
+                                  <td><strong class="<?php echo ($value['failure_code']) ? 'text-danger' : ((!$value['sent'] || !$value['paid']) ? 'text-warning' : 'text-success'); ?>"><?php echo number_format(($value['amount']/100), 2); ?> ฿</strong></td>
+                                  <td><a href="https://dashboard.omise.co/<?php echo $value['livemode'] ? 'live' : 'test'; ?>/transfers//<?php echo $value['id']; ?>"><?php echo $value['id']; ?></a></td>
+                                  <td><?php echo $value['sent'] ? '<strong class="text-success">Yes</strong>' : 'No'; ?></td>
+                                  <td><?php echo $value['paid'] ? '<strong class="text-success">Yes</strong>' : 'No'; ?></td>
+                                  <td><?php echo $value['failure_code'] ? '('.$value['failure_code'].') '.$value['failure_code'] : '-'; ?></td>
+                                  <td class="text-center"><?php echo $date->format('M d, Y H:i'); ?></td>
+                                </tr>
+                              <?php endforeach; ?>
+                              <tr>
+                                <td colspan="6" class="text-right"><input style="width: 25%; float:right;" class="form-control" min="0" type="number" step="0.01" name="transfer_amount" placeholder="Transfer amount (number only)"></td>
+                                <td class="text-center">
+                                  <button type="submit" id="button-transfer" class="btn btn-primary">Create transfer&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+
                 </div>
               </div>
+
             </div> <!-- /END .content -->
           </div> <!-- /END .box -->
         <?php } ?>

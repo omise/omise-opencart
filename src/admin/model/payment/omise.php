@@ -90,6 +90,27 @@ class ModelPaymentOmise extends Model {
     }
 
     /**
+     * Get charge list from Omise server
+     * @return OmiseCharge|array
+     */
+    public function getOmiseChargeList() {
+        $this->load->library('omise');
+        $this->load->library('omise-php/lib/Omise');
+        $this->load->language('payment/omise');
+
+        // Get Omise Keys.
+        if ($keys = $this->_retrieveOmiseKeys()) {
+            try {
+                return OmiseCharge::retrieve('?limit=20&order=reverse_chronological', $keys['pkey'], $keys['skey']);
+            } catch (Exception $e) {
+                return array('error' => $e->getMessage());
+            }
+        } else {
+            return $this->_error($this->language->get('error_extension_disabled'));
+        }
+    }
+
+    /**
      * Get transfer list from Omise server
      * @return OmiseTransfer|array
      */

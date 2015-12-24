@@ -41,7 +41,7 @@ $_['label_omise_3ds']           = 'Enable 3D-Secure';
 $_['label_omise_payment_title'] = 'Payment method title';
 
 // 3. Transfer API Response
-$_['api_transfer_success']      = 'Sent your transfer request already, please waiting for comfirmation from the bank.';
+$_['api_transfer_success']      = 'Your transfer request has sent already.';
 
 
 /**
@@ -50,7 +50,7 @@ $_['api_transfer_success']      = 'Sent your transfer request already, please wa
  */
 $_['error_omise_table_install_failed']  = 'Can not create Omise table now, something wrong.';
 $_['error_extension_disabled']          = 'Please enable Omise Payment Gateway extension (check \'Setting\' tab).';
-$_['error_currency_thb_not_found']      = 'Thai Baht (THB) currency was not found.';
+$_['error_currency_thb_not_found']      = 'Thai Baht (THB) currency was not found from your system.';
 $_['error_currency_no_support']         = 'Currently, we only support Thai Baht (THB).';
 // $_['error_omise_menu_xml_not_exists']   = 'omise_menu.xml not found in install folder, please check.';
 // $_['error_vqmod_xml_not_exists']        = 'vQmod\'s xml folder does not exists.';

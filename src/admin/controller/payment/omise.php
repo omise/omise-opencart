@@ -115,6 +115,14 @@ class ControllerPaymentOmise extends Controller {
                 $data['omise_dashboard']['balance']['total']     = $omise_balance['total'];
                 $data['omise_dashboard']['balance']['currency']  = $omise_balance['currency'];
 
+                // Retrieve Omise Charge List.
+                $omise_charge = $this->model_payment_omise->getOmiseChargeList();
+                if (isset($omise_charge['error']))
+                    throw new Exception('Omise Charge:: '.$omise_charge['error'], 1);
+
+                $data['omise_dashboard']['charge']['data']       = $omise_charge['data'];
+                $data['omise_dashboard']['charge']['total']      = $omise_charge['total'];
+
                 // Retrieve Omise Transfer List.
                 $omise_transfer = $this->model_payment_omise->getOmiseTransferList();
                 if (isset($omise_transfer['error']))
