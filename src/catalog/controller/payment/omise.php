@@ -1,33 +1,53 @@
 <?php
 class ControllerPaymentOmise extends Controller {
+	public function checkoutCallback() {
+		if ($this->request->get['order_id']) {
+			$this->load->library('omise');
+			$this->load->library('omise-php/lib/Omise');
+			$this->load->model('payment/omise');
+			$this->load->model('checkout/order');
+
+			$omise_keys = $this->model_payment_omise->retrieveOmiseKeys();
+			$transaction = $this->model_payment_omise->getChargeTransaction($this->request->get['order_id']);
+
+			$charge = OmiseCharge::retrieve($transaction->row['charge_id'], $omise_keys['pkey'], $omise_keys['skey']);
+			if ($charge && $charge['authorized'] && $charge['captured'])
+				$this->model_checkout_order->addOrderHistory($order_id, 15);
+			else
+				$this->model_checkout_order->addOrderHistory($order_id, 10);
+
+			$this->response->redirect($this->url->link('checkout/success'));
+		}
+
+		exit;
+	}
+
 	/**
 	 * Checkout orders and charge a card process
 	 * @return string(Json)
 	 */
 	public function checkout() {
-        $this->load->model('payment/omise');
-		$this->load->library('omise');
-
 		// If has a `post['omise_token']` request.
 		if (isset($this->request->post['omise_token'])) {
-			// Load `omise-php` library.
+			$this->load->library('omise');
 			$this->load->library('omise-php/lib/Omise');
+			$this->load->model('payment/omise');
+			$this->load->model('checkout/order');
 
 			// Get Omise configuration.
 			$omise = array();
 			if ($this->config->get('omise_test_mode')) {
-				$omise['public_key'] = $this->config->get('omise_pkey_test');
-				$omise['secret_key'] = $this->config->get('omise_skey_test');
+				$omise['pkey'] = $this->config->get('omise_pkey_test');
+				$omise['skey'] = $this->config->get('omise_skey_test');
 			} else {
-				$omise['public_key']    = $this->config->get('omise_pkey');
-				$omise['secret_key']    = $this->config->get('omise_skey');
+				$omise['pkey'] = $this->config->get('omise_pkey');
+				$omise['skey'] = $this->config->get('omise_skey');
 			}
 
 			// Create a order history with `Processing` status
-			$this->load->model('checkout/order');
-			$order_id       = $this->session->data['order_id'];
-			$order_info     = $this->model_checkout_order->getOrder($order_id);
-			$order_total    = number_format($order_info['total'], 2, '', '');
+			$order_id    = $this->session->data['order_id'];
+			$order_info  = $this->model_checkout_order->getOrder($order_id);
+			$order_total = number_format($order_info['total'], 2, '', '');
 			if ($order_info) {
 				try {
 					// Try to create a charge and capture it.
@@ -36,32 +56,44 @@ class ControllerPaymentOmise extends Controller {
 							"amount"        => $order_total,
 							"currency"      => 'thb',
 							"description"   => $this->request->post['description'],
+							"return_uri"	=> $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
 							"card"          => $this->request->post['omise_token']
 						),
-						$omise['public_key'],
-						$omise['secret_key']
+						$omise['pkey'],
+						$omise['skey']
 					);
 
-					if (is_null($omise_charge['failure_code']) && is_null($omise_charge['failure_code']) && $omise_charge['captured']) {
-						// Status: processed.
-						$this->model_checkout_order->addOrderHistory($order_id, 15);
-					} else {
-						// Status: failed.
-						$this->model_checkout_order->addOrderHistory($order_id, 10);
+					// Status: failed.
+					if ($omise_charge['failure_code'] || $omise_charge['failure_code']) {
+						throw new Exception($omise_charge['failure_code'].': '.$omise_charge['failure_code'], 1);
 					}
 
-					echo json_encode(
-						array(
-							'failure_code'      => $omise_charge['failure_code'],
-							'failure_message'   => $omise_charge['failure_message'],
-							'captured'          => $omise_charge['captured'],
-							'omise'             => $omise_charge
-						)
-					);
+					$this->model_payment_omise->addChargeTransaction($order_id, $omise_charge['id']);
+
+					if ($this->config->get('omise_3ds')) {
+						echo json_encode(array(
+							'omise'    => $omise_charge,
+							'captured' => $omise_charge['captured'],
+							'redirect' => $omise_charge['authorize_uri']
+						));
+					} else {
+						if ($omise_charge['authorized'] && $omise_charge['captured']) {
+							// Status: processed.
+							$this->model_checkout_order->addOrderHistory($order_id, 15);
+						} else if ($omise_charge['authorized']) {
+							// Status: processing.
+							$this->model_checkout_order->addOrderHistory($order_id, 2);
+						}
+
+						echo json_encode(array(
+							'omise'    => $omise_charge,
+							'captured' => $omise_charge['captured']
+						));
+					}
 				} catch (Exception $e) {
 					// Status: failed.
 					$this->model_checkout_order->addOrderHistory($order_id, 10);
-					echo json_encode(array('error' => $e->getMessage()));
+					echo json_encode(array('error' => 'Payment Gateway - '.$e->getMessage()));
 				}
 			} else {
 				echo json_encode(array('error' => 'Cannot find your order, please try again.'));
@@ -106,6 +138,8 @@ class ControllerPaymentOmise extends Controller {
 	 * @return void
 	 */
 	public function index() {
+		var_dump(unserialize("b:0;"));
+
 		$this->load->model('checkout/order');
 		$this->load->model('payment/omise');
 		$this->load->language('payment/omise');

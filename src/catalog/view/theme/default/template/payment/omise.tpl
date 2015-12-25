@@ -47,6 +47,8 @@
                     // Re-enable the submit button.
                     form.find("input[type=submit]").prop("disabled", false);
                 } else {
+                    $("#input-omise-token").val(response.id);
+
                     // Token was created. Then, charge a card with token.
                     var posting = $.post("<?php echo $checkout_url; ?>", {
                         "omise_token": response.id,
@@ -57,19 +59,24 @@
                         .done(function(resp) {
                             resp = JSON.parse(resp);
 
-                            if (typeof resp.error != "undefined") {
-                                alertError.html("Omise Response: "+resp.error).addClass('show');
-                                form.find("input[type=submit]").prop("disabled", false);
-                            } else if (resp.failure_code != null) {
-                                alertError.html("Bank Response: "+resp.failure_message).addClass('show');
-                                form.find("input[type=submit]").prop("disabled", false);
-                            } else {
-                                alertSuccess.html("Succeed").addClass('show');
-                                form.get(0).submit();
+                            if (typeof resp === "object") {
+                                if (typeof resp.error !== "undefined") {
+                                    alertError.html(resp.error).addClass('show');
+                                } else {
+                                    if (typeof resp.redirect !== "undefined") {
+                                        console.log('redirect');
+                                        window.location = resp.redirect;
+                                    } else {
+                                        form.get(0).submit();
+                                    }
+                                }
                             }
+
+                            form.find("input[type=submit]").prop("disabled", false);
                         })
                         .fail(function(jqXHR, textStatus, errorThrown) {
                             alertError.html("Omise "+errorThrown).addClass('show');
+                            form.find("input[type=submit]").prop("disabled", false);
                         });
                 };
 
@@ -93,7 +100,7 @@
         <div class="alert alert-box alert-success success"></div>
 
         <!-- Token -->
-        <input type="hidden" name="omise_token" class="input-omise-token">
+        <input type="hidden" id="input-omise-token" name="omise_token" class="input-omise-token">
 
         <!-- Card Holder Name -->
         <div class="row">
