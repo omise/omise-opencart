@@ -1,136 +1,85 @@
 <?php
-// Define 'OMISE_USER_AGENT_SUFFIX'
-if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
-    define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.5.0.2 OpenCart/'.VERSION);
-
-// Define 'OMISE_API_VERSION'
-if(!defined('OMISE_API_VERSION'))
-    define('OMISE_API_VERSION', '2014-07-27');
-
-class ModelPaymentOmise extends Model
-{
+class ModelPaymentOmise extends Model {
     /**
      * @var string  Omise table name
      */
     private $_table = 'omise_gateway';
+    private $_group = 'omise';
 
     /**
      * Install a table that need to use in Omise Payment Gateway module
      * @return boolean
      */
-    public function install()
-    {
-        try {
-            // Create new table
-            $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX.$this->_table."` (
-                `id` int NOT NULL,
-                `public_key` varchar(45),
-                `secret_key` varchar(45),
-                `public_key_test` varchar(45),
-                `secret_key_test` varchar(45),
-                `test_mode` tinyint NOT NULL DEFAULT 0,
-                PRIMARY KEY `id` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
+    public function install() {
+        $this->load->model('setting/setting');
+        $this->model_setting_setting->editSetting($this->_group, array(
+            'omise_status'        => 0,
+            'omise_pkey'          => '',
+            'omise_skey'          => '',
+            'omise_pkey_test'     => '',
+            'omise_skey_test'     => '',
+            'omise_test_mode'     => 0,
+            'omise_3ds'           => 0,
+            'omise_payment_title' => 'Credit Card (Powered by Omise)'
+        ));
 
-            // Insert seed data into table.
-            $this->db->query("INSERT INTO `" .DB_PREFIX. "omise_gateway` 
-                (`id`, `public_key`, `secret_key`, `public_key_test`, `secret_key_test`, `test_mode`)
-                VALUES (1, '', '', '', '', 0)");
+        /* Install omise_charge table */
+        $this->db->query("
+            CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "omise_charge` (
+              `id` INT(11) NOT NULL AUTO_INCREMENT,
+              `order_id` INT(11) NOT NULL,
+              `omise_charge_id` CHAR(45) NOT NULL,
+              `date_added` DATETIME NOT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");
 
-            return true;
-        } catch (Exception $e) {
-            return false;
-        }
+        /* Install omise_customer table */
+        $this->db->query("
+            CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "omise_customer` (
+              `id` INT(11) NOT NULL AUTO_INCREMENT,
+              `customer_id` INT(11) NOT NULL,
+              `omise_customer_id` CHAR(45) NOT NULL,
+              `date_added` DATETIME NOT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");
+
+        return true;
     }
 
     /**
      * Drop table when uninstall Omise Payment Gateway module
      * @return boolean
      */
-    public function uninstall()
-    {
-        try {
-            $this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX.$this->_table."`;");
-        } catch (Exception $e) {
-            return false;
-        }
-
-        return true;
+    public function uninstall() {
+        // ...
     }
 
     /**
      * Get config from table
      * @return array|boolean
      */
-    public function getConfig()
-    {
+    public function getConfig() {
         try {
-            return $this->db->query("SELECT * FROM `".DB_PREFIX.$this->_table."` WHERE `id` = 1")->row;
+            $this->load->model('setting/setting');
+            $this->model_setting_setting->getSetting($this->_group);
         } catch (Exception $e) {
-            return false;            
+            return false;
         }
-    }
-
-    /**
-     * Update config value
-     * @return boolean
-     */
-    public function updateConfig($update)
-    {
-        try {
-            $string = "";
-
-            foreach ($update as $key => $value)
-                $string .= "`".$key."` = '".$value."', ";
-
-            $string = substr($string, 0, -2);
-
-            $this->db->query("UPDATE ".DB_PREFIX.$this->_table." SET ".$string." WHERE id = 1");
-        } catch (Exception $e) {
-            return false;            
-        }
-    }
-
-    /**
-     * Get Omise keys from table that set in Omise setting page
-     * @return array
-     */
-    private function _getOmiseKeys()
-    {
-        $omise = array();
-
-        if ($this->config->get('omise_status')) {
-            // Get Omise configuration.
-            $omise = $this->getConfig();
-
-            // If test mode is enable,
-            // replace Omise live key with test key.
-            if ($omise['test_mode']) {
-                $omise['public_key'] = $omise['public_key_test'];
-                $omise['secret_key'] = $omise['secret_key_test'];
-            }
-        }
-
-        return $omise;
     }
 
     /**
      * Retrieve account from Omise server
      * @return OmiseAccount|array
      */
-    public function getOmiseAccount()
-    {
-        // Load `omise-php` library.
-        $this->load->library('omise/omise-php/lib/Omise');
-
-        // Load language.
-        $this->language->load('payment/omise');
+    public function getOmiseAccount() {
+        $this->load->library('omise');
+        $this->load->library('omise-php/lib/Omise');
+        $this->load->language('payment/omise');
 
         // Get Omise Keys.
-        if ($keys = $this->_getOmiseKeys()) {
+        if ($keys = $this->_retrieveOmiseKeys()) {
             try {
-                $omise = OmiseAccount::retrieve($keys['public_key'], $keys['secret_key']);
-
-                return $omise;
+                return OmiseAccount::retrieve($keys['pkey'], $keys['skey']);
             } catch (Exception $e) {
                 return array('error' => $e->getMessage());
             }
@@ -143,20 +92,15 @@ class ModelPaymentOmise extends Model
      * Retrieve balance from Omise server
      * @return OmiseBalance|array
      */
-    public function getOmiseBalance()
-    {
-        // Load `omise-php` library.
-        $this->load->library('omise/omise-php/lib/Omise');
-
-        // Load language.
-        $this->language->load('payment/omise');
+    public function getOmiseBalance() {
+        $this->load->library('omise');
+        $this->load->library('omise-php/lib/Omise');
+        $this->load->language('payment/omise');
 
         // Get Omise Keys.
-        if ($keys = $this->_getOmiseKeys()) {
+        if ($keys = $this->_retrieveOmiseKeys()) {
             try {
-                $omise = OmiseBalance::retrieve($keys['public_key'], $keys['secret_key']);
-
-                return $omise;
+                return OmiseBalance::retrieve($keys['pkey'], $keys['skey']);
             } catch (Exception $e) {
                 return array('error' => $e->getMessage());
             }
@@ -166,23 +110,18 @@ class ModelPaymentOmise extends Model
     }
 
     /**
-     * Get transaction list from Omise server
-     * @return OmiseTransaction|array
+     * Get charge list from Omise server
+     * @return OmiseCharge|array
      */
-    public function getOmiseTransactionList()
-    {
-        // Load `omise-php` library.
-        $this->load->library('omise/omise-php/lib/Omise');
-
-        // Load language.
-        $this->language->load('payment/omise');
+    public function getOmiseChargeList() {
+        $this->load->library('omise');
+        $this->load->library('omise-php/lib/Omise');
+        $this->load->language('payment/omise');
 
         // Get Omise Keys.
-        if ($keys = $this->_getOmiseKeys()) {
+        if ($keys = $this->_retrieveOmiseKeys()) {
             try {
-                $omise = OmiseTransaction::retrieve('', $keys['public_key'], $keys['secret_key']);
-
-                return $omise;
+                return OmiseCharge::retrieve('?limit=20&order=reverse_chronological', $keys['pkey'], $keys['skey']);
             } catch (Exception $e) {
                 return array('error' => $e->getMessage());
             }
@@ -195,20 +134,15 @@ class ModelPaymentOmise extends Model
      * Get transfer list from Omise server
      * @return OmiseTransfer|array
      */
-    public function getOmiseTransferList()
-    {
-        // Load `omise-php` library.
-        $this->load->library('omise/omise-php/lib/Omise');
-
-        // Load language.
-        $this->language->load('payment/omise');
+    public function getOmiseTransferList() {
+        $this->load->library('omise');
+        $this->load->library('omise-php/lib/Omise');
+        $this->load->language('payment/omise');
 
         // Get Omise Keys.
-        if ($keys = $this->_getOmiseKeys()) {
+        if ($keys = $this->_retrieveOmiseKeys()) {
             try {
-                $omise = OmiseTransfer::retrieve('', $keys['public_key'], $keys['secret_key']);
-
-                return $omise;
+                return OmiseTransfer::retrieve('?limit=20&order=reverse_chronological', $keys['pkey'], $keys['skey']);
             } catch (Exception $e) {
                 return array('error' => $e->getMessage());
             }
@@ -221,18 +155,15 @@ class ModelPaymentOmise extends Model
      * Create a transfer to Omise server
      * @return OmiseTransfer|array
      */
-    public function createOmiseTransfer($amount)
-    {
-        // Load `omise-php` library.
-        $this->load->library('omise/omise-php/lib/Omise');
+    public function createOmiseTransfer($amount) {
+        $this->load->library('omise');
+        $this->load->library('omise-php/lib/Omise');
+        $this->load->language('payment/omise');
 
-        // Load language.
-        $this->language->load('payment/omise');
-        
         // Get Omise Keys.
-        if ($keys = $this->_getOmiseKeys()) {
+        if ($keys = $this->_retrieveOmiseKeys()) {
             try {
-                $omise = OmiseTransfer::create(array('amount' => $amount), $keys['public_key'], $keys['secret_key']);
+                $omise = OmiseTransfer::create(array('amount' => $amount), $keys['pkey'], $keys['skey']);
 
                 if (isset($omise['object']) && $omise['object'] == "transfer")
                     return true;
@@ -247,12 +178,27 @@ class ModelPaymentOmise extends Model
     }
 
     /**
-     * Return error array template
+     * Get Omise keys from table that set in Omise setting page
      * @return array
      */
-    private function _error($msg = '')
-    {
-        return array('error' => $msg);
+    private function _retrieveOmiseKeys() {
+        if ($this->config->get('omise_status') && $this->config->get('omise_test_mode')) {
+            $keys = array(
+                'pkey' => $this->config->get('omise_pkey_test'),
+                'skey' => $this->config->get('omise_skey_test')
+            );
+        } else if ($this->config->get('omise_status')) {
+            $keys = array(
+                'pkey' => $this->config->get('omise_pkey'),
+                'skey' => $this->config->get('omise_skey')
+            );
+        } else {
+            $keys = array(
+                'pkey' => '',
+                'skey' => ''
+            );
+        }
+
+        return $keys;
     }
 }
-?>

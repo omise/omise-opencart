@@ -1,179 +1,198 @@
 <?php
+class ControllerPaymentOmise extends Controller {
+	public function checkoutCallback() {
+		if ($this->request->get['order_id']) {
+			$this->load->library('omise');
+			$this->load->library('omise-php/lib/Omise');
+			$this->load->model('payment/omise');
+			$this->load->model('checkout/order');
 
-class ControllerPaymentOmise extends Controller
-{
-    /**
-     * Checkout orders and charge a card process
-     * @return string(Json)
-     */
-    public function checkout()
-    {
-        // Define 'OMISE_USER_AGENT_SUFFIX'
-        if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
-            define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.5.0.2 OpenCart/'.VERSION);
+			$order_id    = $this->request->get['order_id'];
+			$omise_keys  = $this->model_payment_omise->retrieveOmiseKeys();
+			$transaction = $this->model_payment_omise->getChargeTransaction($this->request->get['order_id']);
 
-        // Define 'OMISE_API_VERSION'
-        if(!defined('OMISE_API_VERSION'))
-            define('OMISE_API_VERSION', '2014-07-27');
+			$charge = OmiseCharge::retrieve($transaction->row['omise_charge_id'], $omise_keys['pkey'], $omise_keys['skey']);
+			if ($charge && $charge['authorized'] && $charge['captured']) {
+				// Status: processed.
+				$this->model_checkout_order->addOrderHistory($order_id, 15);
+				$this->response->redirect($this->url->link('checkout/success'));
+			} else {
+				// Status: failed.
+				$this->model_checkout_order->addOrderHistory($order_id, 10);
+				$this->response->redirect($this->url->link('checkout/failure'));
+			}
+		}
 
-        // If has a `post['omise_token']` request.
-        if (isset($this->request->post['omise_token'])) {
-            // Load `omise-php` library.
-            $this->load->library('omise/omise-php/lib/Omise');
+		exit;
+	}
 
-            // Get Omise configuration.
-            $omise = $this->config->get('Omise');
+	/**
+	 * Checkout orders and charge a card process
+	 * @return string(Json)
+	 */
+	public function checkout() {
+		// If has a `post['omise_token']` request.
+		if (isset($this->request->post['omise_token'])) {
+			$this->load->library('omise');
+			$this->load->library('omise-php/lib/Omise');
+			$this->load->model('payment/omise');
+			$this->load->model('checkout/order');
 
-            // If test mode was enabled,
-            // replace Omise live key with test key.
-            if (isset($omise['test_mode']) && $omise['test_mode']) {
-                $omise['public_key'] = $omise['public_key_test'];
-                $omise['secret_key'] = $omise['secret_key_test'];
-            }
+			// Get Omise configuration.
+			$omise = array();
+			if ($this->config->get('omise_test_mode')) {
+				$omise['pkey'] = $this->config->get('omise_pkey_test');
+				$omise['skey'] = $this->config->get('omise_skey_test');
+			} else {
+				$omise['pkey'] = $this->config->get('omise_pkey');
+				$omise['skey'] = $this->config->get('omise_skey');
+			}
 
-            // Create a order history with `Processing` status
-            $this->load->model('checkout/order');
-            $order_id       = $this->session->data['order_id'];
-            $order_info     = $this->model_checkout_order->getOrder($order_id);
-            $order_total    = number_format($order_info['total'], 2, '', '');
+			// Create a order history with `Processing` status
+			$order_id    = $this->session->data['order_id'];
+			$order_info  = $this->model_checkout_order->getOrder($order_id);
+			$order_total = number_format($order_info['total'], 2, '', '');
+			if ($order_info) {
+				try {
+					// Try to create a charge and capture it.
+					$omise_charge = OmiseCharge::create(
+						array(
+							"amount"        => $order_total,
+							"currency"      => 'thb',
+							"description"   => $this->request->post['description'],
+							"return_uri"	=> $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
+							"card"          => $this->request->post['omise_token']
+						),
+						$omise['pkey'],
+						$omise['skey']
+					);
 
-            if ($order_info) {
-                try {
-                    // Try to create a charge and capture it.
-                    $omise_charge = OmiseCharge::create(
-                        array(
-                            "amount"        => $order_total,
-                            "currency"      => 'thb',
-                            "description"   => $this->request->post['description'],
-                            "card"          => $this->request->post['omise_token']
-                        ),
-                        $omise['public_key'],
-                        $omise['secret_key']
-                    );
+					// Status: failed.
+					if ($omise_charge['failure_code'] || $omise_charge['failure_code']) {
+						throw new Exception($omise_charge['failure_code'].': '.$omise_charge['failure_code'], 1);
+					}
 
-                    if (is_null($omise_charge['failure_code']) && is_null($omise_charge['failure_code']) && $omise_charge['captured']) {
-                        // Status: processed.
-                        $this->model_checkout_order->confirm($order_id, 15);
-                    } else {
-                        // Status: failed.
-                        $this->model_checkout_order->update($order_id, 10);
-                    }
+					$this->model_payment_omise->addChargeTransaction($order_id, $omise_charge['id']);
 
-                    echo json_encode(
-                        array(
-                            'failure_code'      => $omise_charge['failure_code'],
-                            'failure_message'   => $omise_charge['failure_message'],
-                            'captured'          => $omise_charge['captured'],
-                            'omise'             => $omise_charge
-                        )
-                    );
-                } catch (Exception $e) {
-                    // Status: failed.
-                    $this->model_checkout_order->update($this->session->data['order_id'], 10);
-                    echo json_encode(array('error' => $e->getMessage()));
-                }
-            } else {
-                echo json_encode(array('error' => 'Cannot find your order, please try again.'));
-            }
-        } else {
-            return 'not authorized';
-        }
-    }
+					if ($this->config->get('omise_3ds')) {
+						// Status: processing.
+						$this->model_checkout_order->addOrderHistory($order_id, 2);
 
-    /**
-     * Retrieve list of months translation
-     *
-     * @return array
-     */
-    public function getMonths()
-    {
-        $months = array();
-        for ($index=1; $index <= 12; $index++) {
-            $month = ($index < 10) ? '0'.$index : $index;
-            $months[$month] = $month;
-        }
-        return $months;
-    }
+						echo json_encode(array(
+							'omise'    => $omise_charge,
+							'captured' => $omise_charge['captured'],
+							'redirect' => $omise_charge['authorize_uri']
+						));
+					} else {
+						if ($omise_charge['authorized'] && $omise_charge['captured']) {
+							// Status: processed.
+							$this->model_checkout_order->addOrderHistory($order_id, 15);
+						} else if ($omise_charge['authorized']) {
+							// Status: processing.
+							$this->model_checkout_order->addOrderHistory($order_id, 2);
+						} else {
+							// Status: failed.
+							throw new Exception('Your charge was failed - '.$omise_charge['failure_code'].': '.$omise_charge['failure_code'], 1);
+						}
 
-    /**
-     * Retrieve array of available years
-     *
-     * @return array
-     */
-    public function getYears()
-    {
-        $years = array();
-        $first = date("Y");
+						echo json_encode(array(
+							'omise'    => $omise_charge,
+							'captured' => $omise_charge['captured']
+						));
+					}
+				} catch (Exception $e) {
+					// Status: failed.
+					$this->model_checkout_order->addOrderHistory($order_id, 10);
+					echo json_encode(array('error' => 'Payment Gateway - '.$e->getMessage()));
+				}
+			} else {
+				echo json_encode(array('error' => 'Cannot find your order, please try again.'));
+			}
+		} else {
+			return 'not authorized';
+		}
+	}
 
-        for ($index=0; $index <= 10; $index++) {
-            $year = $first + $index;
-            $years[$year] = $year;
-        }
-        return $years;
-    }
-    
-    /**
-     * Omise card information form
-     * @return void
-     */
-    protected function index()
-    {
-        /**
-         * Prepare and loading necessary scripts.
-         *
-         */
-        // Load language.
-        $this->language->load('payment/omise');
+	/**
+	 * Retrieve list of months translation
+	 *
+	 * @return array
+	 */
+	public function getMonths() {
+		$months = array();
+		for ($index=1; $index <= 12; $index++) {
+			$month = ($index < 10) ? '0'.$index : $index;
+			$months[$month] = $month;
+		}
+		return $months;
+	}
 
-        // Get Omise configuration.
-        $omise = $this->config->get('Omise');
-        
-        // If test mode was enabled, replace Omise public and secret key with test key.
-        if (isset($omise['test_mode']) && $omise['test_mode']) {
-            $omise['public_key'] = $omise['public_key_test'];
-            $omise['secret_key'] = $omise['secret_key_test'];
-        }
+	/**
+	 * Retrieve array of available years
+	 *
+	 * @return array
+	 */
+	public function getYears() {
+		$years = array();
+		$first = date("Y");
 
-        $this->data['button_confirm']   = $this->language->get('button_confirm');
-        $this->data['checkout_url']     = $this->url->link('payment/omise/checkout');
-        $this->data['success_url']      = $this->url->link('checkout/success');
+		for ($index=0; $index <= 10; $index++) {
+			$year = $first + $index;
+			$years[$year] = $year;
+		}
+		return $years;
+	}
 
-        $this->load->model('checkout/order');
-        $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+	/**
+	 * Omise card information form
+	 * @return void
+	 */
+	public function index() {
+		$this->load->model('checkout/order');
+		$this->load->model('payment/omise');
+		$this->load->language('payment/omise');
 
-        if ($order_info) {
-            $this->data['text_config_one']      = trim($this->config->get('text_config_one')); 
-            $this->data['text_config_two']      = trim($this->config->get('text_config_two')); 
-            $this->data['orderid']              = date('His') . $this->session->data['order_id'];
-            $this->data['callbackurl']          = $this->url->link('payment/custom/callback');
-            $this->data['orderdate']            = date('YmdHis');
-            $this->data['currency']             = $order_info['currency_code'];
-            $this->data['orderamount']          = $this->currency->format($order_info['total'], $this->data['currency'] , false, false);
-            $this->data['billemail']            = $order_info['email'];
-            $this->data['billphone']            = html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8');
-            $this->data['billaddress']          = html_entity_decode($order_info['payment_address_1'], ENT_QUOTES, 'UTF-8');
-            $this->data['billcountry']          = html_entity_decode($order_info['payment_iso_code_2'], ENT_QUOTES, 'UTF-8');
-            $this->data['billprovince']         = html_entity_decode($order_info['payment_zone'], ENT_QUOTES, 'UTF-8');;
-            $this->data['billcity']             = html_entity_decode($order_info['payment_city'], ENT_QUOTES, 'UTF-8');
-            $this->data['billpost']             = html_entity_decode($order_info['payment_postcode'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliveryname']         = html_entity_decode($order_info['shipping_firstname'] . $order_info['shipping_lastname'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliveryaddress']      = html_entity_decode($order_info['shipping_address_1'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliverycity']         = html_entity_decode($order_info['shipping_city'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliverycountry']      = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliveryprovince']     = html_entity_decode($order_info['shipping_zone'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliveryemail']        = $order_info['email'];
-            $this->data['deliveryphone']        = html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliverypost']         = html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8');
-            
-            $this->data['omise']                = $omise;
+		$data = array();
 
-            if (file_exists(DIR_TEMPLATE.$this->config->get('config_template') . '/template/payment/omise.tpl')) {
-                $this->template = $this->config->get('config_template') . '/template/payment/omise.tpl';
-            } else {
-                $this->template = 'default/template/payment/omise.tpl';
-            }
-            
-            $this->render();
-        }
-    }
+		// Retrieve order information
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		if ($order_info) {
+			$data = array_merge($data, array(
+				'button_confirm'   => $this->language->get('button_confirm'),
+				'checkout_url'     => $this->url->link('payment/omise/checkout'),
+				'success_url'      => $this->url->link('checkout/success'),
+				'text_config_one'  => trim($this->config->get('text_config_one')),
+				'text_config_two'  => trim($this->config->get('text_config_two')),
+				'orderid'          => date('His') . $this->session->data['order_id'],
+				'callbackurl'      => $this->url->link('payment/custom/callback'),
+				'orderdate'        => date('YmdHis'),
+				'currency'         => $order_info['currency_code'],
+				'orderamount'      => $this->currency->format($order_info['total'], $order_info['currency_code'] , false, false),
+				'billemail'        => $order_info['email'],
+				'billphone'        => html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8'),
+				'billaddress'      => html_entity_decode($order_info['payment_address_1'], ENT_QUOTES, 'UTF-8'),
+				'billcountry'      => html_entity_decode($order_info['payment_iso_code_2'], ENT_QUOTES, 'UTF-8'),
+				'billprovince'     => html_entity_decode($order_info['payment_zone'], ENT_QUOTES, 'UTF-8'),
+				'billcity'         => html_entity_decode($order_info['payment_city'], ENT_QUOTES, 'UTF-8'),
+				'billpost'         => html_entity_decode($order_info['payment_postcode'], ENT_QUOTES, 'UTF-8'),
+				'deliveryname'     => html_entity_decode($order_info['shipping_firstname'] . $order_info['shipping_lastname'], ENT_QUOTES, 'UTF-8'),
+				'deliveryaddress'  => html_entity_decode($order_info['shipping_address_1'], ENT_QUOTES, 'UTF-8'),
+				'deliverycity'     => html_entity_decode($order_info['shipping_city'], ENT_QUOTES, 'UTF-8'),
+				'deliverycountry'  => html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8'),
+				'deliveryprovince' => html_entity_decode($order_info['shipping_zone'], ENT_QUOTES, 'UTF-8'),
+				'deliveryemail'    => $order_info['email'],
+				'deliveryphone'    => html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8'),
+				'deliverypost'     => html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8'),
+				'loop_months'      => $this->getMonths(),
+				'loop_years'       => $this->getYears(),
+				'omise'            => $this->model_payment_omise->retrieveOmiseKeys()
+			));
+
+			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise.tpl')) {
+				return $this->load->view($this->config->get('config_template') . '/template/payment/omise.tpl', $data);
+			} else {
+				return $this->load->view('default/template/payment/omise.tpl', $data);
+			}
+		}
+	}
 }
