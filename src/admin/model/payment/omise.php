@@ -23,11 +23,22 @@ class ModelPaymentOmise extends Model {
             'omise_payment_title' => 'Credit Card (Powered by Omise)'
         ));
 
+        /* Install omise_charge table */
         $this->db->query("
             CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "omise_charge` (
               `id` INT(11) NOT NULL AUTO_INCREMENT,
               `order_id` INT(11) NOT NULL,
-              `charge_id` CHAR(45) NOT NULL,
+              `omise_charge_id` CHAR(45) NOT NULL,
+              `date_added` DATETIME NOT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");
+
+        /* Install omise_customer table */
+        $this->db->query("
+            CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "omise_customer` (
+              `id` INT(11) NOT NULL AUTO_INCREMENT,
+              `customer_id` INT(11) NOT NULL,
+              `omise_customer_id` CHAR(45) NOT NULL,
               `date_added` DATETIME NOT NULL,
               PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");

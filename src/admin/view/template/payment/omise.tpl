@@ -56,9 +56,9 @@ echo $header; ?><?php echo $column_left; ?>
     <div class="tab-content">
       <!-- Dashboard tab -->
       <div class="tab-pane active in" id="tab-dashboard">
-        <?php if ($omise_dashboard['error_warning']) { ?>
-          <?php if (is_array($omise_dashboard['error_warning'])) { ?>
-              <?php foreach ($omise_dashboard['error_warning'] as $key => $value) { ?>
+        <?php if ($omise_dashboard['error_danger']) { ?>
+          <?php if (is_array($omise_dashboard['error_danger'])) { ?>
+              <?php foreach ($omise_dashboard['error_danger'] as $key => $value) { ?>
                 <div class="alert alert-danger">
                   <i class="fa fa-exclamation-circle"></i>
                   <?php echo $value; ?>
@@ -68,13 +68,32 @@ echo $header; ?><?php echo $column_left; ?>
           <?php } else { ?>
             <div class="alert alert-danger">
               <i class="fa fa-exclamation-circle"></i>
-              <?php echo $omise_dashboard['error_warning']; ?>
+              <?php echo $omise_dashboard['error_danger']; ?>
               <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
           <?php } ?>
         <?php } ?>
 
-        <?php if ($omise_dashboard['enabled'] && !$omise_dashboard['error_warning']) { ?>
+        <?php if ($omise_dashboard['enabled'] && !$omise_dashboard['error_danger']) { ?>
+
+          <?php if ($omise_dashboard['error_warning']) { ?>
+            <?php if (is_array($omise_dashboard['error_warning'])) { ?>
+                <?php foreach ($omise_dashboard['error_warning'] as $key => $value) { ?>
+                  <div class="alert alert-warning">
+                    <i class="fa fa-exclamation-circle"></i>
+                    <?php echo $value; ?>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  </div>
+                <?php } ?>
+            <?php } else { ?>
+              <div class="alert alert-warning">
+                <i class="fa fa-exclamation-circle"></i>
+                <?php echo $omise_dashboard['error_warning']; ?>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+              </div>
+            <?php } ?>
+          <?php } ?>
+
           <div class="box">
             <div class="content">
               <!-- Account Info -->
@@ -249,7 +268,7 @@ echo $header; ?><?php echo $column_left; ?>
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="omise_payments_public_key_test"><?php echo $label_omise_pkey_test; ?></label>
                 <div class="col-sm-10">
-                  <input size="40" type="password" name="omise_pkey_test" value="<?php echo $omise_pkey_test; ?>" id="omise_payments_public_key_test" class="form-control" />
+                  <input size="40" type="text" name="omise_pkey_test" value="<?php echo $omise_pkey_test; ?>" id="omise_payments_public_key_test" class="form-control" />
                 </div>
               </div>
 
@@ -265,7 +284,7 @@ echo $header; ?><?php echo $column_left; ?>
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="omise_payments_public_key"><?php echo $label_omise_pkey; ?></label>
                 <div class="col-sm-10">
-                  <input type="password" name="omise_pkey" value="<?php echo $omise_pkey; ?>" id="omise_payments_public_key" class="form-control" />
+                  <input type="text" name="omise_pkey" value="<?php echo $omise_pkey; ?>" id="omise_payments_public_key" class="form-control" />
                 </div>
               </div>
 
@@ -382,4 +401,3 @@ echo $header; ?><?php echo $column_left; ?>
 </script>
 
 <?php echo $footer; ?>
-

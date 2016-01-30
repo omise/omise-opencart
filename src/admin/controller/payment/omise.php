@@ -88,13 +88,14 @@ class ControllerPaymentOmise extends Controller {
         // Page data. Dashboard tab
         $data = array_merge($data, array(
             'omise_dashboard' => array(
+                'error_danger'  => '',
                 'error_warning' => '',
                 'enabled'       => $this->config->get('omise_status')
             )
         ));
 
         if (!$data['omise_dashboard']['enabled']) {
-            $data['omise_dashboard']['error_warning'][] = $this->language->get('error_extension_disabled');
+            $data['omise_dashboard']['error_danger'][] = $this->language->get('error_extension_disabled');
         } else {
             try {
                 // Retrieve Omise Account.
@@ -131,17 +132,17 @@ class ControllerPaymentOmise extends Controller {
                 $data['omise_dashboard']['transfer']['data']     = $omise_transfer['data'];
                 $data['omise_dashboard']['transfer']['total']    = $omise_transfer['total'];
             } catch (Exception $e) {
-                $data['omise_dashboard']['error_warning'][] = $e->getMessage();
+                $data['omise_dashboard']['error_danger'][] = $e->getMessage();
             }
         }
 
         // Check currency supported
         if (empty($this->model_localisation_currency->getCurrencyByCode('THB'))) {
-            $data['omise_dashboard']['error_warning'][] = $this->language->get('error_currency_thb_not_found').' <a href="'.$this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL').'">Setup here</a>';
+            $data['omise_dashboard']['error_warning'][] = $this->language->get('error_currency_thb_not_found').' <a href="'.$this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL').'">setup</a> or <a href="http://docs.opencart.com/system/localisation/currency">learn more</a>';
         }
 
         if (strtolower($this->config->get('config_currency')) !== 'thb') {
-            $data['omise_dashboard']['error_warning'][] = $this->language->get('error_currency_no_support').' Your default currency is <strong>'.$this->config->get('config_currency').'</strong>.'.' <a href="'.$this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL').'">Setup here</a>';
+            $data['omise_dashboard']['error_warning'][] = $this->language->get('error_currency_no_support').' Your default currency is <strong>'.$this->config->get('config_currency').'</strong>.'.' <a href="'.$this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL').'">setup</a> or <a href="http://docs.opencart.com/system/setting/local">learn more</a>';
         }
 
         // Page labels
@@ -169,10 +170,10 @@ class ControllerPaymentOmise extends Controller {
 
         // Page templates
         $data = array_merge($data, array(
-            'header'        => $this->load->controller('common/header'),
-            'breadcrumbs'   => $this->_setBreadcrumb(null),
-            'column_left'   => $this->load->controller('common/column_left'),
-            'footer'        => $this->load->controller('common/footer')
+            'header'      => $this->load->controller('common/header'),
+            'breadcrumbs' => $this->_setBreadcrumb(null),
+            'column_left' => $this->load->controller('common/column_left'),
+            'footer'      => $this->load->controller('common/footer')
         ));
 
         $this->response->setOutput($this->load->view('payment/omise.tpl', $data));

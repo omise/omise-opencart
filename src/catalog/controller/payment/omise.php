@@ -7,16 +7,20 @@ class ControllerPaymentOmise extends Controller {
 			$this->load->model('payment/omise');
 			$this->load->model('checkout/order');
 
-			$omise_keys = $this->model_payment_omise->retrieveOmiseKeys();
+			$order_id    = $this->request->get['order_id'];
+			$omise_keys  = $this->model_payment_omise->retrieveOmiseKeys();
 			$transaction = $this->model_payment_omise->getChargeTransaction($this->request->get['order_id']);
 
-			$charge = OmiseCharge::retrieve($transaction->row['charge_id'], $omise_keys['pkey'], $omise_keys['skey']);
-			if ($charge && $charge['authorized'] && $charge['captured'])
+			$charge = OmiseCharge::retrieve($transaction->row['omise_charge_id'], $omise_keys['pkey'], $omise_keys['skey']);
+			if ($charge && $charge['authorized'] && $charge['captured']) {
+				// Status: processed.
 				$this->model_checkout_order->addOrderHistory($order_id, 15);
-			else
+				$this->response->redirect($this->url->link('checkout/success'));
+			} else {
+				// Status: failed.
 				$this->model_checkout_order->addOrderHistory($order_id, 10);
-
-			$this->response->redirect($this->url->link('checkout/success'));
+				$this->response->redirect($this->url->link('checkout/failure'));
+			}
 		}
 
 		exit;
@@ -71,6 +75,9 @@ class ControllerPaymentOmise extends Controller {
 					$this->model_payment_omise->addChargeTransaction($order_id, $omise_charge['id']);
 
 					if ($this->config->get('omise_3ds')) {
+						// Status: processing.
+						$this->model_checkout_order->addOrderHistory($order_id, 2);
+
 						echo json_encode(array(
 							'omise'    => $omise_charge,
 							'captured' => $omise_charge['captured'],
@@ -83,6 +90,9 @@ class ControllerPaymentOmise extends Controller {
 						} else if ($omise_charge['authorized']) {
 							// Status: processing.
 							$this->model_checkout_order->addOrderHistory($order_id, 2);
+						} else {
+							// Status: failed.
+							throw new Exception('Your charge was failed - '.$omise_charge['failure_code'].': '.$omise_charge['failure_code'], 1);
 						}
 
 						echo json_encode(array(
@@ -138,8 +148,6 @@ class ControllerPaymentOmise extends Controller {
 	 * @return void
 	 */
 	public function index() {
-		var_dump(unserialize("b:0;"));
-
 		$this->load->model('checkout/order');
 		$this->load->model('payment/omise');
 		$this->load->language('payment/omise');

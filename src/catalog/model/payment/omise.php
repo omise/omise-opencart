@@ -42,7 +42,7 @@ class ModelPaymentOmise extends Model {
     }
 
     public function addChargeTransaction($order_id, $charge_id) {
-        $this->db->query("INSERT into `" . DB_PREFIX . "omise_charge` SET order_id = '" . $order_id . "', charge_id = '" . $charge_id . "', date_added = NOW()");
+        $this->db->query("INSERT into `" . DB_PREFIX . "omise_charge` SET order_id = '" . $order_id . "', omise_charge_id = '" . $charge_id . "', date_added = NOW()");
     }
 
     public function getChargeTransaction($order_id = null) {
