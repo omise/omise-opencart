@@ -160,6 +160,64 @@ class ControllerPaymentOmise extends Controller {
     }
 
     /**
+     * @return array
+     */
+    private function pageTranslation() {
+        $this->load->language('payment/omise');
+
+        return array(
+            'heading_title'                           => $this->language->get('heading_title'),
+            'label_tab_dashboard'                     => $this->language->get('label_tab_dashboard'),
+            'label_tab_setting'                       => $this->language->get('label_tab_setting'),
+            'label_tab_plugin_version'                => $this->language->get('label_tab_plugin_version'),
+            'label_tab_charge'                        => $this->language->get('label_tab_charge'),
+            'label_tab_transfer'                      => $this->language->get('label_tab_transfer'),
+            'label_dashboard_account'                 => $this->language->get('label_dashboard_account'),
+            'label_dashboard_mode'                    => $this->language->get('label_dashboard_mode'),
+            'label_dashboard_currency'                => $this->language->get('label_dashboard_currency'),
+            'label_dashboard_total_balance'           => $this->language->get('label_dashboard_total_balance'),
+            'label_dashboard_transferable_balance'    => $this->language->get('label_dashboard_transferable_balance'),
+            'label_dashboard_transactions_history'    => $this->language->get('label_dashboard_transactions_history'),
+            'label_charge_table_no'                   => $this->language->get('label_charge_table_no'),
+            'label_charge_table_amount'               => $this->language->get('label_charge_table_amount'),
+            'label_charge_table_id'                   => $this->language->get('label_charge_table_id'),
+            'label_charge_table_authorized'           => $this->language->get('label_charge_table_authorized'),
+            'label_charge_table_paid'                 => $this->language->get('label_charge_table_paid'),
+            'label_charge_table_failure_message'      => $this->language->get('label_charge_table_failure_message'),
+            'label_charge_table_created'              => $this->language->get('label_charge_table_created'),
+            'label_transfer_table_no'                 => $this->language->get('label_transfer_table_no'),
+            'label_transfer_table_amount'             => $this->language->get('label_transfer_table_amount'),
+            'label_transfer_table_id'                 => $this->language->get('label_transfer_table_id'),
+            'label_transfer_table_sent'               => $this->language->get('label_transfer_table_sent'),
+            'label_transfer_table_paid'               => $this->language->get('label_transfer_table_paid'),
+            'label_transfer_table_failure_message'    => $this->language->get('label_transfer_table_failure_message'),
+            'label_transfer_table_created'            => $this->language->get('label_transfer_table_created'),
+            'label_transfer_amount_field_placeholder' => $this->language->get('label_transfer_amount_field_placeholder'),
+            'label_setting_module_config'             => $this->language->get('label_setting_module_config'),
+            'label_setting_module_status'             => $this->language->get('label_setting_module_status'),
+            'label_setting_key_config'                => $this->language->get('label_setting_key_config'),
+            'label_setting_omise_config'              => $this->language->get('label_setting_omise_config'),
+            'label_omise_pkey_test'                   => $this->language->get('label_omise_pkey_test'),
+            'label_omise_skey_test'                   => $this->language->get('label_omise_skey_test'),
+            'label_omise_pkey'                        => $this->language->get('label_omise_pkey'),
+            'label_omise_skey'                        => $this->language->get('label_omise_skey'),
+            'label_omise_mode_test'                   => $this->language->get('label_omise_mode_test'),
+            'label_omise_mode_live'                   => $this->language->get('label_omise_mode_live'),
+            'label_omise_3ds'                         => $this->language->get('label_omise_3ds'),
+            'label_omise_payment_title'               => $this->language->get('label_omise_payment_title'),
+            'text_mode_test'                          => $this->language->get('text_mode_test'),
+            'text_mode_live'                          => $this->language->get('text_mode_live'),
+            'text_enabled'                            => $this->language->get('text_enabled'),
+            'text_disabled'                           => $this->language->get('text_disabled'),
+            'text_checking_for_latest_version'        => $this->language->get('text_checking_for_latest_version'),
+            'text_version_up_to_date'                 => $this->language->get('text_version_up_to_date'),
+            'button_save'                             => $this->language->get('button_save'),
+            'button_cancel'                           => $this->language->get('button_cancel'),
+            'button_create_transfer'                  => $this->language->get('button_create_transfer'),
+        );
+    }
+
+    /**
      * This method will fire when user click `install` button from `extension/payment` page
      * It will call `model/payment/omise.php` file and run `install` method for installl stuff
      * that necessary to use in Omise Payment Gateway module
@@ -202,26 +260,12 @@ class ControllerPaymentOmise extends Controller {
         $data = array_merge(
             $this->pageDataDashboardTab(),
             $this->pageDataSettingTab(),
+            $this->pageTranslation(),
             array(
                 'success'                   => $this->flashSuccessMessages(),
                 'error_warning'             => $this->flashErrorMessages(),
-                'heading_title'             => $this->language->get('heading_title'),
-                'button_save'               => $this->language->get('button_save'),
                 'action'                    => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
-                'button_cancel'             => $this->language->get('button_cancel'),
                 'cancel'                    => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
-                'text_form'                 => $this->language->get('text_form'),
-                'entry_status'              => $this->language->get('entry_status'),
-                'text_enabled'              => $this->language->get('text_enabled'),
-                'text_disabled'             => $this->language->get('text_disabled'),
-                'label_omise_pkey_test'     => $this->language->get('label_omise_pkey_test'),
-                'label_omise_skey_test'     => $this->language->get('label_omise_skey_test'),
-                'label_omise_pkey'          => $this->language->get('label_omise_pkey'),
-                'label_omise_skey'          => $this->language->get('label_omise_skey'),
-                'label_omise_mode_test'     => $this->language->get('label_omise_mode_test'),
-                'label_omise_mode_live'     => $this->language->get('label_omise_mode_live'),
-                'label_omise_3ds'           => $this->language->get('label_omise_3ds'),
-                'label_omise_payment_title' => $this->language->get('label_omise_payment_title'),
                 'transfer_url'              => $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL'),
                 'versioncheckup_url'        => $this->url->link('payment/omise/ajaxversioncheckup', 'token=' . $this->session->data['token'], 'SSL'),
             )

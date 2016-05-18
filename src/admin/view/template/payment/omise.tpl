@@ -41,10 +41,10 @@ echo $header; ?><?php echo $column_left; ?>
     <?php } ?>
 
     <ul class="nav nav-tabs">
-      <li class="active"><a href="#tab-dashboard" data-toggle="tab">Dashboard</a></li>
-      <li><a href="#tab-setting" data-toggle="tab">Setting</a></li>
+      <li class="active"><a href="#tab-dashboard" data-toggle="tab"><?php echo $label_tab_dashboard; ?></a></li>
+      <li><a href="#tab-setting" data-toggle="tab"><?php echo $label_tab_setting; ?></a></li>
       <li>
-        <a href="#tab-update" data-toggle="tab">Update
+        <a href="#tab-update" data-toggle="tab"><?php echo $label_tab_plugin_version; ?>
           <i style="display: none;" id="tab-update-spin" class="fa fa-spinner fa-spin"></i>
           <span id="icon-has-update" style="display: none;" class="text-danger">(<i class="fa fa-bell"></i> 1)</span>
           <span id="icon-up-to-date" style="display: none;" class="text-success">(<i class="fa fa-check"></i>)</span>
@@ -100,34 +100,34 @@ echo $header; ?><?php echo $column_left; ?>
               <div class="omise-account-info omise-dashboard">
                 <dl>
                   <!-- Account email -->
-                  <dt>Account: </dt>
+                  <dt><?php echo $label_dashboard_account; ?>: </dt>
                   <dd><?php echo $omise_dashboard['email']; ?></dd>
 
                   <!-- Account status -->
-                  <dt>Mode: </dt>
-                  <dd><strong><?php echo $omise_dashboard['livemode'] ? '<span class="livemode-label">Live</span>' : '<span class="testmode-label">Test</span>'; ?></strong></dd>
+                  <dt><?php echo $label_dashboard_mode; ?>: </dt>
+                  <dd><strong><?php echo $omise_dashboard['livemode'] ? '<span class="livemode-label">' . $text_mode_live . '</span>' : '<span class="testmode-label">' . $text_mode_test . '</span>'; ?></strong></dd>
 
                   <!-- Current Currency -->
-                  <dt>Currency: </dt>
+                  <dt><?php echo $label_dashboard_currency; ?>: </dt>
                   <dd><?php echo strtoupper($omise_dashboard['currency']); ?></dd>
                 </dl>
               </div>
 
               <!-- Balance -->
               <div class="omise-balance omise-clearfix">
-                <div class="left"><span class="omise-number"><?php echo OmisePluginHelperCurrency::format($omise_dashboard['currency'], $omise_dashboard['total']); ?></span><br/>Total Balance</div>
-                <div class="right"><span class="omise-number"><?php echo OmisePluginHelperCurrency::format($omise_dashboard['currency'], $omise_dashboard['available']); ?></span><br/>Transferable Balance</div>
+                <div class="left"><span class="omise-number"><?php echo OmisePluginHelperCurrency::format($omise_dashboard['currency'], $omise_dashboard['total']); ?></span><br/><?php echo $label_dashboard_total_balance; ?></div>
+                <div class="right"><span class="omise-number"><?php echo OmisePluginHelperCurrency::format($omise_dashboard['currency'], $omise_dashboard['available']); ?></span><br/><?php echo $label_dashboard_transferable_balance; ?></div>
               </div>
 
               <!-- Charge History -->
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <h3 class="panel-title"><i class="fa fa-list"></i> Transactions history</h3>
+                  <h3 class="panel-title"><i class="fa fa-list"></i> <?php echo $label_dashboard_transactions_history; ?></h3>
                 </div>
                 <div class="panel-body">
                   <ul class="nav nav-tabs">
-                    <li class="active"><a href="#tab-charge-history" data-toggle="tab">Charge</a></li>
-                    <li><a href="#tab-transfer-history" data-toggle="tab">Transfer</a></li>
+                    <li class="active"><a href="#tab-charge-history" data-toggle="tab"><?php echo $label_tab_charge; ?></a></li>
+                    <li><a href="#tab-transfer-history" data-toggle="tab"><?php echo $label_tab_transfer; ?></a></li>
                   </ul>
 
                   <div class="tab-content">
@@ -138,13 +138,13 @@ echo $header; ?><?php echo $column_left; ?>
                           <table class="table table-bordered table-hover table-striped">
                             <thead>
                               <tr>
-                                <td>No.</td>
-                                <td>Amount</td>
-                                <td>Charge Id</td>
-                                <td width="8%">Authorized</td>
-                                <td width="8%">Paid</td>
-                                <td>Failure Message</td>
-                                <td class="text-center" width="15%">Created</td>
+                                <td><?php echo $label_charge_table_no; ?></td>
+                                <td><?php echo $label_charge_table_amount; ?></td>
+                                <td><?php echo $label_charge_table_id; ?></td>
+                                <td width="8%"><?php echo $label_charge_table_authorized; ?></td>
+                                <td width="8%"><?php echo $label_charge_table_paid; ?></td>
+                                <td><?php echo $label_charge_table_failure_message; ?></td>
+                                <td class="text-center" width="15%"><?php echo $label_charge_table_created; ?></td>
                               </tr>
                             </thead>
                             <tbody>
@@ -173,13 +173,13 @@ echo $header; ?><?php echo $column_left; ?>
                           <table class="table table-bordered table-hover">
                             <thead>
                               <tr>
-                                <td>No.</td>
-                                <td>Amount</td>
-                                <td>Transfer Id</td>
-                                <td>Sent</td>
-                                <td>Paid</td>
-                                <td>Failure Message</td>
-                                <td class="text-center" width="15%">Created</td>
+                                <td><?php echo $label_transfer_table_no; ?></td>
+                                <td><?php echo $label_transfer_table_amount; ?></td>
+                                <td><?php echo $label_transfer_table_id; ?></td>
+                                <td><?php echo $label_transfer_table_sent; ?></td>
+                                <td><?php echo $label_transfer_table_paid; ?></td>
+                                <td><?php echo $label_transfer_table_failure_message; ?></td>
+                                <td class="text-center" width="15%"><?php echo $label_transfer_table_created; ?></td>
                               </tr>
                             </thead>
                             <tbody>
@@ -195,9 +195,9 @@ echo $header; ?><?php echo $column_left; ?>
                                 </tr>
                               <?php endforeach; ?>
                               <tr>
-                                <td colspan="6" class="text-right"><input style="width: 25%; float:right;" class="form-control" min="0" type="number" step="0.01" name="transfer_amount" placeholder="Transfer amount (number only)"></td>
+                                <td colspan="6" class="text-right"><input style="width: 25%; float:right;" class="form-control" min="0" type="number" step="0.01" name="transfer_amount" placeholder="<?php echo $label_transfer_amount_field_placeholder; ?>"></td>
                                 <td class="text-center">
-                                  <button type="submit" id="button-transfer" class="btn btn-primary">Create transfer&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
+                                  <button type="submit" id="button-transfer" class="btn btn-primary"><?php echo $button_create_transfer; ?>&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
                                 </td>
                               </tr>
                             </tbody>
@@ -220,13 +220,13 @@ echo $header; ?><?php echo $column_left; ?>
         <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-setting" class="form-horizontal">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $text_form; ?></h3>
+              <h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $label_setting_module_config; ?></h3>
             </div>
 
             <div class="panel-body">
               <!-- Module config -->
               <div class="form-group required">
-                <label class="col-sm-2 control-label" for="omise_status"><?php echo $entry_status; ?></label>
+                <label class="col-sm-2 control-label" for="omise_status"><?php echo $label_setting_module_status; ?></label>
                 <div class="col-sm-10">
                   <select name="omise_status" class="form-control">
                     <option value="1" <?php echo $omise_status ? 'selected="selected"' : ''; ?>><?php echo $text_enabled; ?></option>
@@ -261,7 +261,7 @@ echo $header; ?><?php echo $column_left; ?>
 
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title"><i class="fa fa-pencil"></i> Omise Keys Config</h3>
+              <h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $label_setting_key_config; ?></h3>
             </div>
             <div class="panel-body">
               <!-- Test public key -->
@@ -300,7 +300,7 @@ echo $header; ?><?php echo $column_left; ?>
 
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title"><i class="fa fa-pencil"></i> Omise Advance Integration</h3>
+              <h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $label_setting_omise_config; ?></h3>
             </div>
             <div class="panel-body">
               <!-- 3D-Secure -->
@@ -321,11 +321,11 @@ echo $header; ?><?php echo $column_left; ?>
       <div class="tab-pane fade" id="tab-update">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title"><i class="fa fa-cog"></i> Update</h3>
+            <h3 class="panel-title"><i class="fa fa-cog"></i> <?php echo $label_tab_plugin_version; ?></h3>
           </div>
 
           <div class="panel-body text-center">
-            <p id="box-label">Version checking...</p>
+            <p id="box-label"><?php echo $text_checking_for_latest_version; ?></p>
             <div style="display: none;" id="omise-update-instruction"></div>
           </div>
         </div>
