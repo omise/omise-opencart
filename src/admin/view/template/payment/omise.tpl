@@ -56,9 +56,9 @@ echo $header; ?><?php echo $column_left; ?>
     <div class="tab-content">
       <!-- Dashboard tab -->
       <div class="tab-pane active in" id="tab-dashboard">
-        <?php if ($omise_dashboard['error_danger']) { ?>
-          <?php if (is_array($omise_dashboard['error_danger'])) { ?>
-              <?php foreach ($omise_dashboard['error_danger'] as $key => $value) { ?>
+        <?php if ($omise_dashboard['error']) { ?>
+          <?php if (is_array($omise_dashboard['error'])) { ?>
+              <?php foreach ($omise_dashboard['error'] as $key => $value) { ?>
                 <div class="alert alert-danger">
                   <i class="fa fa-exclamation-circle"></i>
                   <?php echo $value; ?>
@@ -68,17 +68,17 @@ echo $header; ?><?php echo $column_left; ?>
           <?php } else { ?>
             <div class="alert alert-danger">
               <i class="fa fa-exclamation-circle"></i>
-              <?php echo $omise_dashboard['error_danger']; ?>
+              <?php echo $omise_dashboard['error']; ?>
               <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
           <?php } ?>
         <?php } ?>
 
-        <?php if ($omise_dashboard['enabled'] && !$omise_dashboard['error_danger']) { ?>
+        <?php if ($omise_dashboard['enabled'] && !$omise_dashboard['error']) { ?>
 
-          <?php if ($omise_dashboard['error_warning']) { ?>
-            <?php if (is_array($omise_dashboard['error_warning'])) { ?>
-                <?php foreach ($omise_dashboard['error_warning'] as $key => $value) { ?>
+          <?php if ($omise_dashboard['warning']) { ?>
+            <?php if (is_array($omise_dashboard['warning'])) { ?>
+                <?php foreach ($omise_dashboard['warning'] as $key => $value) { ?>
                   <div class="alert alert-warning">
                     <i class="fa fa-exclamation-circle"></i>
                     <?php echo $value; ?>
@@ -88,7 +88,7 @@ echo $header; ?><?php echo $column_left; ?>
             <?php } else { ?>
               <div class="alert alert-warning">
                 <i class="fa fa-exclamation-circle"></i>
-                <?php echo $omise_dashboard['error_warning']; ?>
+                <?php echo $omise_dashboard['warning']; ?>
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
               </div>
             <?php } ?>
@@ -101,22 +101,22 @@ echo $header; ?><?php echo $column_left; ?>
                 <dl>
                   <!-- Account email -->
                   <dt>Account: </dt>
-                  <dd><?php echo $omise_dashboard['account']['email']; ?></dd>
+                  <dd><?php echo $omise_dashboard['email']; ?></dd>
 
                   <!-- Account status -->
                   <dt>Mode: </dt>
-                  <dd><strong><?php echo $omise_dashboard['balance']['livemode'] ? '<span class="livemode-label">Live</span>' : '<span class="testmode-label">Test</span>'; ?></strong></dd>
+                  <dd><strong><?php echo $omise_dashboard['livemode'] ? '<span class="livemode-label">Live</span>' : '<span class="testmode-label">Test</span>'; ?></strong></dd>
 
                   <!-- Current Currency -->
                   <dt>Currency: </dt>
-                  <dd><?php echo strtoupper($omise_dashboard['balance']['currency']); ?></dd>
+                  <dd><?php echo strtoupper($omise_dashboard['currency']); ?></dd>
                 </dl>
               </div>
 
               <!-- Balance -->
               <div class="omise-balance omise-clearfix">
-                <div class="left"><span class="omise-number"><?php echo number_format(($omise_dashboard['balance']['total']/100), 2); ?> ฿</span><br/>Total Balance</div>
-                <div class="right"><span class="omise-number"><?php echo number_format(($omise_dashboard['balance']['available']/100), 2); ?> ฿</span><br/>Transferable Balance</div>
+                <div class="left"><span class="omise-number"><?php echo OmisePluginHelperCurrency::format($omise_dashboard['currency'], $omise_dashboard['total']); ?></span><br/>Total Balance</div>
+                <div class="right"><span class="omise-number"><?php echo OmisePluginHelperCurrency::format($omise_dashboard['currency'], $omise_dashboard['available']); ?></span><br/>Transferable Balance</div>
               </div>
 
               <!-- Charge History -->
@@ -148,10 +148,10 @@ echo $header; ?><?php echo $column_left; ?>
                               </tr>
                             </thead>
                             <tbody>
-                              <?php foreach ($omise_dashboard['charge']['data'] as $key => $value): $date = new \DateTime($value['created']); ?>
+                              <?php foreach ($omise_dashboard['charge_data'] as $key => $value): $date = new \DateTime($value['created']); ?>
                                 <tr>
-                                  <td><?php echo $omise_dashboard['charge']['total'] -$key; ?></td>
-                                  <td><strong class="<?php echo ($value['failure_code']) ? 'text-danger' : ((!$value['authorized'] || !$value['captured']) ? 'text-warning' : 'text-success'); ?>"><?php echo number_format(($value['amount']/100), 2); ?> ฿</strong></td>
+                                  <td><?php echo $omise_dashboard['charge_total'] -$key; ?></td>
+                                  <td><strong class="<?php echo ($value['failure_code']) ? 'text-danger' : ((!$value['authorized'] || !$value['captured']) ? 'text-warning' : 'text-success'); ?>"><?php echo OmisePluginHelperCurrency::format($omise_dashboard['currency'], $value['amount']); ?></strong></td>
                                   <td><a href="https://dashboard.omise.co/<?php echo $value['livemode'] ? 'live' : 'test'; ?>/charges/<?php echo $value['id']; ?>"><?php echo $value['id']; ?></a></td>
                                   <td><?php echo $value['authorized'] ? '<strong class="text-success">Yes</strong>' : 'No'; ?></td>
                                   <td><?php echo $value['captured'] ? '<strong class="text-success">Yes</strong>' : 'No'; ?></td>
@@ -183,10 +183,10 @@ echo $header; ?><?php echo $column_left; ?>
                               </tr>
                             </thead>
                             <tbody>
-                              <?php foreach ($omise_dashboard['transfer']['data'] as $key => $value): $date = new \DateTime($value['created']); ?>
+                              <?php foreach ($omise_dashboard['transfer_data'] as $key => $value): $date = new \DateTime($value['created']); ?>
                                 <tr>
-                                  <td><?php echo $omise_dashboard['transfer']['total'] -$key; ?></td>
-                                  <td><strong class="<?php echo ($value['failure_code']) ? 'text-danger' : ((!$value['sent'] || !$value['paid']) ? 'text-warning' : 'text-success'); ?>"><?php echo number_format(($value['amount']/100), 2); ?> ฿</strong></td>
+                                  <td><?php echo $omise_dashboard['transfer_total'] -$key; ?></td>
+                                  <td><strong class="<?php echo ($value['failure_code']) ? 'text-danger' : ((!$value['sent'] || !$value['paid']) ? 'text-warning' : 'text-success'); ?>"><?php echo OmisePluginHelperCurrency::format($omise_dashboard['currency'], $value['amount']); ?></strong></td>
                                   <td><a href="https://dashboard.omise.co/<?php echo $value['livemode'] ? 'live' : 'test'; ?>/transfers//<?php echo $value['id']; ?>"><?php echo $value['id']; ?></a></td>
                                   <td><?php echo $value['sent'] ? '<strong class="text-success">Yes</strong>' : 'No'; ?></td>
                                   <td><?php echo $value['paid'] ? '<strong class="text-success">Yes</strong>' : 'No'; ?></td>

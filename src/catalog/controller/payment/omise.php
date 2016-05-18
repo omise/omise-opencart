@@ -58,7 +58,7 @@ class ControllerPaymentOmise extends Controller {
 					$omise_charge = OmiseCharge::create(
 						array(
 							"amount"        => $order_total,
-							"currency"      => 'thb',
+							"currency"      => $this->currency->getCode(),
 							"description"   => $this->request->post['description'],
 							"return_uri"	=> $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
 							"card"          => $this->request->post['omise_token']
