@@ -90,22 +90,22 @@ class ControllerPaymentOmise extends Controller {
                 // Retrieve Omise Account.
                 $omise_account = $this->model_payment_omise->getOmiseAccount();
                 if (isset($omise_account['error']))
-                    throw new Exception('Omise Account:: '.$omise_account['error'], 1);
+                    throw new Exception('Omise Account '.$omise_account['error'], 1);
 
                 // Retrieve Omise Balance.
                 $omise_balance = $this->model_payment_omise->getOmiseBalance();
                 if (isset($omise_balance['error']))
-                    throw new Exception('Omise Balance:: '.$omise_balance['error'], 1);
+                    throw new Exception('Omise Balance '.$omise_balance['error'], 1);
 
                 // Retrieve Omise Charge List.
                 $omise_charge = $this->model_payment_omise->getOmiseChargeList();
                 if (isset($omise_charge['error']))
-                    throw new Exception('Omise Charge:: '.$omise_charge['error'], 1);
+                    throw new Exception('Omise Charge '.$omise_charge['error'], 1);
 
                 // Retrieve Omise Transfer List.
                 $omise_transfer = $this->model_payment_omise->getOmiseTransferList();
                 if (isset($omise_transfer['error']))
-                    throw new Exception('Omise Transfer:: '.$omise_transfer['error'], 1);
+                    throw new Exception('Omise Transfer '.$omise_transfer['error'], 1);
 
                 $data['omise_dashboard'] = array_merge(
                     $data['omise_dashboard'],
@@ -123,7 +123,12 @@ class ControllerPaymentOmise extends Controller {
                     )
                 );
             } catch (Exception $e) {
-                $data['omise_dashboard']['error'][] = $e->getMessage();
+                // Looking for translate first,
+                $translation = $this->searchErrorTranslation($e->getMessage());
+                if ($translation !== "")
+                    $data['omise_dashboard']['error'][] = $translation;
+                else
+                    $data['omise_dashboard']['error'][] = $e->getMessage();
             }
         }
 
@@ -131,13 +136,13 @@ class ControllerPaymentOmise extends Controller {
         if (! OmisePluginHelperCurrency::isSupport($this->config->get('config_currency'))) {
             // THB currency
             if (empty($this->model_localisation_currency->getCurrencyByCode('THB')))
-                $data['omise_dashboard']['warning'][] = $this->language->get('error_currency_thb_not_found').' <a href="'.$this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL').'">setup</a> or <a href="http://docs.opencart.com/system/localisation/currency">learn more</a>';
+                $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_thb_not_found'), $this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL'));
 
             // JPY currency
             if (empty($this->model_localisation_currency->getCurrencyByCode('JPY')))
-                $data['omise_dashboard']['warning'][] = $this->language->get('error_currency_jpy_not_found').' <a href="'.$this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL').'">setup</a> or <a href="http://docs.opencart.com/system/localisation/currency">learn more</a>';
+                $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_jpy_not_found'), $this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL'));
 
-            $data['omise_dashboard']['warning'][] = $this->language->get('error_currency_no_support').' Your default currency is <strong>'.$this->config->get('config_currency').'</strong>.'.' <a href="'.$this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL').'">setup</a> or <a href="http://docs.opencart.com/system/setting/local">learn more</a>';
+            $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_not_support'), $this->config->get('config_currency'), $this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL'));
         }
 
         return $data;
@@ -215,6 +220,19 @@ class ControllerPaymentOmise extends Controller {
             'button_cancel'                           => $this->language->get('button_cancel'),
             'button_create_transfer'                  => $this->language->get('button_create_transfer'),
         );
+    }
+
+    /**
+     * @return string
+     */
+    private function searchErrorTranslation($clue) {
+        $translate_code = 'error_' . str_replace(' ', '_', strtolower($clue));
+        $translate_msg  = $this->language->get($translate_code);
+
+        if ($translate_code !== $translate_msg)
+            return $translate_msg;
+
+        return "";
     }
 
     /**
