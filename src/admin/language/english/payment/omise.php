@@ -50,8 +50,9 @@ $_['api_transfer_success']      = 'Your transfer request has sent already.';
  */
 $_['error_omise_table_install_failed']  = 'Can not create Omise table now, something wrong.';
 $_['error_extension_disabled']          = 'Please enable Omise Payment Gateway extension (check \'Setting\' tab).';
-$_['error_currency_thb_not_found']      = 'Thai Baht (THB) currency was not found from your system.';
-$_['error_currency_no_support']         = 'Currently, we only support Thai Baht (THB).';
+$_['error_currency_thb_not_found']      = 'Thai Baht (THB) currencies was not found from your system.';
+$_['error_currency_jpy_not_found']      = 'Japanese Yen (JPY) currencies was not found from your system.';
+$_['error_currency_no_support']         = 'Currently, we only support Thai Baht (THB) and Japanese Yen (JPY).';
 // $_['error_omise_menu_xml_not_exists']   = 'omise_menu.xml not found in install folder, please check.';
 // $_['error_vqmod_xml_not_exists']        = 'vQmod\'s xml folder does not exists.';
 // $_['error_file_not_writable']           = 'File not writable, please give it the writable permission.';

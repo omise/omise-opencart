@@ -5,6 +5,8 @@ An [unreleased] version is not available on `master` branch and is subject to ch
 
 [unreleased]
 ------------
+- *`Added`* Support `JPY` currency
+- *`Improved`* Code Refactoring
 - *`Updated`* Updated README.md file
 - *`Updated`* Changed compatible version number from `1.5.x` to `2.0.x`
 - *`Updated`* Updated Opencart2.0 interface images
