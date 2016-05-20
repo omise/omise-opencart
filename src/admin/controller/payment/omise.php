@@ -226,6 +226,8 @@ class ControllerPaymentOmise extends Controller {
      * @return string
      */
     private function searchErrorTranslation($clue) {
+        $this->load->language('payment/omise');
+
         $translate_code = 'error_' . str_replace(' ', '_', strtolower($clue));
         $translate_msg  = $this->language->get($translate_code);
 
@@ -280,12 +282,12 @@ class ControllerPaymentOmise extends Controller {
             $this->pageDataSettingTab(),
             $this->pageTranslation(),
             array(
-                'success'                   => $this->flashSuccessMessages(),
-                'error_warning'             => $this->flashErrorMessages(),
-                'action'                    => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
-                'cancel'                    => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
-                'transfer_url'              => $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL'),
-                'versioncheckup_url'        => $this->url->link('payment/omise/ajaxversioncheckup', 'token=' . $this->session->data['token'], 'SSL'),
+                'success'            => $this->flashSuccessMessages(),
+                'error_warning'      => $this->flashErrorMessages(),
+                'action'             => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
+                'cancel'             => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
+                'transfer_url'       => $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL'),
+                'versioncheckup_url' => $this->url->link('payment/omise/ajaxversioncheckup', 'token=' . $this->session->data['token'], 'SSL'),
             )
         );
 
