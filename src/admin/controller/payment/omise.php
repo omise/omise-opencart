@@ -90,22 +90,22 @@ class ControllerPaymentOmise extends Controller {
                 // Retrieve Omise Account.
                 $omise_account = $this->model_payment_omise->getOmiseAccount();
                 if (isset($omise_account['error']))
-                    throw new Exception('Omise Account:: '.$omise_account['error'], 1);
+                    throw new Exception('Omise Account '.$omise_account['error'], 1);
 
                 // Retrieve Omise Balance.
                 $omise_balance = $this->model_payment_omise->getOmiseBalance();
                 if (isset($omise_balance['error']))
-                    throw new Exception('Omise Balance:: '.$omise_balance['error'], 1);
+                    throw new Exception('Omise Balance '.$omise_balance['error'], 1);
 
                 // Retrieve Omise Charge List.
                 $omise_charge = $this->model_payment_omise->getOmiseChargeList();
                 if (isset($omise_charge['error']))
-                    throw new Exception('Omise Charge:: '.$omise_charge['error'], 1);
+                    throw new Exception('Omise Charge '.$omise_charge['error'], 1);
 
                 // Retrieve Omise Transfer List.
                 $omise_transfer = $this->model_payment_omise->getOmiseTransferList();
                 if (isset($omise_transfer['error']))
-                    throw new Exception('Omise Transfer:: '.$omise_transfer['error'], 1);
+                    throw new Exception('Omise Transfer '.$omise_transfer['error'], 1);
 
                 $data['omise_dashboard'] = array_merge(
                     $data['omise_dashboard'],
@@ -123,7 +123,12 @@ class ControllerPaymentOmise extends Controller {
                     )
                 );
             } catch (Exception $e) {
-                $data['omise_dashboard']['error'][] = $e->getMessage();
+                // Looking for translate first,
+                $translation = $this->searchErrorTranslation($e->getMessage());
+                if ($translation !== "")
+                    $data['omise_dashboard']['error'][] = $translation;
+                else
+                    $data['omise_dashboard']['error'][] = $e->getMessage();
             }
         }
 
@@ -131,13 +136,13 @@ class ControllerPaymentOmise extends Controller {
         if (! OmisePluginHelperCurrency::isSupport($this->config->get('config_currency'))) {
             // THB currency
             if (empty($this->model_localisation_currency->getCurrencyByCode('THB')))
-                $data['omise_dashboard']['warning'][] = $this->language->get('error_currency_thb_not_found').' <a href="'.$this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL').'">setup</a> or <a href="http://docs.opencart.com/system/localisation/currency">learn more</a>';
+                $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_thb_not_found'), $this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL'));
 
             // JPY currency
             if (empty($this->model_localisation_currency->getCurrencyByCode('JPY')))
-                $data['omise_dashboard']['warning'][] = $this->language->get('error_currency_jpy_not_found').' <a href="'.$this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL').'">setup</a> or <a href="http://docs.opencart.com/system/localisation/currency">learn more</a>';
+                $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_jpy_not_found'), $this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL'));
 
-            $data['omise_dashboard']['warning'][] = $this->language->get('error_currency_no_support').' Your default currency is <strong>'.$this->config->get('config_currency').'</strong>.'.' <a href="'.$this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL').'">setup</a> or <a href="http://docs.opencart.com/system/setting/local">learn more</a>';
+            $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_not_support'), $this->config->get('config_currency'), $this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL'));
         }
 
         return $data;
@@ -157,6 +162,79 @@ class ControllerPaymentOmise extends Controller {
             'omise_skey'          => $this->config->get('omise_skey'),
             'omise_payment_title' => $this->config->get('omise_payment_title'),
         );
+    }
+
+    /**
+     * @return array
+     */
+    private function pageTranslation() {
+        $this->load->language('payment/omise');
+
+        return array(
+            'heading_title'                           => $this->language->get('heading_title'),
+            'label_tab_dashboard'                     => $this->language->get('label_tab_dashboard'),
+            'label_tab_setting'                       => $this->language->get('label_tab_setting'),
+            'label_tab_plugin_version'                => $this->language->get('label_tab_plugin_version'),
+            'label_tab_charge'                        => $this->language->get('label_tab_charge'),
+            'label_tab_transfer'                      => $this->language->get('label_tab_transfer'),
+            'label_dashboard_account'                 => $this->language->get('label_dashboard_account'),
+            'label_dashboard_mode'                    => $this->language->get('label_dashboard_mode'),
+            'label_dashboard_currency'                => $this->language->get('label_dashboard_currency'),
+            'label_dashboard_total_balance'           => $this->language->get('label_dashboard_total_balance'),
+            'label_dashboard_transferable_balance'    => $this->language->get('label_dashboard_transferable_balance'),
+            'label_dashboard_transactions_history'    => $this->language->get('label_dashboard_transactions_history'),
+            'label_charge_table_no'                   => $this->language->get('label_charge_table_no'),
+            'label_charge_table_amount'               => $this->language->get('label_charge_table_amount'),
+            'label_charge_table_id'                   => $this->language->get('label_charge_table_id'),
+            'label_charge_table_authorized'           => $this->language->get('label_charge_table_authorized'),
+            'label_charge_table_paid'                 => $this->language->get('label_charge_table_paid'),
+            'label_charge_table_failure_message'      => $this->language->get('label_charge_table_failure_message'),
+            'label_charge_table_created'              => $this->language->get('label_charge_table_created'),
+            'label_transfer_table_no'                 => $this->language->get('label_transfer_table_no'),
+            'label_transfer_table_amount'             => $this->language->get('label_transfer_table_amount'),
+            'label_transfer_table_id'                 => $this->language->get('label_transfer_table_id'),
+            'label_transfer_table_sent'               => $this->language->get('label_transfer_table_sent'),
+            'label_transfer_table_paid'               => $this->language->get('label_transfer_table_paid'),
+            'label_transfer_table_failure_message'    => $this->language->get('label_transfer_table_failure_message'),
+            'label_transfer_table_created'            => $this->language->get('label_transfer_table_created'),
+            'label_transfer_amount_field_placeholder' => $this->language->get('label_transfer_amount_field_placeholder'),
+            'label_setting_module_config'             => $this->language->get('label_setting_module_config'),
+            'label_setting_module_status'             => $this->language->get('label_setting_module_status'),
+            'label_setting_key_config'                => $this->language->get('label_setting_key_config'),
+            'label_setting_omise_config'              => $this->language->get('label_setting_omise_config'),
+            'label_omise_pkey_test'                   => $this->language->get('label_omise_pkey_test'),
+            'label_omise_skey_test'                   => $this->language->get('label_omise_skey_test'),
+            'label_omise_pkey'                        => $this->language->get('label_omise_pkey'),
+            'label_omise_skey'                        => $this->language->get('label_omise_skey'),
+            'label_omise_mode_test'                   => $this->language->get('label_omise_mode_test'),
+            'label_omise_mode_live'                   => $this->language->get('label_omise_mode_live'),
+            'label_omise_3ds'                         => $this->language->get('label_omise_3ds'),
+            'label_omise_payment_title'               => $this->language->get('label_omise_payment_title'),
+            'text_mode_test'                          => $this->language->get('text_mode_test'),
+            'text_mode_live'                          => $this->language->get('text_mode_live'),
+            'text_enabled'                            => $this->language->get('text_enabled'),
+            'text_disabled'                           => $this->language->get('text_disabled'),
+            'text_checking_for_latest_version'        => $this->language->get('text_checking_for_latest_version'),
+            'text_version_up_to_date'                 => $this->language->get('text_version_up_to_date'),
+            'button_save'                             => $this->language->get('button_save'),
+            'button_cancel'                           => $this->language->get('button_cancel'),
+            'button_create_transfer'                  => $this->language->get('button_create_transfer'),
+        );
+    }
+
+    /**
+     * @return string
+     */
+    private function searchErrorTranslation($clue) {
+        $this->load->language('payment/omise');
+
+        $translate_code = 'error_' . str_replace(' ', '_', strtolower($clue));
+        $translate_msg  = $this->language->get($translate_code);
+
+        if ($translate_code !== $translate_msg)
+            return $translate_msg;
+
+        return "";
     }
 
     /**
@@ -202,28 +280,14 @@ class ControllerPaymentOmise extends Controller {
         $data = array_merge(
             $this->pageDataDashboardTab(),
             $this->pageDataSettingTab(),
+            $this->pageTranslation(),
             array(
-                'success'                   => $this->flashSuccessMessages(),
-                'error_warning'             => $this->flashErrorMessages(),
-                'heading_title'             => $this->language->get('heading_title'),
-                'button_save'               => $this->language->get('button_save'),
-                'action'                    => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
-                'button_cancel'             => $this->language->get('button_cancel'),
-                'cancel'                    => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
-                'text_form'                 => $this->language->get('text_form'),
-                'entry_status'              => $this->language->get('entry_status'),
-                'text_enabled'              => $this->language->get('text_enabled'),
-                'text_disabled'             => $this->language->get('text_disabled'),
-                'label_omise_pkey_test'     => $this->language->get('label_omise_pkey_test'),
-                'label_omise_skey_test'     => $this->language->get('label_omise_skey_test'),
-                'label_omise_pkey'          => $this->language->get('label_omise_pkey'),
-                'label_omise_skey'          => $this->language->get('label_omise_skey'),
-                'label_omise_mode_test'     => $this->language->get('label_omise_mode_test'),
-                'label_omise_mode_live'     => $this->language->get('label_omise_mode_live'),
-                'label_omise_3ds'           => $this->language->get('label_omise_3ds'),
-                'label_omise_payment_title' => $this->language->get('label_omise_payment_title'),
-                'transfer_url'              => $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL'),
-                'versioncheckup_url'        => $this->url->link('payment/omise/ajaxversioncheckup', 'token=' . $this->session->data['token'], 'SSL'),
+                'success'            => $this->flashSuccessMessages(),
+                'error_warning'      => $this->flashErrorMessages(),
+                'action'             => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
+                'cancel'             => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
+                'transfer_url'       => $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL'),
+                'versioncheckup_url' => $this->url->link('payment/omise/ajaxversioncheckup', 'token=' . $this->session->data['token'], 'SSL'),
             )
         );
 
