@@ -1,6 +1,28 @@
 Change Log
 ==========
 
+An [unreleased] version is not available on `master` branch and is subject to changes and must not be considered final. Elements of unreleased list may be edited or removed at any time.
+
+[unreleased]
+------------
+- *`Added`* Support `JPY` currency
+- *`Added`* JA (Japanese language) Translation
+- *`Added`* Implement `version checker` feature. That it will request to the Github api to check the latest version of Omise-OpenCart repository
+- *`Added`* Implement 3D-Secure feature
+- *`Added`* Omise-Plugin
+- *`Improved`* Code refactoring
+- *`Improved`* Code styling
+- *`Improved`* Better error messages
+- *`Improved`* Re-design & re-implement Omise dashboard for support OpenCart 2.0.x (Admin page)
+- *`Improved`* Re-design & re-implement Omise setting page for support OpenCart 2.0.x (Admin page)
+- *`Improved`* Re-design & re-implement Omise Checkout form (frontend)
+- *`Updated`* Admin be able to change the payment method title from `Credit Card (Powered by Omise)` to another word by themselve from the Omise Setting page
+- *`Updated`* Updated README.md file
+- *`Updated`* Changed compatible version number from `1.5.x` to `2.0.x`
+- *`Updated`* Updated OpenCart2.0 interface images
+- *`Updated`* Updated interface to use bootstrap 3
+- *`Removed`* Remove vQmod library
+
 [1.5.0.2] 2015-11-16
 ----------------------
 #### Updates

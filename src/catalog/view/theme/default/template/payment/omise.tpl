@@ -1,26 +1,23 @@
-<!-- Include Omise's stylesheet -->
-<link rel="stylesheet" type="text/css" href="catalog/view/stylesheet/omise/omise.css">
-
 <!-- Include Omise's javascript -->
 <script type="text/javascript">
     $.getScript("https://cdn.omise.co/omise.min.js.gz", function() {
-        Omise.setPublicKey("<?php echo $omise['public_key']; ?>");
+        Omise.setPublicKey("<?php echo $omise['pkey']; ?>");
 
         $("#omise-form-checkout").submit(function() {
             var form            = $(this),
                 alertSuccess    = form.find(".alert-success"),
                 alertError      = form.find(".alert-error"),
-                overlay         = form.find('.overlay');
+                spinner         = form.find('.omise-submitting');
 
-            // Show loading overlay.
-            overlay.addClass('show');
-
-            // Disable the submit button to avoid repeated click.
-            form.find("input[type=submit]").prop("disabled", true);
+            // Show spinner icon.
+            spinner.addClass('loading');
 
             // Hidden alert box
             alertError.removeClass('show');
             alertSuccess.removeClass('show');
+
+            // Disable the submit button to avoid repeated click.
+            form.find("input[type=submit]").prop("disabled", true);
 
             // Serialize the form fields into a valid card object.
             var card = {
@@ -50,6 +47,8 @@
                     // Re-enable the submit button.
                     form.find("input[type=submit]").prop("disabled", false);
                 } else {
+                    $("#input-omise-token").val(response.id);
+
                     // Token was created. Then, charge a card with token.
                     var posting = $.post("<?php echo $checkout_url; ?>", {
                         "omise_token": response.id,
@@ -60,23 +59,28 @@
                         .done(function(resp) {
                             resp = JSON.parse(resp);
 
-                            if (typeof resp.error != "undefined") {
-                                alertError.html("Omise Response: "+resp.error).addClass('show');
-                                form.find("input[type=submit]").prop("disabled", false);
-                            } else if (resp.failure_code != null) {
-                                alertError.html("Bank Response: "+resp.failure_message).addClass('show');
-                                form.find("input[type=submit]").prop("disabled", false);
-                            } else {
-                                alertSuccess.html("Succeed").addClass('show');
-                                form.get(0).submit();
+                            if (typeof resp === "object") {
+                                if (typeof resp.error !== "undefined") {
+                                    alertError.html(resp.error).addClass('show');
+                                } else {
+                                    if (typeof resp.redirect !== "undefined") {
+                                        console.log('redirect');
+                                        window.location = resp.redirect;
+                                    } else {
+                                        form.get(0).submit();
+                                    }
+                                }
                             }
+
+                            form.find("input[type=submit]").prop("disabled", false);
                         })
                         .fail(function(jqXHR, textStatus, errorThrown) {
                             alertError.html("Omise "+errorThrown).addClass('show');
+                            form.find("input[type=submit]").prop("disabled", false);
                         });
                 };
 
-                overlay.removeClass('show');
+                spinner.removeClass('loading');
             });
 
             // Prevent the form from being submitted;
@@ -87,64 +91,78 @@
 
 <!-- Omise's checkout form -->
 <form id="omise-form-checkout" method="post" action="<?php echo $success_url; ?>">
-    <img src="catalog/view/theme/default/image/secured_by_omise.png" width="200">
     <!-- Collect a customer's card -->
     <div class="omise-payment">
         <h3>Card Information</h3>
-        
+
         <!-- Alert box -->
-        <div class="alert-box alert-error warning"></div>
-        <div class="alert-box alert-success success"></div>
+        <div class="alert alert-danger alert-box alert-error warning"></div>
+        <div class="alert alert-box alert-success success"></div>
 
         <!-- Token -->
-        <input type="hidden" name="omise_token" class="input-omise-token">
+        <input type="hidden" id="input-omise-token" name="omise_token" class="input-omise-token">
 
         <!-- Card Holder Name -->
-        <div class="input-group clearfix">
-            <div class="left"><label>Card Holder Name</label></div>
-            <div class="right">
-                <input type="text" data-omise="holder_name" value="" class="input-omise-collect-holder-name">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="input-omise-cardname">Card Holder Name</label>
+                    <input id="input-omise-cardname" type="text" data-omise="holder_name" value="" class="form-control input-omise-collect-holder-name">
+                </div>
             </div>
         </div>
-        
-        <!-- Card Number -->
-        <div class="input-group clearfix">
-            <div class="left"><label>Card Number</label></div>
-            <div class="right">
-                <input type="text" data-omise="number" value="" class="input-omise-collect-number">
+
+        <div class="row">
+            <!-- Card Number -->
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group">
+                    <label for="input-omise-cardnumber">Card Number</label>
+                    <input id="input-omise-cardnumber" type="text" data-omise="number" value="" class="form-control input-omise-collect-number">
+                </div>
+            </div>
+
+            <!-- Expiration date -->
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>Expire Month</label>
+                            <select data-omise="expiration_month" class="form-control input-omise-collect-expiration-month"> >
+                                <?php foreach ($loop_months as $k=>$v): ?>
+                                    <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Expire Year</label>
+                            <select data-omise="expiration_year" class="form-control input-omise-collect-expiration-year">
+                                <?php foreach ($loop_years as $k=>$v): ?>
+                                    <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <!-- Expiration date -->
-        <div class="input-group clearfix">
-            <div class="left"><label>Expire Date</label></div>
-            <div class="right">
-                <select data-omise="expiration_month" class="input-omise-collect-expiration-month"> >
-                <?php foreach ($this->getMonths() as $k=>$v): ?>
-                    <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
-                <?php endforeach ?>
-                </select>
-                <select data-omise="expiration_year" class="input-omise-collect-expiration-year">
-                <?php foreach ($this->getYears() as $k=>$v): ?>
-                    <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
-                <?php endforeach ?>
-                </select>
-            </div>
-        </div>
-        
-        <!-- Security Code -->
-        <div class="input-group clearfix">
-            <div class="left"><label>Security Code</label></div>
-            <div class="right">
-                <input type="password" data-omise="security_code" size="8" value="" class="input-omise-collect-security-code">
+
+        <div class="row">
+            <div class="col-sm-3 col-md-2">
+                <!-- Security Code -->
+                <div class="form-group">
+                    <label>Security Code</label>
+                    <input type="password" data-omise="security_code" size="8" value="" class="form-control input-omise-collect-security-code">
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Button -->
     <div class="buttons">
-        <div class="right">
-            <input type="submit" value="<?php echo $button_confirm; ?>" class="button btn-checkout" />
+        <div class="pull-right">
+            <i class="omise-submitting fa fa-spinner fa-spin"></i>
+            &nbsp;
+            <input type="submit" value="<?php echo $button_confirm; ?>" class="button btn btn-primary btn-checkout" />
         </div>
     </div>
 
@@ -171,7 +189,13 @@
     <input type="hidden" name="deliveryemail" value="<?php echo $deliveryemail; ?>" />
     <input type="hidden" name="deliveryphone" value="<?php echo $deliveryphone; ?>" />
     <input type="hidden" name="deliverypost" value="<?php echo $deliverypost; ?>" />
-
-    <!-- Overlay -->
-    <div class="overlay"></div>
 </form>
+
+
+<style>
+#collapse-checkout-confirm                 { position: relative; }
+form#omise-form-checkout .alert-box        { display: none; }
+form#omise-form-checkout .show             { display: block !important; }
+form#omise-form-checkout .loading          { display: inline-block !important; }
+form#omise-form-checkout .omise-submitting { display: none; }
+</style>
