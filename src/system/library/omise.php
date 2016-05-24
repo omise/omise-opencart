@@ -1,5 +1,6 @@
 <?php
 
+require_once dirname(__FILE__).'/omise-plugin/helpers/charge.php';
 require_once dirname(__FILE__).'/omise-plugin/helpers/currency.php';
 
 // Define version of Omise-OpenCart

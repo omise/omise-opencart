@@ -71,7 +71,7 @@ class ControllerPaymentOmise extends Controller {
 					// Try to create a charge and capture it.
 					$omise_charge = OmiseCharge::create(
 						array(
-							"amount"      => str_replace('.', '', $order_total),
+							"amount"      => OmisePluginHelperCharge::amount($order_info['currency_code'], $order_total),
 							"currency"    => $this->currency->getCode(),
 							"description" => $this->request->post['description'],
 							"return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
