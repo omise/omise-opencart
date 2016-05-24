@@ -1,5 +1,20 @@
 <?php
 class ControllerPaymentOmise extends Controller {
+	/**
+	 * @return string
+	 */
+	private function searchErrorTranslation($clue) {
+	    $this->load->language('payment/omise');
+
+	    $translate_code = 'error_' . str_replace(' ', '_', strtolower($clue));
+	    $translate_msg  = $this->language->get($translate_code);
+
+	    if ($translate_code !== $translate_msg)
+	        return $translate_msg;
+
+	    return $clue;
+	}
+
 	public function checkoutCallback() {
 		if ($this->request->get['order_id']) {
 			$this->load->library('omise');
@@ -31,7 +46,6 @@ class ControllerPaymentOmise extends Controller {
 	 * @return string(Json)
 	 */
 	public function checkout() {
-		// If has a `post['omise_token']` request.
 		if (isset($this->request->post['omise_token'])) {
 			$this->load->library('omise');
 			$this->load->library('omise-php/lib/Omise');
@@ -51,17 +65,17 @@ class ControllerPaymentOmise extends Controller {
 			// Create a order history with `Processing` status
 			$order_id    = $this->session->data['order_id'];
 			$order_info  = $this->model_checkout_order->getOrder($order_id);
-			$order_total = number_format($order_info['total'], 2, '', '');
+			$order_total = $this->currency->format($order_info['total'], $order_info['currency_code'], '', false);
 			if ($order_info) {
 				try {
 					// Try to create a charge and capture it.
 					$omise_charge = OmiseCharge::create(
 						array(
-							"amount"        => $order_total,
-							"currency"      => $this->currency->getCode(),
-							"description"   => $this->request->post['description'],
-							"return_uri"	=> $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
-							"card"          => $this->request->post['omise_token']
+							"amount"      => OmisePluginHelperCharge::amount($order_info['currency_code'], $order_total),
+							"currency"    => $this->currency->getCode(),
+							"description" => $this->request->post['description'],
+							"return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
+							"card"        => $this->request->post['omise_token']
 						),
 						$omise['pkey'],
 						$omise['skey']
@@ -102,8 +116,12 @@ class ControllerPaymentOmise extends Controller {
 					}
 				} catch (Exception $e) {
 					// Status: failed.
-					$this->model_checkout_order->addOrderHistory($order_id, 10);
-					echo json_encode(array('error' => 'Payment Gateway - '.$e->getMessage()));
+					$error_message = $this->searchErrorTranslation('Payment ' . $e->getMessage());
+
+					$this->model_checkout_order->addOrderHistory($order_id, 10, $error_message);
+					echo json_encode(array(
+						'error' => $error_message
+					));
 				}
 			} else {
 				echo json_encode(array('error' => 'Cannot find your order, please try again.'));

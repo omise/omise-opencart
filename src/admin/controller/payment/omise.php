@@ -122,27 +122,24 @@ class ControllerPaymentOmise extends Controller {
                         'transfer_total' => $omise_transfer['total'],
                     )
                 );
+
+                // Check currency supports
+                if (! OmisePluginHelperCurrency::isSupport($this->config->get('config_currency'))) {
+                    // THB currency
+                    $thb_currency = $this->model_localisation_currency->getCurrencyByCode('THB');
+                    if (strtoupper($omise_balance['currency']) === "THB" && empty($thb_currency))
+                        $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_thb_not_found'), $this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL'));
+
+                    // JPY currency
+                    $jpy_currency = $this->model_localisation_currency->getCurrencyByCode('JPY');
+                    if (strtoupper($omise_balance['currency']) === "JPY" && empty($jpy_currency))
+                        $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_jpy_not_found'), $this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL'));
+
+                    $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_not_support'), $this->config->get('config_currency'), $this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL'));
+                }
             } catch (Exception $e) {
-                // Looking for translate first,
-                $translation = $this->searchErrorTranslation($e->getMessage());
-                if ($translation !== "")
-                    $data['omise_dashboard']['error'][] = $translation;
-                else
-                    $data['omise_dashboard']['error'][] = $e->getMessage();
+                $data['omise_dashboard']['error'][] = $this->searchErrorTranslation($e->getMessage());
             }
-        }
-
-        // Check currency supports
-        if (! OmisePluginHelperCurrency::isSupport($this->config->get('config_currency'))) {
-            // THB currency
-            if (empty($this->model_localisation_currency->getCurrencyByCode('THB')))
-                $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_thb_not_found'), $this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL'));
-
-            // JPY currency
-            if (empty($this->model_localisation_currency->getCurrencyByCode('JPY')))
-                $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_jpy_not_found'), $this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL'));
-
-            $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_not_support'), $this->config->get('config_currency'), $this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL'));
         }
 
         return $data;
@@ -234,7 +231,22 @@ class ControllerPaymentOmise extends Controller {
         if ($translate_code !== $translate_msg)
             return $translate_msg;
 
-        return "";
+        return $clue;
+    }
+
+    /**
+     * @return void
+     */
+    private function redirectTo($destination) {
+        switch ($destination) {
+            case 'omise_dashboard':
+                $this->response->redirect($this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
+                break;
+
+            default:
+                $this->response->redirect($this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
+                break;
+        }
     }
 
     /**
@@ -310,16 +322,24 @@ class ControllerPaymentOmise extends Controller {
         $this->load->model('setting/setting');
         $this->load->language('payment/omise');
 
-        $update = $this->request->post;
-        if (! empty($update)) {
-            $update['omise_3ds'] = isset($update['omise_3ds']) ? $update['omise_3ds'] : 0;
+        try {
+            // Allowed only POST method
+            if ($this->request->server['REQUEST_METHOD'] !== 'POST')
+                throw new Exception($this->language->get('error_allowed_only_post_method'), 1);
 
-            // Update
-            $this->model_setting_setting->editSetting('omise', $update);
+            $update = $this->request->post;
+            if (! empty($update)) {
+                $update['omise_3ds'] = isset($update['omise_3ds']) ? $update['omise_3ds'] : 0;
 
-            $this->session->data['success'] = $this->language->get('text_session_save');
-            $this->response->redirect($this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
+                // Update
+                $this->model_setting_setting->editSetting('omise', $update);
+                $this->session->data['success'] = $this->language->get('text_session_save');
+            }
+        } catch (Exception $e) {
+            $this->session->data['error'] = $this->searchErrorTranslation($e->getMessage());
         }
+
+        $this->redirectTo('omise_dashboard');
     }
 
     /**
@@ -331,23 +351,24 @@ class ControllerPaymentOmise extends Controller {
         $this->load->language('payment/omise');
 
         try {
-            // POST request handler.
+            // Allowed only POST method
             if (! $this->request->server['REQUEST_METHOD'] === 'POST')
-                throw new Exception($this->language->get('error_needed_post_request'), 1);
+                throw new Exception($this->language->get('error_allowed_only_post_method'), 1);
 
+            // Required 'transfer_amount' and transfer_amount must be greater than 0
             if (! isset($this->request->post['transfer_amount']) || $this->request->post['transfer_amount'] <= 0)
-                throw new Exception($this->language->get('error_need_amount_value'), 1);
+                throw new Exception($this->language->get('error_transfer_amount_is_empty'), 1);
 
             $transferring = $this->model_payment_omise->createOmiseTransfer($this->request->post['transfer_amount']);
             if (isset($transferring['error']))
-                throw new Exception('Omise Transfer:: '.$transferring['error'], 1);
+                throw new Exception('Omise Transfer '.$transferring['error'], 1);
 
-            $this->session->data['success'] = $this->language->get('api_transfer_success');
+            $this->session->data['success'] = $this->language->get('text_omise_transfer_success');
         } catch (Exception $e) {
-            $this->session->data['error'] = $e->getMessage();
+            $this->session->data['error'] = $this->searchErrorTranslation($e->getMessage());
         }
 
-        $this->response->redirect($this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
+        $this->redirectTo('omise_dashboard');
     }
 
     /**
