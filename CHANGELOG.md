@@ -1,9 +1,7 @@
 Change Log
 ==========
 
-An [unreleased] version is not available on `master` branch and is subject to changes and must not be considered final. Elements of unreleased list may be edited or removed at any time.
-
-[unreleased]
+[2.0.0.0] 2016-05-24
 ------------
 - *`Added`* Support `JPY` currency
 - *`Added`* JA (Japanese language) Translation
