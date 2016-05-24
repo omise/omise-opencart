@@ -116,9 +116,11 @@ class ControllerPaymentOmise extends Controller {
 					}
 				} catch (Exception $e) {
 					// Status: failed.
-					$this->model_checkout_order->addOrderHistory($order_id, 10);
+					$error_message = $this->searchErrorTranslation('Payment ' . $e->getMessage());
+
+					$this->model_checkout_order->addOrderHistory($order_id, 10, $error_message);
 					echo json_encode(array(
-						'error' => $this->searchErrorTranslation('Payment ' . $e->getMessage())
+						'error' => $error_message
 					));
 				}
 			} else {
