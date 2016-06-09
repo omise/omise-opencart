@@ -20,7 +20,8 @@ class ModelPaymentOmise extends Model {
             'omise_skey_test'     => '',
             'omise_test_mode'     => 0,
             'omise_3ds'           => 0,
-            'omise_payment_title' => 'Credit Card (Powered by Omise)'
+            'omise_payment_title' => 'Credit Card (Powered by Omise)',
+            'omise_auto_capture'  => 1
         ));
 
         /* Install omise_charge table */

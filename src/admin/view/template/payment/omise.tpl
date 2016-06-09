@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Include header.
  *
@@ -12,7 +12,7 @@ echo $header; ?><?php echo $column_left; ?>
         <button type="submit" onclick="$('#form-setting').submit();" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
         <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
       </div>
-      
+
       <h1><?php echo $heading_title; ?></h1>
       <ul class="breadcrumb">
         <?php foreach ($breadcrumbs as $breadcrumb) { ?>
@@ -307,11 +307,21 @@ echo $header; ?><?php echo $column_left; ?>
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="omise_payments_3ds"><?php echo $label_omise_3ds; ?></label>
                 <div class="col-sm-10">
-                  <div class="checkbox">
-                    <input type="checkbox" name="omise_3ds" value="1" class="form-control" <?php echo $omise_3ds ? 'checked="checked"' : ''; ?> />
+                  <div class="checkbox-inline">
+                    <input type="checkbox" name="omise_3ds" id="omise_payments_3ds" value="1" class="form-control" <?php echo $omise_3ds ? 'checked="checked"' : ''; ?> />
                   </div>
                 </div>
               </div> <!-- /END .3D-Secure -->
+              <!-- Payment Action -->
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="omise_auto_capture"><?php echo $label_omise_payment_action; ?></label>
+                <div class="col-sm-10">
+                  <select name="omise_auto_capture" id="omise_auto_capture" class="form-control">
+                    <option value="1" <?php echo $omise_auto_capture ? 'selected="selected"' : ''; ?>><?php echo $text_auto_capture; ?></option>
+                    <option value="0" <?php echo !$omise_auto_capture ? 'selected="selected"' : ''; ?>><?php echo $text_manual_capture; ?></option>
+                  </select>
+                </div>
+              </div> <!-- /END Payment Action -->
             </div>
           </div>
         </form>
@@ -332,7 +342,7 @@ echo $header; ?><?php echo $column_left; ?>
       </div>
     </div>
 
-    
+
   </div> <!-- /END .container-fluid -->
 </div> <!-- /END #content -->
 
