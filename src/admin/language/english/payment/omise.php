@@ -34,7 +34,7 @@ $_['label_transfer_amount_field_placeholder']                  = 'Transfer amoun
 $_['label_setting_module_config']                              = 'Module Config';
 $_['label_setting_module_status']                              = 'Module Status';
 $_['label_setting_key_config']                                 = 'Omise Keys Config';
-$_['label_setting_omise_config']                               = 'Omise Advance Integration';
+$_['label_setting_omise_config']                               = 'Omise Advance Settings';
 
 
 // Omise's labels
@@ -62,7 +62,7 @@ $_['text_disabled']                                            = 'Disabled';
 $_['text_checking_for_latest_version']                         = 'Checking for latest version...';
 $_['text_version_up_to_date']                                  = 'Your Omise-OpenCart version is up to date.';
 $_['text_session_save']                                        = 'Saved.';
-$_['text_omise_transfer_success']                              = 'Your transfer request has sent already.';
+$_['text_omise_transfer_success']                              = 'Your transfer request has been sent already.';
 $_['text_auto_capture']                                        = 'Auto Capture';
 $_['text_manual_capture']                                      = 'Manual Capture';
 
