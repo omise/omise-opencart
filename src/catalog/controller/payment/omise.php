@@ -62,12 +62,6 @@ class ControllerPaymentOmise extends Controller {
 				$omise['skey'] = $this->config->get('omise_skey');
 			}
 
-			if ($this->config->get('omise_auto_capture') == 0) {
-				$omise['capture'] = false;
-			} else {
-				$omise['capture'] = true;
-			}
-
 			// Create a order history with `Processing` status
 			$order_id    = $this->session->data['order_id'];
 			$order_info  = $this->model_checkout_order->getOrder($order_id);
@@ -82,7 +76,7 @@ class ControllerPaymentOmise extends Controller {
 							"description" => $this->request->post['description'],
 							"return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
 							"card"        => $this->request->post['omise_token'],
-							"capture"     => $omise['capture']
+							"capture"     => $this->config->get('omise_auto_capture')
 						),
 						$omise['pkey'],
 						$omise['skey']

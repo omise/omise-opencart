@@ -5,6 +5,14 @@ class ModelPaymentOmise extends Model {
      */
     private $_table = 'omise_gateway';
     private $_group = 'omise';
+    
+    /**
+     * 0 is manual capture.
+     * 1 is auto capture.
+     * 
+     * @var integer
+     */
+    const DEFAULT_AUTO_CAPTURE = 1;
 
     /**
      * Install a table that need to use in Omise Payment Gateway module
@@ -21,7 +29,7 @@ class ModelPaymentOmise extends Model {
             'omise_test_mode'     => 0,
             'omise_3ds'           => 0,
             'omise_payment_title' => 'Credit Card (Powered by Omise)',
-            'omise_auto_capture'  => 1
+            'omise_auto_capture'  => self::DEFAULT_AUTO_CAPTURE
         ));
 
         /* Install omise_charge table */
@@ -201,5 +209,9 @@ class ModelPaymentOmise extends Model {
         }
 
         return $keys;
+    }
+    
+    public function get_default_auto_capture() {
+    	return self::DEFAULT_AUTO_CAPTURE;
     }
 }

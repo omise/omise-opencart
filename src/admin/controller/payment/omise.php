@@ -149,6 +149,14 @@ class ControllerPaymentOmise extends Controller {
      * @return array
      */
     private function pageDataSettingTab() {
+        $this->load->model('payment/omise');
+
+    	if (is_null($this->config->get('omise_auto_capture'))) {
+    		$omise_auto_capture = $this->model_payment_omise->get_default_auto_capture();
+    	} else {
+    		$omise_auto_capture = $this->config->get('omise_auto_capture');
+    	}
+
         return array(
             'omise_status'        => $this->config->get('omise_status'),
             'omise_test_mode'     => $this->config->get('omise_test_mode'),
@@ -158,7 +166,7 @@ class ControllerPaymentOmise extends Controller {
             'omise_pkey'          => $this->config->get('omise_pkey'),
             'omise_skey'          => $this->config->get('omise_skey'),
             'omise_payment_title' => $this->config->get('omise_payment_title'),
-            'omise_auto_capture'  => $this->config->get('omise_auto_capture')
+            'omise_auto_capture'  => $omise_auto_capture
         );
     }
 
