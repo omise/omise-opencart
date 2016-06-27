@@ -7,6 +7,7 @@ if (! class_exists('OmisePluginHelperTransfer')) {
 		 *
 		 * Example for THB:
 		 * 100    => 10000
+		 * 100.00 => 10000
 		 * 100.25 => 10025
 		 * 100.50 => 10050
 		 * 100.1  => 10010
