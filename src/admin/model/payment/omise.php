@@ -168,25 +168,19 @@ class ModelPaymentOmise extends Model {
         $this->load->library('omise');
         $this->load->library('omise-php/lib/Omise');
         $this->load->language('payment/omise');
-        $this->load->model('payment/omise');
 
         // Get Omise Keys.
         if ($keys = $this->_retrieveOmiseKeys()) {
             try {
-                $omise_balance = $this->model_payment_omise->getOmiseBalance();
+                $omise_balance = $this->getOmiseBalance();
                 if (isset($omise_balance['error'])) {
                     throw new Exception('Omise Balance ' . $omise_balance['error'], 1);
                 }
 
                 $transfer_amount = OmisePluginHelperTransfer::amount($omise_balance['currency'], $amount);
 
-                $omise = OmiseTransfer::create(array('amount' => $transfer_amount), $keys['pkey'], $keys['skey']);
+                return OmiseTransfer::create(array('amount' => $transfer_amount), $keys['pkey'], $keys['skey']);
 
-                if (isset($omise['object']) && $omise['object'] == "transfer") {
-                    return true;
-                } else {
-                    return array('error' => 'Something went wrong.');
-                }
             } catch (Exception $e) {
                 return array('error' => $e->getMessage());
             }
