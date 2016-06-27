@@ -152,7 +152,7 @@ class ControllerPaymentOmise extends Controller {
         $this->load->model('payment/omise');
 
     	if (is_null($this->config->get('omise_auto_capture'))) {
-    		$omise_auto_capture = $this->model_payment_omise->get_default_auto_capture();
+    		$omise_auto_capture = $this->model_payment_omise->getDefaultAutoCapture();
     	} else {
     		$omise_auto_capture = $this->config->get('omise_auto_capture');
     	}

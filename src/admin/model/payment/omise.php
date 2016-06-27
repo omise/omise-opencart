@@ -211,7 +211,7 @@ class ModelPaymentOmise extends Model {
         return $keys;
     }
     
-    public function get_default_auto_capture() {
+    public function getDefaultAutoCapture() {
     	return self::DEFAULT_AUTO_CAPTURE;
     }
 }
