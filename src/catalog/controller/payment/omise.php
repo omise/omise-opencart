@@ -75,7 +75,8 @@ class ControllerPaymentOmise extends Controller {
 							"currency"    => $this->currency->getCode(),
 							"description" => $this->request->post['description'],
 							"return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
-							"card"        => $this->request->post['omise_token']
+							"card"        => $this->request->post['omise_token'],
+							"capture"     => $this->config->get('omise_auto_capture')
 						),
 						$omise['pkey'],
 						$omise['skey']
