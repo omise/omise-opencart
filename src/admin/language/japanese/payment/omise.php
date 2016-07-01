@@ -46,6 +46,7 @@ $_['label_omise_pkey']                                         = 'パブリッ�
 $_['label_omise_skey']                                         = 'シークレットキー';
 $_['label_omise_3ds']                                          = '3Dセキュアの有効化';
 $_['label_omise_payment_title']                                = '決済方法';
+$_['label_omise_payment_action']                               = '売上処理方法';
 
 
 // Breadcrumb menu.
@@ -62,6 +63,8 @@ $_['text_checking_for_latest_version']                         = '最新のバ�
 $_['text_version_up_to_date']                                  = 'お使いの Omise-OpenCart のバージョンは最新です';
 $_['text_session_save']                                        = '保存されました';
 $_['text_omise_transfer_success']                              = '振込要求が送信されました';
+$_['text_auto_capture']                                        = '自動売上';
+$_['text_manual_capture']                                      = '手動売上';
 
 
 // Action buttons

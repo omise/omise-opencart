@@ -5,6 +5,14 @@ class ModelPaymentOmise extends Model {
      */
     private $_table = 'omise_gateway';
     private $_group = 'omise';
+    
+    /**
+     * 0 is manual capture.
+     * 1 is auto capture.
+     * 
+     * @var integer
+     */
+    const DEFAULT_AUTO_CAPTURE = 1;
 
     /**
      * Install a table that need to use in Omise Payment Gateway module
@@ -20,7 +28,8 @@ class ModelPaymentOmise extends Model {
             'omise_skey_test'     => '',
             'omise_test_mode'     => 0,
             'omise_3ds'           => 0,
-            'omise_payment_title' => 'Credit Card (Powered by Omise)'
+            'omise_payment_title' => 'Credit Card (Powered by Omise)',
+            'omise_auto_capture'  => self::DEFAULT_AUTO_CAPTURE
         ));
 
         /* Install omise_charge table */
@@ -163,12 +172,15 @@ class ModelPaymentOmise extends Model {
         // Get Omise Keys.
         if ($keys = $this->_retrieveOmiseKeys()) {
             try {
-                $omise = OmiseTransfer::create(array('amount' => $amount), $keys['pkey'], $keys['skey']);
+                $omise_balance = $this->getOmiseBalance();
+                if (isset($omise_balance['error'])) {
+                    throw new Exception('Omise Balance ' . $omise_balance['error'], 1);
+                }
 
-                if (isset($omise['object']) && $omise['object'] == "transfer")
-                    return true;
-                else
-                    return array('error' => 'Something went wrong.');
+                $transfer_amount = OmisePluginHelperTransfer::amount($omise_balance['currency'], $amount);
+
+                return OmiseTransfer::create(array('amount' => $transfer_amount), $keys['pkey'], $keys['skey']);
+
             } catch (Exception $e) {
                 return array('error' => $e->getMessage());
             }
@@ -200,5 +212,9 @@ class ModelPaymentOmise extends Model {
         }
 
         return $keys;
+    }
+    
+    public function getDefaultAutoCapture() {
+    	return self::DEFAULT_AUTO_CAPTURE;
     }
 }

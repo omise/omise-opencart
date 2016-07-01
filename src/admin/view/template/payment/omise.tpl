@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Include header.
  *
@@ -12,7 +12,7 @@ echo $header; ?><?php echo $column_left; ?>
         <button type="submit" onclick="$('#form-setting').submit();" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
         <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
       </div>
-      
+
       <h1><?php echo $heading_title; ?></h1>
       <ul class="breadcrumb">
         <?php foreach ($breadcrumbs as $breadcrumb) { ?>
@@ -138,7 +138,6 @@ echo $header; ?><?php echo $column_left; ?>
                           <table class="table table-bordered table-hover table-striped">
                             <thead>
                               <tr>
-                                <td><?php echo $label_charge_table_no; ?></td>
                                 <td><?php echo $label_charge_table_amount; ?></td>
                                 <td><?php echo $label_charge_table_id; ?></td>
                                 <td width="8%"><?php echo $label_charge_table_authorized; ?></td>
@@ -150,7 +149,6 @@ echo $header; ?><?php echo $column_left; ?>
                             <tbody>
                               <?php foreach ($omise_dashboard['charge_data'] as $key => $value): $date = new \DateTime($value['created']); ?>
                                 <tr>
-                                  <td><?php echo $omise_dashboard['charge_total'] -$key; ?></td>
                                   <td><strong class="<?php echo ($value['failure_code']) ? 'text-danger' : ((!$value['authorized'] || !$value['captured']) ? 'text-warning' : 'text-success'); ?>"><?php echo OmisePluginHelperCurrency::format($omise_dashboard['currency'], $value['amount']); ?></strong></td>
                                   <td><a href="https://dashboard.omise.co/<?php echo $value['livemode'] ? 'live' : 'test'; ?>/charges/<?php echo $value['id']; ?>"><?php echo $value['id']; ?></a></td>
                                   <td><?php echo $value['authorized'] ? '<strong class="text-success">Yes</strong>' : 'No'; ?></td>
@@ -173,7 +171,6 @@ echo $header; ?><?php echo $column_left; ?>
                           <table class="table table-bordered table-hover">
                             <thead>
                               <tr>
-                                <td><?php echo $label_transfer_table_no; ?></td>
                                 <td><?php echo $label_transfer_table_amount; ?></td>
                                 <td><?php echo $label_transfer_table_id; ?></td>
                                 <td><?php echo $label_transfer_table_sent; ?></td>
@@ -185,7 +182,6 @@ echo $header; ?><?php echo $column_left; ?>
                             <tbody>
                               <?php foreach ($omise_dashboard['transfer_data'] as $key => $value): $date = new \DateTime($value['created']); ?>
                                 <tr>
-                                  <td><?php echo $omise_dashboard['transfer_total'] -$key; ?></td>
                                   <td><strong class="<?php echo ($value['failure_code']) ? 'text-danger' : ((!$value['sent'] || !$value['paid']) ? 'text-warning' : 'text-success'); ?>"><?php echo OmisePluginHelperCurrency::format($omise_dashboard['currency'], $value['amount']); ?></strong></td>
                                   <td><a href="https://dashboard.omise.co/<?php echo $value['livemode'] ? 'live' : 'test'; ?>/transfers//<?php echo $value['id']; ?>"><?php echo $value['id']; ?></a></td>
                                   <td><?php echo $value['sent'] ? '<strong class="text-success">Yes</strong>' : 'No'; ?></td>
@@ -195,7 +191,7 @@ echo $header; ?><?php echo $column_left; ?>
                                 </tr>
                               <?php endforeach; ?>
                               <tr>
-                                <td colspan="6" class="text-right"><input style="width: 25%; float:right;" class="form-control" min="0" type="number" step="0.01" name="transfer_amount" placeholder="<?php echo $label_transfer_amount_field_placeholder; ?>"></td>
+                                <td colspan="5" class="text-right"><input style="width: 25%; float:right;" class="form-control" min="0" type="number" step="0.01" name="transfer_amount" placeholder="<?php echo $label_transfer_amount_field_placeholder; ?>"></td>
                                 <td class="text-center">
                                   <button type="submit" id="button-transfer" class="btn btn-primary"><?php echo $button_create_transfer; ?>&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
                                 </td>
@@ -307,11 +303,21 @@ echo $header; ?><?php echo $column_left; ?>
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="omise_payments_3ds"><?php echo $label_omise_3ds; ?></label>
                 <div class="col-sm-10">
-                  <div class="checkbox">
-                    <input type="checkbox" name="omise_3ds" value="1" class="form-control" <?php echo $omise_3ds ? 'checked="checked"' : ''; ?> />
+                  <div class="checkbox-inline">
+                    <input type="checkbox" name="omise_3ds" id="omise_payments_3ds" value="1" class="form-control" <?php echo $omise_3ds ? 'checked="checked"' : ''; ?> />
                   </div>
                 </div>
               </div> <!-- /END .3D-Secure -->
+              <!-- Payment Action -->
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="omise_auto_capture"><?php echo $label_omise_payment_action; ?></label>
+                <div class="col-sm-10">
+                  <select name="omise_auto_capture" id="omise_auto_capture" class="form-control">
+                    <option value="1" <?php echo $omise_auto_capture ? 'selected="selected"' : ''; ?>><?php echo $text_auto_capture; ?></option>
+                    <option value="0" <?php echo !$omise_auto_capture ? 'selected="selected"' : ''; ?>><?php echo $text_manual_capture; ?></option>
+                  </select>
+                </div>
+              </div> <!-- /END Payment Action -->
             </div>
           </div>
         </form>
@@ -332,7 +338,7 @@ echo $header; ?><?php echo $column_left; ?>
       </div>
     </div>
 
-    
+
   </div> <!-- /END .container-fluid -->
 </div> <!-- /END #content -->
 

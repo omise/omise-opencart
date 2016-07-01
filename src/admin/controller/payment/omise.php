@@ -149,6 +149,14 @@ class ControllerPaymentOmise extends Controller {
      * @return array
      */
     private function pageDataSettingTab() {
+        $this->load->model('payment/omise');
+
+    	if (is_null($this->config->get('omise_auto_capture'))) {
+    		$omise_auto_capture = $this->model_payment_omise->getDefaultAutoCapture();
+    	} else {
+    		$omise_auto_capture = $this->config->get('omise_auto_capture');
+    	}
+
         return array(
             'omise_status'        => $this->config->get('omise_status'),
             'omise_test_mode'     => $this->config->get('omise_test_mode'),
@@ -158,6 +166,7 @@ class ControllerPaymentOmise extends Controller {
             'omise_pkey'          => $this->config->get('omise_pkey'),
             'omise_skey'          => $this->config->get('omise_skey'),
             'omise_payment_title' => $this->config->get('omise_payment_title'),
+            'omise_auto_capture'  => $omise_auto_capture
         );
     }
 
@@ -207,12 +216,15 @@ class ControllerPaymentOmise extends Controller {
             'label_omise_mode_live'                   => $this->language->get('label_omise_mode_live'),
             'label_omise_3ds'                         => $this->language->get('label_omise_3ds'),
             'label_omise_payment_title'               => $this->language->get('label_omise_payment_title'),
+            'label_omise_payment_action'              => $this->language->get('label_omise_payment_action'),
             'text_mode_test'                          => $this->language->get('text_mode_test'),
             'text_mode_live'                          => $this->language->get('text_mode_live'),
             'text_enabled'                            => $this->language->get('text_enabled'),
             'text_disabled'                           => $this->language->get('text_disabled'),
             'text_checking_for_latest_version'        => $this->language->get('text_checking_for_latest_version'),
             'text_version_up_to_date'                 => $this->language->get('text_version_up_to_date'),
+            'text_auto_capture'                       => $this->language->get('text_auto_capture'),
+            'text_manual_capture'                     => $this->language->get('text_manual_capture'),
             'button_save'                             => $this->language->get('button_save'),
             'button_cancel'                           => $this->language->get('button_cancel'),
             'button_create_transfer'                  => $this->language->get('button_create_transfer'),

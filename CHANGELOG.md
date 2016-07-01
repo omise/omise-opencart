@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+[2.0.0.1] 2016-07-01
+---
+- *`Added`* A configuration for manual capture
+- *`Fixed`* An invalid format of transfer amount when setup a transfer that currency is Thai Baht
+- *`Removed`* Remove a column, No., from charge and transfer list
+
 [2.0.0.0] 2016-05-24
 ------------
 - *`Added`* Support `JPY` currency
