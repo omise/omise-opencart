@@ -5,7 +5,7 @@
 
 ## Dependencies (already included in Omise-OpenCart)
 - [omise-php](https://github.com/omise/omise-php) (v2.4.0)
-- [Jquery](https://github.com/jquery/jquery) (v2.1.1 from OpenCart (v2.0.0)'s dependency)
+- [jQuery](https://github.com/jquery/jquery) (v2.1.1 from OpenCart (v2.0.0)'s dependency)
 
 ## Installation
 Follow these steps to install **Omise-OpenCart**:
@@ -13,8 +13,8 @@ Follow these steps to install **Omise-OpenCart**:
 1. Download Omise-OpenCart from this repository (or [OpenCart Store](http://www.opencart.com/index.php?route=extension/extension/info&extension_id=22942)) and unzip it to your `local machine` (or directly to your server).
 
   Download links: 
-  [omise-opencart-v2.0.0.0.zip](https://github.com/omise/omise-opencart/archive/v2.0.0.0.zip) or
-  [omise-opencart-v2.0.0.0.tar.gz](https://github.com/omise/omise-opencart/archive/v2.0.0.0.tar.gz)
+  [omise-opencart-v2.0.0.1.zip](https://github.com/omise/omise-opencart/archive/v2.0.0.1.zip) or
+  [omise-opencart-v2.0.0.1.tar.gz](https://github.com/omise/omise-opencart/archive/v2.0.0.1.tar.gz)
 
   Open the zip file. You'll find the following files and folders:
   ![omise-opencart Folder Structure](https://cdn.omise.co/assets/omise-opencart/omise-opencart-2x-install-01.png)
