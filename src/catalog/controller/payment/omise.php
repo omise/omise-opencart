@@ -18,6 +18,8 @@ class ControllerPaymentOmise extends Controller
 
         // If has a `post['omise_token']` request.
         if (isset($this->request->post['omise_token'])) {
+            $this->load->helper('omise_currency');
+
             // Load `omise-php` library.
             $this->load->library('omise/omise-php/lib/Omise');
 
@@ -33,17 +35,22 @@ class ControllerPaymentOmise extends Controller
 
             // Create a order history with `Processing` status
             $this->load->model('checkout/order');
-            $order_id       = $this->session->data['order_id'];
-            $order_info     = $this->model_checkout_order->getOrder($order_id);
-            $order_total    = number_format($order_info['total'], 2, '', '');
+            $order_id    = $this->session->data['order_id'];
+            $order_info  = $this->model_checkout_order->getOrder($order_id);
+            $order_total = $this->currency->format(
+                $order_info['total'],
+                $order_info['currency_code'],
+                $order_info['currency_value'],
+                false
+            );
 
             if ($order_info) {
                 try {
                     // Try to create a charge and capture it.
                     $omise_charge = OmiseCharge::create(
                         array(
-                            "amount"        => $order_total,
-                            "currency"      => 'thb',
+                            "amount"        => formatChargeAmount($order_info['currency_code'], $order_total),
+                            "currency"      => $order_info['currency_code'],
                             "description"   => $this->request->post['description'],
                             "card"          => $this->request->post['omise_token']
                         ),
