@@ -3,7 +3,7 @@ if (! class_exists('OmisePluginHelperCharge')) {
     class OmisePluginHelperCharge
     {
         /**
-         * Format a Magento's amount to be a small-unit that Omise's API requires.
+         * Format an order's amount to be a small-unit that Omise's API accept.
          * Note, no specific format for JPY currency.
          *
          * @param  string  $currency
