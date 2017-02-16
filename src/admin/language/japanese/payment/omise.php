@@ -75,9 +75,7 @@ $_['button_create_transfer']                                   = '振込の要�
 
 // Errors
 $_['error_extension_disabled']                                 = 'Omiseペイメントゲートウェイの extension を有効化してください（\'設定\' タブを確認してください)';
-$_['error_currency_thb_not_found']                             = 'タイバーツ(THB) は利用可能な設定となっていません。<a href="%s">セットアップ</a> もしくは <a href="http://docs.opencart.com/system/localisation/currency">詳しく知る</a>';
-$_['error_currency_jpy_not_found']                             = '日本円(JPY) は利用可能な設定となっていません。<a href="%s">セットアップ</a> もしくは <a href="http://docs.opencart.com/system/localisation/currency">詳しく知る</a>';
-$_['error_currency_not_support']                               = '現在、対応可能な通貨はタイバーツ(THB)と日本円(JPY)のみとなっております。あなたのデフォルト通貨は<strong>%s</strong>に設定されています。<a href="%s">セットアップ</a> もしくは <a href="http://docs.opencart.com/system/setting/local">詳しく知る</a>';
+$_['error_currency_not_support']                               = 'Currently, we only support Thai Baht (THB), Indo Rupee (IDR), Japanese Yen (JPY) and Singapore Dollar (SGD). Your default currency is <strong>%s</strong>. Please <a href="%s">setup</a> or <a href="http://docs.opencart.com/system/setting/local">learn more</a>';
 $_['error_transfer_amount_is_empty']                           = '振込希望金額を入力、送信してください。';
 $_['error_allowed_only_post_method']                           = '振込金額に問題があります。';
 

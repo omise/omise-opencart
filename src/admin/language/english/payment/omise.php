@@ -75,9 +75,7 @@ $_['button_create_transfer']                                   = 'Create transfe
 
 // Errors
 $_['error_extension_disabled']                                 = 'Please enable Omise Payment Gateway extension (check \'Setting\' tab).';
-$_['error_currency_thb_not_found']                             = 'Thai Baht (THB) currency was not found from your system. Please <a href="%s">setup</a> or <a href="http://docs.opencart.com/system/localisation/currency">learn more</a>';
-$_['error_currency_jpy_not_found']                             = 'Japanese Yen (JPY) currency was not found from your system. Please <a href="%s">setup</a> or <a href="http://docs.opencart.com/system/localisation/currency">learn more</a>';
-$_['error_currency_not_support']                               = 'Currently, we only support Thai Baht (THB) and Japanese Yen (JPY). Your default currency is <strong>%s</strong>. Please <a href="%s">setup</a> or <a href="http://docs.opencart.com/system/setting/local">learn more</a>';
+$_['error_currency_not_support']                               = 'Currently, we only support Thai Baht (THB), Indo Rupee (IDR), Japanese Yen (JPY) and Singapore Dollar (SGD). Your default currency is <strong>%s</strong>. Please <a href="%s">setup</a> or <a href="http://docs.opencart.com/system/setting/local">learn more</a>';
 $_['error_transfer_amount_is_empty']                           = 'Please submit your transfer amount.';
 $_['error_allowed_only_post_method']                           = 'Your method is not allowed';
 
