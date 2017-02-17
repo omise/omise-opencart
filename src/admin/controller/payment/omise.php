@@ -18,6 +18,8 @@ class ControllerPaymentOmise extends Controller
          * Prepare and loading necessary scripts.
          *
          */
+        $this->load->helper('omise_currency');
+
         // Load model.
         $this->load->model('payment/omise');
 
