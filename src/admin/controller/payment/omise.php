@@ -415,6 +415,8 @@ class ControllerPaymentOmise extends Controller
          * Prepare and loading necessary scripts.
          *
          */
+        $this->load->helper('omise_currency');
+
         // Load model.
         $this->load->model('payment/omise');
 
@@ -429,7 +431,9 @@ class ControllerPaymentOmise extends Controller
             if (!isset($this->request->post['OmiseTransfer']['amount']))
                 throw new Exception($this->language->get('error_need_amount_value'), 1);
 
-            $transferring = $this->model_payment_omise->createOmiseTransfer($this->request->post['OmiseTransfer']['amount']);
+            // Retrieve Omise Balance.
+            $balance      = $this->model_payment_omise->getOmiseBalance();
+            $transferring = $this->model_payment_omise->createOmiseTransfer(formatChargeAmount($balance['currency'], $this->request->post['OmiseTransfer']['amount']));
             if (isset($transferring['error']))
                 throw new Exception('Omise Transfer:: '.$transferring['error'], 1);
             else
