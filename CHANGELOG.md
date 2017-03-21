@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+[1.3] 2017-03-22
+---
+- *`Added`* Support new currencies, IDR, JPY and SGD.
+
 [1.5.0.2] 2015-11-16
 ----------------------
 #### Updates
