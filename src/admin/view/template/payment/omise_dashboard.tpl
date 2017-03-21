@@ -54,8 +54,8 @@ echo $header; ?>
 
                 <!-- Balance -->
                 <div class="omise-balance omise-clearfix">
-                    <div class="left"><span class="omise-number"><?php echo number_format(($omise['balance']['total']/100), 2); ?></span><br/>Total Balance</div>
-                    <div class="right"><span class="omise-number"><?php echo number_format(($omise['balance']['available']/100), 2); ?></span><br/>Transferable Balance</div>
+                    <div class="left"><span class="omise-number"><?php echo formatDisplayPrice($omise['balance']['currency'], $omise['balance']['total']); ?></span><br/>Total Balance</div>
+                    <div class="right"><span class="omise-number"><?php echo formatDisplayPrice($omise['balance']['currency'], $omise['balance']['available']); ?></span><br/>Transferable Balance</div>
                 </div>
 
                 <!-- Transfer History -->
@@ -75,7 +75,7 @@ echo $header; ?>
                         <tbody>
                             <?php foreach ($omise['transfer']['data'] as $key => $value): $date = new \DateTime($value['created']); ?>
                                 <tr>
-                                    <td class="left"><?php echo number_format(($value['amount']/100), 2); ?></td>
+                                    <td class="left"><?php echo formatDisplayPrice($omise['balance']['currency'], $value['amount']); ?></td>
                                     <td class="left"><?php echo $value['id']; ?></td>
                                     <td class="left"><?php echo $value['sent'] ? 'Yes' : 'No'; ?></td>
                                     <td class="left"><?php echo $value['paid'] ? 'Yes' : 'No'; ?></td>
