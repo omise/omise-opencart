@@ -1,108 +1,81 @@
-![Omise-OpenCart](https://omise-cdn.s3.amazonaws.com/artwork/opencart_omise_bodered.png)
+<p align="center"><a href='https://www.omise.co'><img src='https://assets.omise.co/assets/omise-logo-ed530feda8c7bf8b0c990d5e4cf8080a0f23d406fa4049a523ae715252d0dc54.svg' height='60'></a></p>
 
-## OpenCart Version Compatibility
-- OpenCart 1.5.x
+**Omise OpenCart** is the official payment extension which provides support for Omise payment gateway for store builders working on the OpenCart platform.
 
-## Dependencies (Already included in Omise-OpenCart)
-- [omise-php](https://github.com/omise/omise-php) (v2.4.0)
-- [Jquery](https://github.com/jquery/jquery) (v1.7.1 from OpenCart (v1.5.6.4)'s dependency)
-- [vQmod](https://github.com/vqmod/vqmod) (v2.5.1 with OpenCart integration edition)
+## Supported Versions
 
-## Installation
-Follow these steps to install **omise-opencart**:
+Our aim is to support as many versions of OpenCart as we can.  
 
-1. Download this repository and unzip it into your `local machine` (or directly to your server)
+**Here's the list of versions we tested on:**
 
-  Download links: 
-  [omise-opencart-v1.5.0.2.zip](https://github.com/omise/omise-opencart/archive/v1.5.0.2.zip) or
-  [omise-opencart-v1.5.0.2.tar.gz](https://github.com/omise/omise-opencart/archive/v1.5.0.2.tar.gz)
+- OpenCart 1.5.6.4, PHP 5.5.9
 
-  ![omise-opencart Folder Structure](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-01.png)
+**Can't find the version you're looking for?**  
+Submit your requirement as an issue to [GitHub's issue channel](https://github.com/omise/omise-opencart/issues).
 
-  
-2. Go to `/omise-opencart/src` and copy **all files** into your **OpenCart Project**  
+## Getting Started
 
-3. Open your **OpenCart website**, then go to `/admin` page  
+### Installation Instructions
 
-4. Go to `Extensions` > `Payments` (from the top menu), in the payment extension list page
-![Payments Menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-02.png)
-  
-5. Look for `Omise Payment Gateway` and click **Install**  
-![Install Omise Payment Gateway extension menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-03.png)
+#### Manually
 
-If the everything went fine, the `Omise` menu will appear on the right side of your admin page.
-![Omise Menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-04.png)
+The steps below are the method to install the extension manually. This method requires the privilege to access your OpenCart file on your site.
 
-#### Frequent Problems
+1. Download the [Omise OpenCart latest version](https://github.com/omise/omise-opencart/archive/1-stable.zip).
+2. Extract the file that you downloaded. After extracted the file, you will found a directory, **src**. Copy **all directories** that inside the directory, src, and place it into the root directory of your OpenCart site.
+<p align="center"><img width="762" alt="Omise OpenCart src directory" src="https://cloud.githubusercontent.com/assets/4145121/24155742/3b75c40c-0e87-11e7-86f5-83e9746320f0.png"></p>
 
-Permissions must be set so that **omise-opencart** can overwrite the following files:
-- `your-opencart(root)/index.php`
-- `your-opencart(root)/admin/index.php`
+3. Login to your administration side. From the top menu, go to **Extensions** > **Payments**.
+<p align="center"><img alt="Payments menu" src="https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-02.png"></p>
 
-It also creates new folders and files on your `your-opencart(root)/` directory for the first installation.  
-Ensure these 2 files and folder have appropriate `write` permissions (usually `755`).
+4. Look for **Omise Payment Gateway** and click **Install**.
+<p align="center"><img alt="Install Omise Payment Gateway extension menu" src="https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-03.png"></p>
 
-## Omise Keys Setup
-In order to use **omise-opencart** you have to link it to your *Omise account* using your credentials:
+### First Time Setup
 
-1. Go to `Omise` > `Settings` (from Omise menu on the top right of the page)  
-![Omise Menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-05.png)
+After the installation, you can configure the extension by:
 
-2. The page that opens allows you to save your `Omise Keys`. If you want to test Omise service integration, you can enable *test mode* by clicking `Enable test mode`. Your OpenCart will then process orders with your test keys. 
-![Omise Payment Gateway Form](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-06.png)
+Login to your administration side. From the top right menu, go to **Omise** > **Setting**.
+<p align="center"><img alt="Omise menu" src="https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-05.png"></p>
 
-3. The **Module config** allows you to enable or disable Omise Payment on your OpenCart site.
-![Module Config Section](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-07.png)
+The system will display the setting page.
+<p align="center"><img alt="Omise payment gateway setting page" src="https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-06.png"></p>
 
-## Checkout with Omise Payment Gateway
-After setting up your *Omise keys*, you can checkout with *Omise Payment Gateway*. In order to test it, make sure you set up your test keys and enabled test mode.
+The table below is the settings for the extension and the description for each setting.
 
-1. Visit your website and add something to your cart.
+| Setting             | Description                                                                              |
+| ------------------- | -----------------------------------------------------------------------------------------|
+| Public Key for test | Your TEST public key can be found in your Omise dashboard.                               |
+| Secret Key for test | Your TEST secret key can be found in your Omise dashboard.                               |
+| Enable test mode    | If selected, all transactions will be performed in TEST mode and TEST keys will be used. |
+| Public Key          | Your LIVE public key can be found in your Omise dashboard.                               |
+| Secret Key          | Your LIVE secret key can be found in your Omise dashboard.                               |
+| Module Status       | Enables or disables the extension.                                              |
 
-2. Go to your cart and checkout (regular OpenCart process until now. Let's focus on step 5 **Payment Method**)  
-![Checkout Steps](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-08.png)
+- To enable the extension, select the setting for `Module Status` to `Enabled`.
 
-3. In this step (step #5 in opencart)  the **Credit Card (Powered by Omise)** choice will be available. Select it and accept the terms & conditions. 
-![Payment Method](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-09.png)
+**Note:**
 
-4. The form allows you to fill in your credit card details. You can use a test credit card number from [our documentation](https://docs.omise.co/api/tests/).)  
-![Collect a Customer Card](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-10.png)
+If the setting for `Enable test mode` has been checked, the `Test Keys` will be used. If the setting for `Enable test mode` has not been checked, the `Live Keys` will be used.
 
-5. Once done, submit your order with the `Confirm Order` button. If you want to know how we collect and process your card, please check our documentation: [Collecting Cards](https://docs.omise.co/collecting-card-information/) and [Charging Cards](https://docs.omise.co/charging-cards/))
+## Contributing
 
-6. Once completed, you get redirected your website `processed page`.
-![Checkout processed done](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-11.png)
+Thanks for your interest in contributing to Omise OpenCart. We're looking forward to hearing your thoughts and willing to review your changes.
 
-7. If you go back to your **admin dashboard** you will see your order with `Processed` status.  
-![Admin Dashboard](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-12.png)  
-Note: During the short period of authorization, the status will be marked as `Processing`
+The following subjects are instructions for contributors who consider to submit changes and/or issues.
 
-## Uninstalling Omise
+### Submit the changes
 
-Because we can not automatically check that `vQmod` library is used by other extensions, we require you to manually remove Omise Payment Gateway from your server source code. Follow the next steps:
+You're all welcome to submit a pull request. Please consider the [pull request template](https://github.com/omise/omise-opencart/blob/master/.github/PULL_REQUEST_TEMPLATE.md) and fill the form when you submit a new pull request.
 
-- Uninstall extension via extension list page of OpenCart
-- Remove vQmod folder from your OpenCart directory
+Learn more about [pull request](https://help.github.com/articles/about-pull-requests).
 
-#### 1. Uninstall Omise Payment Gateway extension
-1. Open your **OpenCart website**, then go to `/admin` page  
+### Submit the issue
 
-2. Go to `Extensions` > `Payments` (from the top menu)  
-![Payments menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-02.png)
- 
-3. Look for `Omise Payment Gateway` row and click **Uninstall**  
-![Uninstall Omise Payment Gateway extension menu](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-13.png)
+To report problems, feel free to submit the issue through [GitHub's issue channel](https://github.com/omise/omise-opencart/issues) by following the [Create an Issue Guideline](https://guides.github.com/activities/contributing-to-open-source/#contributing).
 
-Once uninstalled, `Omise` will not appear in the top right menu of your admin page anymore.
+Learn more about [issue](https://guides.github.com/features/issues).
 
-#### 2. Removed vQmod library
-*For this step, please make sure you are not using `vQmod` library in other extensions. If you are unsure, you can leave it there. It will not have any effect on your site.
+## License
 
-1. In your OpenCart directory you will see the `vqmod` folder. Remove it  
-![vQmod folder](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-14.png)  
-
-2. Go to `omise-opencart/backup`, restore the backup files. You will see them here:  
-![Backup folder](https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-15.png)  
-Copy and past them into your OpenCart site  
-  - `omise-opencart/backup/index.php` to `your-opencart(root)/index.php`  
-  - `omise-opencart/backup/admin/index.php` to `your-opencart(root)/admin/index.php`  
+Omise OpenCart is open source software released under the [MIT License](https://github.com/omise/omise-opencart/blob/master/LICENSE).
