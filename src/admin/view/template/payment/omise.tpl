@@ -220,7 +220,7 @@ echo $header; ?><?php echo $column_left; ?>
             </div>
 
             <div class="panel-body">
-              <!-- Module config -->
+              <!-- Module status -->
               <div class="form-group required">
                 <label class="col-sm-2 control-label" for="omise_status"><?php echo $label_setting_module_status; ?></label>
                 <div class="col-sm-10">
@@ -229,16 +229,17 @@ echo $header; ?><?php echo $column_left; ?>
                     <option value="0" <?php echo !$omise_status ? 'selected="selected"' : ''; ?>><?php echo $text_disabled; ?></option>
                   </select>
                 </div>
-              </div> <!-- /END Module config (.form-group) -->
+              </div> <!-- /END Module status (.form-group) -->
 
-              <!-- Test public key -->
+              <!-- Payment method title -->
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="omise_payment_title"><?php echo $label_omise_payment_title; ?></label>
                 <div class="col-sm-10">
                   <input type="text" name="omise_payment_title" value="<?php echo $omise_payment_title; ?>" id="omise_payment_title" class="form-control" />
                 </div>
-              </div>
+              </div> <!-- /END Payment method title -->
 
+              <!-- Live mode -->
               <div class="form-group">
                 <label class="col-sm-2 control-label" for=""></label>
                 <div class="col-sm-10">
@@ -251,7 +252,7 @@ echo $header; ?><?php echo $column_left; ?>
                     <?php echo $label_omise_mode_live; ?>
                   </label>
                 </div>
-              </div> <!-- /END Module config (.form-group) -->
+              </div> <!-- /END Live mode (.form-group) -->
             </div> <!-- /END .panel-body -->
           </div> <!-- /END .panel.panel-default -->
 
