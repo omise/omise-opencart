@@ -10,7 +10,9 @@ if (! class_exists('OmisePluginHelperCurrency')) {
         {
             switch (strtoupper($currency_code)) {
                 case 'THB':
+                case 'IDR':
                 case 'JPY':
+                case 'SGD':
                     return true;
                     break;
             }
@@ -31,14 +33,24 @@ if (! class_exists('OmisePluginHelperCurrency')) {
                     if (preg_match('/\.00$/', $amount)) {
                         $amount = substr($amount, 0, -3);
                     }
+                    break;
 
+                case 'IDR':
+                    $amount = "Rp" . number_format(($amount / 100), 2);
+                    if (preg_match('/\.00$/', $amount)) {
+                        $amount = substr($amount, 0, -3);
+                    }
                     break;
 
                 case 'JPY':
-                    $amount = "¥" . number_format($amount);
+                    $amount = number_format($amount) . "円";
                     break;
 
-                default:
+                case 'SGD':
+                    $amount = "S$" . number_format(($amount / 100), 2);
+                    if (preg_match('/\.00$/', $amount)) {
+                        $amount = substr($amount, 0, -3);
+                    }
                     break;
             }
 
