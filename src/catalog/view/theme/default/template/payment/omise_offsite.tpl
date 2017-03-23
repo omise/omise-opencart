@@ -18,7 +18,7 @@
 
         // Charge with internet banking.
         var posting = $.post("<?php echo $checkout_url; ?>", {
-            "offsite_provider": form.find("[data-omise=offsite_provider]").val(),
+            "offsite_provider": form.find("[data-omise=offsite_provider]:checked").val(),
             "description": "Charge an internet banking from OpenCart that order id is <?php echo $orderid; ?> from <?php echo $billemail; ?>"
         });
 

@@ -20,7 +20,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
 	 * @return string(Json)
 	 */
 	public function checkout() {
-		if (isset($this->request->post['offsite_provider'])) {
+		if (!empty($this->request->post['offsite_provider'])) {
 			$this->load->library('omise');
 			$this->load->library('omise-php/lib/Omise');
 			$this->load->model('payment/omise');
@@ -83,7 +83,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
 				echo json_encode(array('error' => 'Cannot find your order, please try again.'));
 			}
 		} else {
-			return 'not authorized';
+			echo json_encode(array('error' => 'Please select one provider from the list.'));
 		}
 	}
 
