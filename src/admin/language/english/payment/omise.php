@@ -1,5 +1,6 @@
 <?php
 $_['heading_title']                 	= 'Omise Payment Gateway';
+$_['text_omise']                        = '<a href="https://www.omise.co" target="_blank" style="border: 1px solid #EEEEEE; padding: 2px; width: 94px; max-height:25px; display: inline-block;" alt="Omise Payment Gateway"" title="Omise Payment Gateway"><img src="view/image/payment/omise-payment.png" alt="Omise Payment Gateway"" title="Omise Payment Gateway" style="max-height:18px;" /></a>';
 
 /**
  * General Message.
