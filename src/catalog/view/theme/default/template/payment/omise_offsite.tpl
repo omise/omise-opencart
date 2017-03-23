@@ -1,6 +1,59 @@
 <!-- Include Omise's stylesheet -->
 <link rel="stylesheet" type="text/css" href="catalog/view/stylesheet/omise/omise.css">
 
+<!-- Include Omise's javascript -->
+<script type="text/javascript">
+    $("#omise-form-checkout").submit(function() {
+        var form            = $(this),
+            alertSuccess    = form.find(".alert-success"),
+            alertError      = form.find(".alert-error"),
+            overlay         = form.find('.overlay');
+
+        // Show loading overlay.
+        overlay.addClass('show');
+
+        // Disable the submit button to avoid repeated click.
+        form.find("input[type=submit]").prop("disabled", true);
+
+        // Hidden alert box
+        alertError.removeClass('show');
+        alertSuccess.removeClass('show');
+
+        // Charge with internet banking.
+        var posting = $.post("<?php echo $checkout_url; ?>", {
+            "offsite_provider": form.find("[data-omise=offsite_provider]:checked").val(),
+            "description": "Charge an internet banking from OpenCart that order id is <?php echo $orderid; ?> from <?php echo $billemail; ?>"
+        });
+
+        posting
+            .done(function(resp) {
+                overlay.removeClass('show');
+                resp = JSON.parse(resp);
+
+                if (typeof resp.error !== "undefined") {
+                    alertError.html("Omise Response: "+resp.error).addClass('show');
+                } else if (resp.failure_code != null) {
+                    alertError.html("Bank Response: "+resp.failure_message).addClass('show');
+                } else if (typeof resp.redirect !== "undefined") {
+                    console.log('redirect');
+                    window.location = resp.redirect;
+                } else {
+                    alertSuccess.html("Succeed").addClass('show');
+                    form.get(0).submit();
+                }
+
+                form.find("input[type=submit]").prop("disabled", false);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                overlay.removeClass('show');
+                alertError.html("Omise "+errorThrown).addClass('show');
+                form.find("input[type=submit]").prop("disabled", false);
+            });
+
+        // Prevent the form from being submitted;
+        return false;
+    });
+</script>
 <!-- Omise's checkout form -->
 <style>
 .omise-logo-wrapper         { display: inline-block; padding: 5px; margin: 0 10px; border-radius: 2px; vertical-align: top; }

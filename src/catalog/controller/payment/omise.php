@@ -1,21 +1,87 @@
 <?php
 
+// Define 'OMISE_USER_AGENT_SUFFIX'
+if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
+    define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.3 OpenCart/'.VERSION);
+
+// Define 'OMISE_API_VERSION'
+if(!defined('OMISE_API_VERSION'))
+    define('OMISE_API_VERSION', '2014-07-27');
+
 class ControllerPaymentOmise extends Controller
 {
+    public function checkoutCallback()
+    {
+        if ($this->request->get['order_id']) {
+            // Load `omise-php` library.
+            $this->load->library('omise/omise-php/lib/Omise');
+
+            // Get Omise configuration.
+            $omise = $this->config->get('Omise');
+
+            // If test mode was enabled,
+            // replace Omise live key with test key.
+            if (isset($omise['test_mode']) && $omise['test_mode']) {
+                $omise['public_key'] = $omise['public_key_test'];
+                $omise['secret_key'] = $omise['secret_key_test'];
+            }
+
+            // Create a order history with `Processing` status
+            $this->load->model('checkout/order');
+            $this->load->model('payment/omise');
+
+            $order_id = $this->request->get['order_id'];
+            $transaction = $this->model_payment_omise->getChargeTransaction($order_id);
+            $omise_charge = OmiseCharge::retrieve($transaction->row['omise_charge_id'], $omise['public_key'], $omise['secret_key']);
+            if ($omise_charge && $omise_charge['authorized'] && $omise_charge['captured']) {
+                // Status: processed.
+                $this->model_checkout_order->confirm($order_id, 15);
+                $this->response->redirect($this->url->link('checkout/success'));
+            } else {
+                // Status: failed.
+                $this->model_checkout_order->confirm($order_id, 10);
+                $this->response->redirect($this->url->link('payment/omise/failure'));
+            }
+        }
+
+        exit;
+    }
+
+    /**
+     * OpenCart 1 does not provide common 'checkout/failure' page, so we need to add one.
+     */
+    public function failure() {
+        $this->language->load('payment/omise');
+
+        $this->document->setTitle($this->language->get('heading_title'));
+
+        $this->data['heading_title'] = $this->language->get('heading_title');
+        $this->data['text_payment_failed'] = $this->language->get('text_payment_failed');
+
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise_failure.tpl')) {
+            $this->template = $this->config->get('config_template') . '/template/payment/omise_failure.tpl';
+        } else {
+            $this->template = 'default/template/payment/omise_failure.tpl';
+        }
+
+        $this->children = array(
+            'common/column_left',
+            'common/column_right',
+            'common/content_top',
+            'common/content_bottom',
+            'common/footer',
+            'common/header'
+        );
+
+        $this->response->setOutput($this->render(true));
+    }
+
     /**
      * Checkout orders and charge a card process
      * @return string(Json)
      */
     public function checkout()
     {
-        // Define 'OMISE_USER_AGENT_SUFFIX'
-        if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
-            define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.3 OpenCart/'.VERSION);
-
-        // Define 'OMISE_API_VERSION'
-        if(!defined('OMISE_API_VERSION'))
-            define('OMISE_API_VERSION', '2014-07-27');
-
         // If has a `post['omise_token']` request.
         if (isset($this->request->post['omise_token'])) {
             $this->load->helper('omise_currency');
