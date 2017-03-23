@@ -1,3 +1,57 @@
+<!-- Include Omise's javascript -->
+<script type="text/javascript">
+    $("#omise-form-checkout").submit(function() {
+        var form            = $(this),
+            alertSuccess    = form.find(".alert-success"),
+            alertError      = form.find(".alert-error"),
+            spinner         = form.find('.omise-submitting');
+
+        // Show spinner icon.
+        spinner.addClass('loading');
+
+        // Hidden alert box
+        alertError.removeClass('show');
+        alertSuccess.removeClass('show');
+
+        // Disable the submit button to avoid repeated click.
+        form.find("input[type=submit]").prop("disabled", true);
+
+        // Charge with internet banking.
+        var posting = $.post("<?php echo $checkout_url; ?>", {
+            "offsite_provider": form.find("[data-omise=offsite_provider]").val(),
+            "description": "Charge an internet banking from OpenCart that order id is <?php echo $orderid; ?> from <?php echo $billemail; ?>"
+        });
+
+        posting
+            .done(function(resp) {
+                spinner.removeClass('loading');
+                resp = JSON.parse(resp);
+
+                if (typeof resp === "object") {
+                    if (typeof resp.error !== "undefined") {
+                        alertError.html(resp.error).addClass('show');
+                    } else {
+                        if (typeof resp.redirect !== "undefined") {
+                            console.log('redirect');
+                            window.location = resp.redirect;
+                        } else {
+                            form.get(0).submit();
+                        }
+                    }
+                }
+
+                form.find("input[type=submit]").prop("disabled", false);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                spinner.removeClass('loading');
+                alertError.html("Omise "+errorThrown).addClass('show');
+                form.find("input[type=submit]").prop("disabled", false);
+            });
+
+        // Prevent the form from being submitted;
+        return false;
+    });
+</script>
 <!-- Omise's checkout form -->
 <style>
 .omise-logo-wrapper         { display: inline-block; padding: 5px; margin: 0 10px; border-radius: 2px; vertical-align: top; }

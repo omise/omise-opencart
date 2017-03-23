@@ -1,6 +1,93 @@
 <?php
 class ControllerPaymentOmiseOffsite extends Controller {
 	/**
+	 * @return string
+	 */
+	private function searchErrorTranslation($clue) {
+		$this->load->language('payment/omise_offsite');
+
+		$translate_code = 'error_' . str_replace(' ', '_', strtolower($clue));
+		$translate_msg  = $this->language->get($translate_code);
+
+		if ($translate_code !== $translate_msg)
+			return $translate_msg;
+
+		return $clue;
+	}
+
+	/**
+	 * Checkout orders and charge a card process
+	 * @return string(Json)
+	 */
+	public function checkout() {
+		if (isset($this->request->post['offsite_provider'])) {
+			$this->load->library('omise');
+			$this->load->library('omise-php/lib/Omise');
+			$this->load->model('payment/omise');
+			$this->load->model('checkout/order');
+
+			// Get Omise configuration.
+			$omise = array();
+			if ($this->config->get('omise_test_mode')) {
+				$omise['pkey'] = $this->config->get('omise_pkey_test');
+				$omise['skey'] = $this->config->get('omise_skey_test');
+			} else {
+				$omise['pkey'] = $this->config->get('omise_pkey');
+				$omise['skey'] = $this->config->get('omise_skey');
+			}
+
+			// Create a order history with `Processing` status
+			$order_id    = $this->session->data['order_id'];
+			$order_info  = $this->model_checkout_order->getOrder($order_id);
+			$order_total = $this->currency->format($order_info['total'], $order_info['currency_code'], '', false);
+			if ($order_info) {
+				try {
+					// Try to create an offsite charge.
+					$omise_charge = OmiseCharge::create(
+						array(
+							"amount"      => OmisePluginHelperCharge::amount($order_info['currency_code'], $order_total),
+							"currency"    => $this->currency->getCode(),
+							"description" => $this->request->post['description'],
+							"return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
+							"offsite"     => $this->request->post['offsite_provider']
+						),
+						$omise['pkey'],
+						$omise['skey']
+					);
+
+					// Status: failed.
+					if ($omise_charge['failure_code'] || $omise_charge['failure_code']) {
+						throw new Exception($omise_charge['failure_code'].': '.$omise_charge['failure_code'], 1);
+					}
+
+					$this->model_payment_omise->addChargeTransaction($order_id, $omise_charge['id']);
+
+					// Status: processing.
+					$this->model_checkout_order->addOrderHistory($order_id, 2);
+
+					echo json_encode(array(
+						'omise'    => $omise_charge,
+						'captured' => $omise_charge['captured'],
+						'redirect' => $omise_charge['authorize_uri']
+					));
+				} catch (Exception $e) {
+					// Status: failed.
+					$error_message = $this->searchErrorTranslation('Payment ' . $e->getMessage());
+
+					$this->model_checkout_order->addOrderHistory($order_id, 10, $error_message);
+					echo json_encode(array(
+						'error' => $error_message
+					));
+				}
+			} else {
+				echo json_encode(array('error' => 'Cannot find your order, please try again.'));
+			}
+		} else {
+			return 'not authorized';
+		}
+	}
+
+	/**
 	 * Omise internet banking form
 	 * @return void
 	 */
