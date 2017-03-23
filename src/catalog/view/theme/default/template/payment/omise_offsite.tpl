@@ -1,3 +1,6 @@
+<!-- Include Omise's stylesheet -->
+<link rel="stylesheet" type="text/css" href="catalog/view/stylesheet/omise/omise.css">
+
 <!-- Omise's checkout form -->
 <style>
 .omise-logo-wrapper         { display: inline-block; padding: 5px; margin: 0 10px; border-radius: 2px; vertical-align: top; }
