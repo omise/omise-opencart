@@ -48,7 +48,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
 							"amount"      => OmisePluginHelperCharge::amount($order_info['currency_code'], $order_total),
 							"currency"    => $this->currency->getCode(),
 							"description" => $this->request->post['description'],
-							"return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
+							"return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id, '', 'SSL'),
 							"offsite"     => $this->request->post['offsite_provider']
 						),
 						$omise['pkey'],
@@ -103,8 +103,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
 		if ($order_info) {
 			$data = array_merge($data, array(
 				'button_confirm'   => $this->language->get('button_confirm'),
-				'checkout_url'     => $this->url->link('payment/omise_offsite/checkout'),
-				'success_url'      => $this->url->link('checkout/success'),
+				'checkout_url'     => $this->url->link('payment/omise_offsite/checkout', '', 'SSL'),
+				'success_url'      => $this->url->link('checkout/success', '', 'SSL'),
 				'text_config_one'  => trim($this->config->get('text_config_one')),
 				'text_config_two'  => trim($this->config->get('text_config_two')),
 				'orderid'          => date('His') . $this->session->data['order_id'],
