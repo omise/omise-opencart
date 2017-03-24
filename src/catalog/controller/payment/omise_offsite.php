@@ -53,7 +53,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
                             "amount"      => formatChargeAmount($order_info['currency_code'], $order_total),
                             "currency"    => $order_info['currency_code'],
                             "description" => $this->request->post['description'],
-                            "return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
+                            "return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id, '', 'SSL'),
                             "offsite"     => $this->request->post['offsite_provider']
                         ),
                         $omise['public_key'],
@@ -106,8 +106,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
         $this->language->load('payment/omise_offsite');
 
         $this->data['button_confirm']   = $this->language->get('button_confirm');
-        $this->data['checkout_url']     = $this->url->link('payment/omise_offsite/checkout');
-        $this->data['success_url']      = $this->url->link('checkout/success');
+        $this->data['checkout_url']     = $this->url->link('payment/omise_offsite/checkout', '', 'SSL');
+        $this->data['success_url']      = $this->url->link('checkout/success', '', 'SSL');
 
         $this->load->model('checkout/order');
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -116,7 +116,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
             $this->data['text_config_one']      = trim($this->config->get('text_config_one'));
             $this->data['text_config_two']      = trim($this->config->get('text_config_two'));
             $this->data['orderid']              = date('His') . $this->session->data['order_id'];
-            $this->data['callbackurl']          = $this->url->link('payment/custom/callback');
+            $this->data['callbackurl']          = $this->url->link('payment/custom/callback', '', 'SSL');
             $this->data['orderdate']            = date('YmdHis');
             $this->data['currency']             = $order_info['currency_code'];
             $this->data['orderamount']          = $this->currency->format($order_info['total'], $this->data['currency'] , false, false);
