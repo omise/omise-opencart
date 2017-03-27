@@ -1,6 +1,7 @@
 <?php
-class ModelPaymentOmiseOffsite extends Model
-{
+class ModelPaymentOmiseOffsite extends Model {
+    private $_group = 'omise_offsite';
+
     /**
      * Install a table that need to use in Omise Payment Gateway module
      * @return boolean
