@@ -350,7 +350,7 @@ class ControllerPaymentOmise extends Controller {
 
         try {
             // Allowed only POST method
-            if (! $this->request->server['REQUEST_METHOD'] === 'POST')
+            if ($this->request->server['REQUEST_METHOD'] !== 'POST')
                 throw new Exception($this->language->get('error_allowed_only_post_method'), 1);
 
             // Required 'transfer_amount' and transfer_amount must be greater than 0
