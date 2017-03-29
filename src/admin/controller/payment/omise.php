@@ -320,19 +320,11 @@ class ControllerPaymentOmise extends Controller {
         $this->response->setOutput($this->load->view('payment/omise.tpl', $data));
     }
 
-    /**
-     * (POST)
-     * @return void
-     */
-    public function updateConfig() {
+    private function updateConfig() {
         $this->load->model('setting/setting');
         $this->load->language('payment/omise');
 
         try {
-            // Allowed only POST method
-            if ($this->request->server['REQUEST_METHOD'] !== 'POST')
-                throw new Exception($this->language->get('error_allowed_only_post_method'), 1);
-
             $update = $this->request->post;
             if (! empty($update)) {
                 $update['omise_3ds'] = isset($update['omise_3ds']) ? $update['omise_3ds'] : 0;
