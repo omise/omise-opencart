@@ -1,19 +1,17 @@
 <?php
-require_once(__DIR__.'/../controller.php');
-require_once(__DIR__.'/../../model/model.php');
 require_once(__DIR__.'/../../../../src/admin/controller/payment/omise.php');
 
 class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase {
     public function setup() {
-        $this->controller = new ControllerPaymentOmise();
-        $this->controller->_admin = true;
+        $this->registry = new MockRegistry('admin');
+        $this->controller = new ControllerPaymentOmise($this->registry);
     }
 
     public function tearDown() {
     }
 
     public function testInstallSuccess() {
-        $model_payment_omise = $this->controller->mockModel('payment/omise', array('install'));
+        $model_payment_omise = $this->registry->mockModel('payment/omise', array('install'));
 
         $model_payment_omise->expects($this->once())
             ->method('install')
@@ -23,7 +21,7 @@ class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testInstallFailure() {
-        $model_payment_omise = $this->controller->mockModel('payment/omise', array('install'));
+        $model_payment_omise = $this->registry->mockModel('payment/omise', array('install'));
 
         $model_payment_omise->expects($this->once())
             ->method('install')
