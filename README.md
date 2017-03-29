@@ -81,7 +81,7 @@ If the setting for `Payment Action` is set to `Auto Capture`, the Omise charge w
 
 To enable the extension, select the setting for `Module Status` to `Enabled`.
 
-In order to enable **Omise Payment Gateway - Internet Banking**, **Omise Payment Gateway** must be installed and enabled.
+> In order to enable **Omise Payment Gateway - Internet Banking**, **Omise Payment Gateway** must be installed and enabled.
 
 ## Contributing
 
