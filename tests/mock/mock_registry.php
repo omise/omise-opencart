@@ -99,7 +99,7 @@ class MockRegistry {
             ->willReturnCallback(function($name) {
                 $file = __DIR__.'/../../src/system/library/'.$name.'.php';
                 if (file_exists($file)) {
-                    require_once($file);
+                    \AspectMock\Kernel::getInstance()->loadFile($file);
                 }
             });
         return $loader;
