@@ -34,9 +34,9 @@ class MockRegistry {
         if (!isset($this->_models[$name])) {
             $clazz = 'Model'.str_replace(' ', '', ucwords(str_replace(array('/','_'), array(' ', ' '), $name)));
             if ($this->_admin) {
-                $file = __DIR__.'/../src/admin/model/'.$name.'.php';
+                $file = __DIR__.'/../../src/admin/model/'.$name.'.php';
             } else {
-                $file = __DIR__.'/../src/catalog/model/'.$name.'.php';
+                $file = __DIR__.'/../../src/catalog/model/'.$name.'.php';
             }
             if (file_exists($file)) {
                 require_once($file);
@@ -97,7 +97,7 @@ class MockRegistry {
         $loader
             ->method('library')
             ->willReturnCallback(function($name) {
-                $file = __DIR__.'/../src/system/library/'.$name.'.php';
+                $file = __DIR__.'/../../src/system/library/'.$name.'.php';
                 if (file_exists($file)) {
                     require_once($file);
                 }
