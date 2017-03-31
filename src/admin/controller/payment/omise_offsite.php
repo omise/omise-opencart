@@ -106,19 +106,19 @@ class ControllerPaymentOmiseOffsite extends Controller {
         $this->data['breadcrumbs'][]    = array(
             'text'      => $this->language->get('text_home'),
             'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
-            'separator' => false
+            'separator' => false,
         );
 
         $this->data['breadcrumbs'][] = array(
             'text'      => $this->language->get('text_payment'),
             'href'      => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
-            'separator' => ' :: '
+            'separator' => ' :: ',
         );
 
         $this->data['breadcrumbs'][] = array(
             'text'      => $this->language->get('heading_title'),
             'href'      => $this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'),
-            'separator' => ' :: '
+            'separator' => ' :: ',
         );
 
         if (!is_null($current)) {
