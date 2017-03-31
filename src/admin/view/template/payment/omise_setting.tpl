@@ -92,7 +92,7 @@ echo $header; ?>
                 </table>
 
                 <!-- Module config -->
-                <h3>Mudule config</h3>
+                <h3>Module config</h3>
                 <table class="form">
                     <tr>
                         <td><?php echo $entry_status; ?></td>

@@ -36,7 +36,7 @@ echo $header; ?>
         <div class="content">
             <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
                 <!-- Module config -->
-                <h3>Mudule config</h3>
+                <h3>Module config</h3>
                 <table class="form">
                     <tr>
                         <td><?php echo $entry_status; ?></td>
