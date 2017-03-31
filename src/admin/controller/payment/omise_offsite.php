@@ -115,7 +115,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
 
         $this->data['breadcrumbs'][] = array(
             'text'      => $this->language->get('heading_title'),
-            'href'      => $this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'),             
+            'href'      => $this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => ' :: '
         );
 
