@@ -1,7 +1,6 @@
 <?php
 
-class ControllerPaymentOmiseOffsite extends Controller
-{
+class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * $error
      *
@@ -12,8 +11,7 @@ class ControllerPaymentOmiseOffsite extends Controller
      * Render Omise Payment Gateway - Internet Banking extension setting page
      * @return void
      */
-    public function index()
-    {
+    public function index() {
         /**
          * Prepare and loading necessary scripts.
          *
@@ -79,7 +77,7 @@ class ControllerPaymentOmiseOffsite extends Controller
         $this->_setBreadcrumb()
              ->_getSessionFlash();
 
-        
+
         /**
          * Template setup.
          *
@@ -99,8 +97,7 @@ class ControllerPaymentOmiseOffsite extends Controller
      * Set page breadcrumb
      * @return self
      */
-    private function _setBreadcrumb($current = null)
-    {
+    private function _setBreadcrumb($current = null) {
         // Set Breadcrumbs.
         $this->data['breadcrumbs']      = array();
 
@@ -133,8 +130,7 @@ class ControllerPaymentOmiseOffsite extends Controller
      * Get session flash from session variable and unset it
      * @return self
      */
-    private function _getSessionFlash()
-    {
+    private function _getSessionFlash() {
         $this->data['success'] = '';
         if (isset($this->session->data['success'])) {
             $this->data['success'] = $this->session->data['success'];
@@ -156,8 +152,7 @@ class ControllerPaymentOmiseOffsite extends Controller
      * This method will fire when user click `install` button from `extension/payment` page
      * @return void
      */
-    public function install()
-    {
+    public function install() {
         // Set `success` session if it completely done.
         $this->session->data['success'] = "Installed";
     }
@@ -167,7 +162,6 @@ class ControllerPaymentOmiseOffsite extends Controller
      * Uninstall anything about Omise Payment Gateway module that installed.
      * @return void
      */
-    public function uninstall()
-    {
+    public function uninstall() {
     }
 }
