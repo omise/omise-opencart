@@ -51,17 +51,17 @@ class ControllerPaymentOmiseOffsite extends Controller {
         $this->document->setTitle('Omise Payment Gateway Internet Banking Configuration');
 
         // Set form label with language.
-        $this->data['heading_title']                    = $this->language->get('heading_title');
-        $this->data['button_save']                      = $this->language->get('text_button_save');
-        $this->data['button_cancel']                    = $this->language->get('text_button_cancel');
-        $this->data['entry_order_status']               = $this->language->get('entry_order_status');
-        $this->data['text_enabled']                     = $this->language->get('text_enabled');
-        $this->data['text_disabled']                    = $this->language->get('text_disabled');
-        $this->data['entry_status']                     = $this->language->get('entry_status');
+        $this->data['heading_title']      = $this->language->get('heading_title');
+        $this->data['button_save']        = $this->language->get('text_button_save');
+        $this->data['button_cancel']      = $this->language->get('text_button_cancel');
+        $this->data['entry_order_status'] = $this->language->get('entry_order_status');
+        $this->data['text_enabled']       = $this->language->get('text_enabled');
+        $this->data['text_disabled']      = $this->language->get('text_disabled');
+        $this->data['entry_status']       = $this->language->get('entry_status');
 
         // Set action button.
-        $this->data['action']                           = $this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL');
-        $this->data['cancel']                           = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['action'] = $this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
 
 
         /**
@@ -101,9 +101,9 @@ class ControllerPaymentOmiseOffsite extends Controller {
      */
     private function _setBreadcrumb($current = null) {
         // Set Breadcrumbs.
-        $this->data['breadcrumbs']      = array();
+        $this->data['breadcrumbs'] = array();
 
-        $this->data['breadcrumbs'][]    = array(
+        $this->data['breadcrumbs'][] = array(
             'text'      => $this->language->get('text_home'),
             'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => false,
