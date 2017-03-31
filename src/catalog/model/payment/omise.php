@@ -12,7 +12,7 @@ class ModelPaymentOmise extends Model {
             'code'       => 'omise',
             'title'      => $payment_title,
             'terms'      => '',
-            'sort_order' => $this->config->get('custom_sort_order')
+            'sort_order' => $this->config->get('omise_sort_order')
         );
     }
 

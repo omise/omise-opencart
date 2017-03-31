@@ -4,10 +4,8 @@ class MockRegistry {
     private $admin = false;
     private $generator;
 
-    public function __construct($mode) {
-        if ($mode == 'admin') {
-            $this->_admin = true;
-        }
+    public function __construct($mode = '') {
+        $this->_admin = $mode == 'admin';
 
         $this->generator = new PHPUnit_Framework_MockObject_Generator(); 
 
