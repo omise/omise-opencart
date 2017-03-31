@@ -24,7 +24,6 @@ class ControllerPaymentOmiseOffsite extends Controller {
         $this->language->load('payment/omise');
         $this->language->load('payment/omise_offsite');
 
-
         /**
          * POST Request handle.
          *
@@ -42,7 +41,6 @@ class ControllerPaymentOmiseOffsite extends Controller {
                 $this->redirect($this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'));
             }
         }
-
 
         /**
          * Language setup.
@@ -63,13 +61,11 @@ class ControllerPaymentOmiseOffsite extends Controller {
         $this->data['action'] = $this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL');
         $this->data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
 
-
         /**
          * Page data setup.
          *
          */
         $this->data['omise_offsite_status'] = $this->config->get('omise_offsite_status');
-
 
         /**
          * Page setup.
@@ -77,7 +73,6 @@ class ControllerPaymentOmiseOffsite extends Controller {
          */
         $this->_setBreadcrumb()
              ->_getSessionFlash();
-
 
         /**
          * Template setup.
