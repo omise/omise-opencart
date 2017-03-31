@@ -19,6 +19,7 @@ class MockRegistry
         $this->data['config'] = $this->getConfig();
         $this->data['language'] = $this->getLanguage();
         $this->data['url'] = $this->getURL();
+        $this->data['currency'] = $this->getCurrency();
         $this->data['db'] = $this->getDB();
     }
 
@@ -166,11 +167,17 @@ class MockRegistry
         $url = $this->getMock('stdClass', array('link'));
         $url
             ->method('link')
-            ->willReturnCallback(function ($route, $args, $secure) {
+            ->willReturnCallback(function ($route, $args = '', $secure = false) {
                 return $route.'__'.$args.'__'.$secure;
             });
 
         return $url;
+    }
+
+    private function getCurrency()
+    {
+        $currency = $this->getMock('stdClass', array('format', 'getCode'));
+        return $currency;
     }
 
     private function getDB()

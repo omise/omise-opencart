@@ -33,6 +33,7 @@
         <whitelist processUndercoveredFilesFromWhitelist="true">
             <directory suffix=".php">src</directory>
             <exclude>
+                <directory suffix=".php">src/catalog</directory>
                 <directory suffix=".php">src/system/library/omise-php</directory>
             </exclude>
         </whitelist>
