@@ -73,7 +73,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
          *
          */
         // Set template.
-        $this->template = 'payment/omise_offsite.tpl';
+        $this->template = 'payment/omise_offsite_setting.tpl';
 
         // Include sub-template.
         $this->children = array('common/header',
