@@ -2,12 +2,6 @@
 
 class ControllerPaymentOmiseOffsite extends Controller {
     /**
-     * $error
-     *
-     */
-    private $error = array();
-
-    /**
      * Render Omise Payment Gateway - Internet Banking extension setting page
      *
      * @return void
