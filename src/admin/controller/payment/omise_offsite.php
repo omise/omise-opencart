@@ -147,7 +147,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
      */
     public function install() {
         // Set `success` session if it completely done.
-        $this->session->data['success'] = "Installed";
+        $this->session->data['success'] = 'Installed';
     }
 
     /**
