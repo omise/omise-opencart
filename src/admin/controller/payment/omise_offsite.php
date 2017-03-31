@@ -9,6 +9,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
 
     /**
      * Render Omise Payment Gateway - Internet Banking extension setting page
+     *
      * @return void
      */
     public function index() {
@@ -95,6 +96,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
 
     /**
      * Set page breadcrumb
+     *
      * @return self
      */
     private function _setBreadcrumb($current = null) {
@@ -128,6 +130,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
 
     /**
      * Get session flash from session variable and unset it
+     *
      * @return self
      */
     private function _getSessionFlash() {
@@ -150,6 +153,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
 
     /**
      * This method will fire when user click `install` button from `extension/payment` page
+     *
      * @return void
      */
     public function install() {
@@ -160,6 +164,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * This method will fire when user click `Uninstall` button from `extension/payment` page
      * Uninstall anything about Omise Payment Gateway module that installed.
+     *
      * @return void
      */
     public function uninstall() {
