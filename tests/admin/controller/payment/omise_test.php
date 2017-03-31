@@ -1,16 +1,20 @@
 <?php
 require_once(__DIR__.'/../../../../src/admin/controller/payment/omise.php');
 
-class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase {
-    public function setup() {
+class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase
+{
+    public function setup()
+    {
         $this->registry = new MockRegistry('admin');
         $this->controller = new ControllerPaymentOmise($this->registry);
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
     }
 
-    public function testInstallSuccess() {
+    public function testInstallSuccess()
+    {
         $model_payment_omise = $this->registry->mockModel('payment/omise', array('install'));
 
         $model_payment_omise->expects($this->once())
@@ -20,7 +24,8 @@ class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase {
         $this->controller->install();
     }
 
-    public function testInstallFailure() {
+    public function testInstallFailure()
+    {
         $model_payment_omise = $this->registry->mockModel('payment/omise', array('install'));
 
         $model_payment_omise->expects($this->once())
@@ -33,13 +38,14 @@ class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase {
         $this->controller->install();
     }
 
-    public function testIndex() {
+    public function testIndex()
+    {
         $view = new stdClass();
 
         $this->controller->load->expects($this->once())
             ->method('view')
             ->with('payment/omise.tpl')
-            ->willReturnCallback(function($name, $data) use ($view) {
+            ->willReturnCallback(function ($name, $data) use ($view) {
                 $this->assertEquals(1, $data['omise_status']);
                 $this->assertEquals('l10n_heading_title', $data['heading_title']);
                 $this->assertEquals('payment/omise__token=tok1__SSL', $data['action']);
@@ -56,13 +62,14 @@ class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase {
         $this->controller->index();
     }
 
-    public function testIndexFlash() {
+    public function testIndexFlash()
+    {
         $view = new stdClass();
 
         $this->controller->load->expects($this->once())
             ->method('view')
             ->with('payment/omise.tpl')
-            ->willReturnCallback(function($name, $data) use ($view) {
+            ->willReturnCallback(function ($name, $data) use ($view) {
                 $this->assertEquals('Success!!!', $data['success']);
                 $this->assertEquals('Error T_T', $data['error_warning']);
                 $this->assertEquals(1, $data['omise_status']);
@@ -83,7 +90,8 @@ class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase {
         $this->controller->index();
     }
 
-    public function testIndexEmptyPost() {
+    public function testIndexEmptyPost()
+    {
         $this->controller->response->expects($this->once())
             ->method('redirect')
             ->with('payment/omise__token=tok1__SSL');
@@ -94,7 +102,8 @@ class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase {
         $this->controller->index();
     }
 
-    public function testIndexPost() {
+    public function testIndexPost()
+    {
         $this->controller->response->expects($this->once())
             ->method('redirect')
             ->with('payment/omise__token=tok1__SSL');
@@ -105,7 +114,8 @@ class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase {
         $this->controller->index();
     }
 
-    public function testSubmitTransferGET() {
+    public function testSubmitTransferGET()
+    {
         $this->controller->response->expects($this->once())
             ->method('redirect')
             ->with('payment/omise__token=tok1__SSL');
@@ -115,6 +125,9 @@ class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase {
 
         $this->controller->submitTransfer();
 
-        $this->assertEquals('l10n_error_l10n_error_allowed_only_post_method', $this->controller->session->data['error']);
+        $this->assertEquals(
+            'l10n_error_l10n_error_allowed_only_post_method',
+            $this->controller->session->data['error']
+        );
     }
 }
