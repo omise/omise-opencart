@@ -1,13 +1,11 @@
 <?php
 
-class ControllerPaymentOmiseOffsite extends Controller
-{
+class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * Omise card information form
      * @return void
      */
-    protected function index()
-    {
+    protected function index() {
         /**
          * Prepare and loading necessary scripts.
          *
