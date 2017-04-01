@@ -3,6 +3,7 @@
 class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * Omise card information form
+     *
      * @return void
      */
     protected function index() {
