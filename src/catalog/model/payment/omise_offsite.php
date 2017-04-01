@@ -1,4 +1,5 @@
 <?php
+
 class ModelPaymentOmiseOffsite extends Model {
     public function getMethod($address, $total) {
         if ($this->config->get('omise_status') != 1) {
@@ -7,7 +8,7 @@ class ModelPaymentOmiseOffsite extends Model {
 
         $this->load->language('payment/omise_offsite');
 
-        if ($this->config->get('omise_offsite_payment_title') != "")
+        if ($this->config->get('omise_offsite_payment_title') != '')
             $payment_title = $this->config->get('omise_offsite_payment_title');
         else
             $payment_title = $this->language->get('text_title');
