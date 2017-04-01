@@ -3,6 +3,9 @@ form#omise-form-checkout .omise-payment                     { background: #fafaf
 form#omise-form-checkout .omise-payment .left               { width: 13%; padding-left: 2%; }
 form#omise-form-checkout .omise-payment .right              { width: 85%; }
 
+form#omise-form-checkout .omise-payment.offsite .left       { width: 5%; padding-left: 2%; }
+form#omise-form-checkout .omise-payment.offsite .right      { width: 93%; }
+
 form#omise-form-checkout .omise-payment .clearfix:after,
 form#omise-form-checkout .omise-payment .clearfix:before    { display: table; content: " " }
 form#omise-form-checkout .omise-payment .clearfix:after     { clear: both }
