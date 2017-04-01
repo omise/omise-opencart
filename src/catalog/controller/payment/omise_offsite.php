@@ -24,8 +24,8 @@ class ControllerPaymentOmiseOffsite extends Controller
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
         if ($order_info) {
-            $this->data['text_config_one']      = trim($this->config->get('text_config_one')); 
-            $this->data['text_config_two']      = trim($this->config->get('text_config_two')); 
+            $this->data['text_config_one']      = trim($this->config->get('text_config_one'));
+            $this->data['text_config_two']      = trim($this->config->get('text_config_two'));
             $this->data['orderid']              = date('His') . $this->session->data['order_id'];
             $this->data['callbackurl']          = $this->url->link('payment/custom/callback');
             $this->data['orderdate']            = date('YmdHis');
@@ -52,7 +52,7 @@ class ControllerPaymentOmiseOffsite extends Controller
             } else {
                 $this->template = 'default/template/payment/omise_offsite.tpl';
             }
-            
+
             $this->render();
         }
     }
