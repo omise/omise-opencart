@@ -16,11 +16,11 @@ unset($kernel);
 
 class PatchedComposerLocator extends \Go\ParserReflection\Locator\ComposerLocator
 {
-     public function locateClass($className)
-     {
+    public function locateClass($className)
+    {
         $className = ltrim($className, '\\');
         return parent::locateClass($className);
-     }
+    }
 }
 
 \Go\ParserReflection\ReflectionEngine::init(new PatchedComposerLocator($loaders[0][0]));
