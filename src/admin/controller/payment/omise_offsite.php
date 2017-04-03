@@ -1,5 +1,6 @@
 <?php
-class ControllerPaymentOmiseOffsite extends Controller {
+class ControllerPaymentOmiseOffsite extends Controller
+{
     /**
      * @var array
      */
@@ -8,7 +9,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * @return string
      */
-    private function flashSuccessMessages() {
+    private function flashSuccessMessages()
+    {
         if (isset($this->session->data['success'])) {
             $msg = $this->session->data['success'];
             unset($this->session->data['success']);
@@ -22,7 +24,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * @return string
      */
-    private function flashErrorMessages() {
+    private function flashErrorMessages()
+    {
         if (isset($this->session->data['error'])) {
             $msg = $this->session->data['error'];
             unset($this->session->data['error']);
@@ -37,7 +40,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
      * Set page breadcrumb
      * @return array
      */
-    private function setBreadcrumb($current = null) {
+    private function setBreadcrumb($current = null)
+    {
         $this->load->language('payment/omise_offsite');
 
         // Set Breadcrumbs.
@@ -61,8 +65,9 @@ class ControllerPaymentOmiseOffsite extends Controller {
             'separator' => ' :: '
         );
 
-        if (! is_null($current))
+        if (! is_null($current)) {
             $breadcrumbs[] = $current;
+        }
 
         return $breadcrumbs;
     }
@@ -70,7 +75,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * @return array
      */
-    private function pageDataSettingTab() {
+    private function pageDataSettingTab()
+    {
         return array(
             'omise_offsite_status'        => $this->config->get('omise_offsite_status'),
             'omise_offsite_payment_title' => $this->config->get('omise_offsite_payment_title')
@@ -80,7 +86,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * @return array
      */
-    private function pageTranslation() {
+    private function pageTranslation()
+    {
         $this->load->language('payment/omise_offsite');
 
         return array(
@@ -98,14 +105,16 @@ class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * @return string
      */
-    private function searchErrorTranslation($clue) {
+    private function searchErrorTranslation($clue)
+    {
         $this->load->language('payment/omise_offsite');
 
         $translate_code = 'error_' . str_replace(' ', '_', strtolower($clue));
         $translate_msg  = $this->language->get($translate_code);
 
-        if ($translate_code !== $translate_msg)
+        if ($translate_code !== $translate_msg) {
             return $translate_msg;
+        }
 
         return $clue;
     }
@@ -113,7 +122,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * @return void
      */
-    private function redirectTo($destination) {
+    private function redirectTo($destination)
+    {
         switch ($destination) {
             case 'omise_dashboard':
                 $this->response->redirect($this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'));
@@ -131,13 +141,15 @@ class ControllerPaymentOmiseOffsite extends Controller {
      * that necessary to use in Omise Payment Gateway Internet Banking module
      * @return void
      */
-    public function install() {
+    public function install()
+    {
         $this->load->model('payment/omise_offsite');
 
         try {
             // Install the extension
-            if (! $this->model_payment_omise_offsite->install())
+            if (! $this->model_payment_omise_offsite->install()) {
                 throw new Exception('', 1);
+            }
         } catch (Exception $e) {
             // Uninstall
             $this->load->controller('extension/payment/uninstall');
@@ -149,17 +161,19 @@ class ControllerPaymentOmiseOffsite extends Controller {
      * Uninstall everything that related with Omise Payment Gateway module.
      * @return void
      */
-    public function uninstall() {
-
+    public function uninstall()
+    {
     }
 
     /**
      * (GET) Page, route=payment/omise_offsite
      */
-    public function index() {
+    public function index()
+    {
         // POST Request handle
-        if (($this->request->server['REQUEST_METHOD'] == 'POST'))
+        if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
             $this->updateConfig();
+        }
 
         $this->load->language('payment/omise_offsite');
         $this->document->setTitle($this->language->get('heading_title'));
@@ -191,14 +205,16 @@ class ControllerPaymentOmiseOffsite extends Controller {
      * (POST)
      * @return void
      */
-    public function updateConfig() {
+    public function updateConfig()
+    {
         $this->load->model('setting/setting');
         $this->load->language('payment/omise_offsite');
 
         try {
             // Allowed only POST method
-            if ($this->request->server['REQUEST_METHOD'] !== 'POST')
+            if ($this->request->server['REQUEST_METHOD'] !== 'POST') {
                 throw new Exception($this->language->get('error_allowed_only_post_method'), 1);
+            }
 
             $update = $this->request->post;
             if (! empty($update)) {

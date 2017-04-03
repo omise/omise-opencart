@@ -1,10 +1,12 @@
 <?php
-class ModelPaymentOmiseOffsite extends Model {
+class ModelPaymentOmiseOffsite extends Model
+{
     /**
      * Install a table that need to use in Omise Payment Gateway module
      * @return boolean
      */
-    public function install() {
+    public function install()
+    {
         $this->load->model('setting/setting');
         $this->model_setting_setting->editSetting($this->_group, array(
             'omise_offsite_status'        => 0,
@@ -18,7 +20,8 @@ class ModelPaymentOmiseOffsite extends Model {
      * Drop table when uninstall Omise Payment Gateway module
      * @return boolean
      */
-    public function uninstall() {
+    public function uninstall()
+    {
         // ...
     }
 
@@ -26,7 +29,8 @@ class ModelPaymentOmiseOffsite extends Model {
      * Get config from table
      * @return array|boolean
      */
-    public function getConfig() {
+    public function getConfig()
+    {
         try {
             $this->load->model('setting/setting');
             $this->model_setting_setting->getSetting($this->_group);
