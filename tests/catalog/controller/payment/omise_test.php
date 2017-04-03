@@ -59,4 +59,52 @@ class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($json['omise']['authorized']);
         $this->assertTrue($json['omise']['captured']);
     }
+
+    public function testCheckoutCallback()
+    {
+        $model_payment_omise = $this->registry->mockModel('payment/omise', array(
+            'retrieveOmiseKey',
+            'getChargeTransaction',
+        ));
+        $model_payment_omise
+            ->method('retrieveOmiseKey')
+            ->willReturn(array(
+                'pkey' => 'public',
+                'skey' => 'secret',
+            ));
+        $model_payment_omise
+            ->method('getChargeTransaction')
+            ->with(1)
+            ->willReturnCallback(function () {
+                $txn = new stdClass();
+                $txn->row = array(
+                    'omise_charge_id' => 'chrg_test_1111',
+                );
+                return $txn;
+            });
+
+        $model_checkout_order = $this->registry->mockModel('checkout/order', array(
+            'addOrderHistory'
+        ));
+        $model_checkout_order
+            ->expects($this->once())
+            ->method('addOrderHistory')
+            ->with(1, 15);
+
+        $this->registry->get('response')
+            ->expects($this->once())
+            ->method('redirect')
+            ->with('checkout/success____');
+
+        $fake_charge = array(
+            'authorized' => true,
+            'captured' => true,
+        );
+        test::double('OmiseCharge', array('retrieve' => $fake_charge));
+
+        $request = $this->registry->get('request');
+        $request->get['order_id'] = 1;
+
+        $this->controller->checkoutCallback();
+    }
 }
