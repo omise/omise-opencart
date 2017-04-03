@@ -2,6 +2,9 @@
 if (!defined('DB_PREFIX')) {
     define('DB_PREFIX', 'ocu_');
 }
+if (!defined('DIR_TEMPLATE')) {
+    define('DIR_TEMPLATE', __DIR__.'/../src/');
+}
 
 require_once(__DIR__.'/../vendor/autoload.php');
 

@@ -107,4 +107,43 @@ class ControllerPaymentOmiseTest extends PHPUnit_Framework_TestCase
 
         $this->controller->checkoutCallback();
     }
+
+    public function testIndex()
+    {
+        $model_checkout_order = $this->registry->mockModel('checkout/order', array(
+            'getOrder'
+        ));
+        $model_checkout_order
+            ->method('getOrder')
+            ->with(1)
+            ->willReturn(array(
+                'currency_code' => 'thb',
+                'total' => 1500,
+                'telephone' => '1150',
+                'payment_address_1' => '1448/2',
+                'payment_iso_code_2' => 'TH',
+                'payment_zone' => '',
+                'payment_city' => 'BKK',
+                'payment_postcode' => '10240',
+                'shipping_firstname' => 'test',
+                'shipping_lastname' => 'test',
+                'shipping_address_1' => '1488/2',
+                'shipping_city' => 'BKK',
+                'shipping_iso_code_2' => 'TH',
+                'shipping_zone' => '',
+                'shipping_postcode' => '10240',
+                'email' => 'omise@omise.co',
+            ));
+
+        $this->registry->get('session')->data['order_id'] = 1;
+
+        $this->registry->get('load')
+            ->method('view')
+            ->with('default/template/payment/omise.tpl')
+            ->willReturnCallback(function ($name, $data) {
+                $this->assertEquals('thb', $data['currency']);
+            });
+
+        $this->controller->index();
+    }
 }
