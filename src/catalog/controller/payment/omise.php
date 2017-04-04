@@ -157,8 +157,8 @@ class ControllerPaymentOmise extends Controller {
      */
     public function getMonths() {
         $months = array();
-        for ($index=1; $index <= 12; $index++) {
-            $month = ($index < 10) ? '0'.$index : $index;
+        for ($index = 1; $index <= 12; $index++) {
+            $month = ($index < 10) ? '0' . $index : $index;
             $months[$month] = $month;
         }
         return $months;
@@ -173,7 +173,7 @@ class ControllerPaymentOmise extends Controller {
         $years = array();
         $first = date("Y");
 
-        for ($index=0; $index <= 10; $index++) {
+        for ($index = 0; $index <= 10; $index++) {
             $year = $first + $index;
             $years[$year] = $year;
         }
