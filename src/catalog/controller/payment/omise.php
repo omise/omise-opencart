@@ -53,7 +53,7 @@ class ControllerPaymentOmise extends Controller {
 
         $this->document->setTitle($this->language->get('heading_title'));
 
-        $this->data['heading_title'] = $this->language->get('heading_title');
+        $this->data['heading_title']       = $this->language->get('heading_title');
         $this->data['text_payment_failed'] = $this->language->get('text_payment_failed');
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise_failure.tpl')) {
@@ -113,10 +113,10 @@ class ControllerPaymentOmise extends Controller {
                     // Try to create a charge and capture it.
                     $omise_charge = OmiseCharge::create(
                         array(
-                            'amount'        => formatChargeAmount($order_info['currency_code'], $order_total),
-                            'currency'      => $order_info['currency_code'],
-                            'description'   => $this->request->post['description'],
-                            'card'          => $this->request->post['omise_token']
+                            'amount'      => formatChargeAmount($order_info['currency_code'], $order_total),
+                            'currency'    => $order_info['currency_code'],
+                            'description' => $this->request->post['description'],
+                            'card'        => $this->request->post['omise_token']
                         ),
                         $omise['public_key'],
                         $omise['secret_key']
@@ -132,10 +132,10 @@ class ControllerPaymentOmise extends Controller {
 
                     echo json_encode(
                         array(
-                            'failure_code'      => $omise_charge['failure_code'],
-                            'failure_message'   => $omise_charge['failure_message'],
-                            'captured'          => $omise_charge['captured'],
-                            'omise'             => $omise_charge
+                            'failure_code'    => $omise_charge['failure_code'],
+                            'failure_message' => $omise_charge['failure_message'],
+                            'captured'        => $omise_charge['captured'],
+                            'omise'           => $omise_charge
                         )
                     );
                 } catch (Exception $e) {
@@ -203,38 +203,38 @@ class ControllerPaymentOmise extends Controller {
             $omise['secret_key'] = $omise['secret_key_test'];
         }
 
-        $this->data['button_confirm']   = $this->language->get('button_confirm');
-        $this->data['checkout_url']     = $this->url->link('payment/omise/checkout', '', 'SSL');
-        $this->data['success_url']      = $this->url->link('checkout/success', '', 'SSL');
+        $this->data['button_confirm'] = $this->language->get('button_confirm');
+        $this->data['checkout_url']   = $this->url->link('payment/omise/checkout', '', 'SSL');
+        $this->data['success_url']    = $this->url->link('checkout/success', '', 'SSL');
 
         $this->load->model('checkout/order');
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
         if ($order_info) {
-            $this->data['text_config_one']      = trim($this->config->get('text_config_one')); 
-            $this->data['text_config_two']      = trim($this->config->get('text_config_two')); 
-            $this->data['orderid']              = date('His') . $this->session->data['order_id'];
-            $this->data['callbackurl']          = $this->url->link('payment/custom/callback', '', 'SSL');
-            $this->data['orderdate']            = date('YmdHis');
-            $this->data['currency']             = $order_info['currency_code'];
-            $this->data['orderamount']          = $this->currency->format($order_info['total'], $this->data['currency'] , false, false);
-            $this->data['billemail']            = $order_info['email'];
-            $this->data['billphone']            = html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8');
-            $this->data['billaddress']          = html_entity_decode($order_info['payment_address_1'], ENT_QUOTES, 'UTF-8');
-            $this->data['billcountry']          = html_entity_decode($order_info['payment_iso_code_2'], ENT_QUOTES, 'UTF-8');
-            $this->data['billprovince']         = html_entity_decode($order_info['payment_zone'], ENT_QUOTES, 'UTF-8');;
-            $this->data['billcity']             = html_entity_decode($order_info['payment_city'], ENT_QUOTES, 'UTF-8');
-            $this->data['billpost']             = html_entity_decode($order_info['payment_postcode'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliveryname']         = html_entity_decode($order_info['shipping_firstname'] . $order_info['shipping_lastname'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliveryaddress']      = html_entity_decode($order_info['shipping_address_1'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliverycity']         = html_entity_decode($order_info['shipping_city'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliverycountry']      = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliveryprovince']     = html_entity_decode($order_info['shipping_zone'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliveryemail']        = $order_info['email'];
-            $this->data['deliveryphone']        = html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8');
-            $this->data['deliverypost']         = html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8');
-            
-            $this->data['omise']                = $omise;
+            $this->data['text_config_one']  = trim($this->config->get('text_config_one'));
+            $this->data['text_config_two']  = trim($this->config->get('text_config_two'));
+            $this->data['orderid']          = date('His') . $this->session->data['order_id'];
+            $this->data['callbackurl']      = $this->url->link('payment/custom/callback', '', 'SSL');
+            $this->data['orderdate']        = date('YmdHis');
+            $this->data['currency']         = $order_info['currency_code'];
+            $this->data['orderamount']      = $this->currency->format($order_info['total'], $this->data['currency'] , false, false);
+            $this->data['billemail']        = $order_info['email'];
+            $this->data['billphone']        = html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8');
+            $this->data['billaddress']      = html_entity_decode($order_info['payment_address_1'], ENT_QUOTES, 'UTF-8');
+            $this->data['billcountry']      = html_entity_decode($order_info['payment_iso_code_2'], ENT_QUOTES, 'UTF-8');
+            $this->data['billprovince']     = html_entity_decode($order_info['payment_zone'], ENT_QUOTES, 'UTF-8');;
+            $this->data['billcity']         = html_entity_decode($order_info['payment_city'], ENT_QUOTES, 'UTF-8');
+            $this->data['billpost']         = html_entity_decode($order_info['payment_postcode'], ENT_QUOTES, 'UTF-8');
+            $this->data['deliveryname']     = html_entity_decode($order_info['shipping_firstname'] . $order_info['shipping_lastname'], ENT_QUOTES, 'UTF-8');
+            $this->data['deliveryaddress']  = html_entity_decode($order_info['shipping_address_1'], ENT_QUOTES, 'UTF-8');
+            $this->data['deliverycity']     = html_entity_decode($order_info['shipping_city'], ENT_QUOTES, 'UTF-8');
+            $this->data['deliverycountry']  = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8');
+            $this->data['deliveryprovince'] = html_entity_decode($order_info['shipping_zone'], ENT_QUOTES, 'UTF-8');
+            $this->data['deliveryemail']    = $order_info['email'];
+            $this->data['deliveryphone']    = html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8');
+            $this->data['deliverypost']     = html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8');
+
+            $this->data['omise']            = $omise;
 
             if (file_exists(DIR_TEMPLATE.$this->config->get('config_template') . '/template/payment/omise.tpl')) {
                 $this->template = $this->config->get('config_template') . '/template/payment/omise.tpl';
