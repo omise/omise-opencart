@@ -5,8 +5,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
      * Checkout orders and charge a card process
      * @return string(Json)
      */
-    public function checkout()
-    {
+    public function checkout() {
         // Define 'OMISE_USER_AGENT_SUFFIX'
         if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
             define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.3 OpenCart/'.VERSION);
