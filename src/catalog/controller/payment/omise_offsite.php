@@ -52,11 +52,11 @@ class ControllerPaymentOmiseOffsite extends Controller {
                     // Try to create a charge and capture it.
                     $omise_charge = OmiseCharge::create(
                         array(
-                            "amount"      => formatChargeAmount($order_info['currency_code'], $order_total),
-                            "currency"    => $order_info['currency_code'],
-                            "description" => $this->request->post['description'],
-                            "return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id, '', 'SSL'),
-                            "offsite"     => $this->request->post['offsite_provider']
+                            'amount'      => formatChargeAmount($order_info['currency_code'], $order_total),
+                            'currency'    => $order_info['currency_code'],
+                            'description' => $this->request->post['description'],
+                            'return_uri'  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id, '', 'SSL'),
+                            'offsite'     => $this->request->post['offsite_provider']
                         ),
                         $omise['public_key'],
                         $omise['secret_key']
