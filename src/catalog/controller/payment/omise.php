@@ -8,10 +8,8 @@ if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
 if(!defined('OMISE_API_VERSION'))
     define('OMISE_API_VERSION', '2014-07-27');
 
-class ControllerPaymentOmise extends Controller
-{
-    public function checkoutCallback()
-    {
+class ControllerPaymentOmise extends Controller {
+    public function checkoutCallback() {
         if ($this->request->get['order_id']) {
             // Load `omise-php` library.
             $this->load->library('omise/omise-php/lib/Omise');
@@ -80,8 +78,7 @@ class ControllerPaymentOmise extends Controller
      * Checkout orders and charge a card process
      * @return string(Json)
      */
-    public function checkout()
-    {
+    public function checkout() {
         // If has a `post['omise_token']` request.
         if (isset($this->request->post['omise_token'])) {
             $this->load->helper('omise_currency');
@@ -158,8 +155,7 @@ class ControllerPaymentOmise extends Controller
      *
      * @return array
      */
-    public function getMonths()
-    {
+    public function getMonths() {
         $months = array();
         for ($index=1; $index <= 12; $index++) {
             $month = ($index < 10) ? '0'.$index : $index;
@@ -173,8 +169,7 @@ class ControllerPaymentOmise extends Controller
      *
      * @return array
      */
-    public function getYears()
-    {
+    public function getYears() {
         $years = array();
         $first = date("Y");
 
@@ -189,8 +184,7 @@ class ControllerPaymentOmise extends Controller
      * Omise card information form
      * @return void
      */
-    protected function index()
-    {
+    protected function index() {
         /**
          * Prepare and loading necessary scripts.
          *
