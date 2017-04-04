@@ -112,10 +112,10 @@ class ControllerPaymentOmise extends Controller {
                     // Try to create a charge and capture it.
                     $omise_charge = OmiseCharge::create(
                         array(
-                            "amount"        => formatChargeAmount($order_info['currency_code'], $order_total),
-                            "currency"      => $order_info['currency_code'],
-                            "description"   => $this->request->post['description'],
-                            "card"          => $this->request->post['omise_token']
+                            'amount'        => formatChargeAmount($order_info['currency_code'], $order_total),
+                            'currency'      => $order_info['currency_code'],
+                            'description'   => $this->request->post['description'],
+                            'card'          => $this->request->post['omise_token']
                         ),
                         $omise['public_key'],
                         $omise['secret_key']
@@ -171,7 +171,7 @@ class ControllerPaymentOmise extends Controller {
      */
     public function getYears() {
         $years = array();
-        $first = date("Y");
+        $first = date('Y');
 
         for ($index = 0; $index <= 10; $index++) {
             $year = $first + $index;
