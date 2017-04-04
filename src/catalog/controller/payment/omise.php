@@ -182,7 +182,7 @@ class ControllerPaymentOmise extends Controller {
         }
         return $years;
     }
-    
+
     /**
      * Omise card information form
      *
@@ -243,7 +243,7 @@ class ControllerPaymentOmise extends Controller {
             } else {
                 $this->template = 'default/template/payment/omise.tpl';
             }
-            
+
             $this->render();
         }
     }
