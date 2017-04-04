@@ -2,7 +2,7 @@
 
 // Define 'OMISE_USER_AGENT_SUFFIX'
 if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
-    define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.3 OpenCart/'.VERSION);
+    define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.3 OpenCart/' . VERSION);
 
 // Define 'OMISE_API_VERSION'
 if(!defined('OMISE_API_VERSION'))
@@ -236,7 +236,7 @@ class ControllerPaymentOmise extends Controller {
 
             $this->data['omise']            = $omise;
 
-            if (file_exists(DIR_TEMPLATE.$this->config->get('config_template') . '/template/payment/omise.tpl')) {
+            if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise.tpl')) {
                 $this->template = $this->config->get('config_template') . '/template/payment/omise.tpl';
             } else {
                 $this->template = 'default/template/payment/omise.tpl';
