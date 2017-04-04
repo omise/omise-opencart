@@ -1,9 +1,11 @@
 Change Log
 ==========
 
-[1.4] Pending Release
+[1.4] 2017-04-04
 ---
 - *`Added`* Support for [Internet Banking](https://www.omise.co/offsite-payment)
+- *`Added`* Support SSL when create the URL link
+- *`Updated`* Upgrade `omise-php` library to 2.7.1
 
 [1.3] 2017-03-22
 ---
