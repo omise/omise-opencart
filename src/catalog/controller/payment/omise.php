@@ -76,6 +76,7 @@ class ControllerPaymentOmise extends Controller {
 
     /**
      * Checkout orders and charge a card process
+     *
      * @return string(Json)
      */
     public function checkout() {
@@ -182,6 +183,7 @@ class ControllerPaymentOmise extends Controller {
     
     /**
      * Omise card information form
+     *
      * @return void
      */
     protected function index() {
