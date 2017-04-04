@@ -3,6 +3,7 @@
 class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * Checkout orders and charge a card process
+     *
      * @return string(Json)
      */
     public function checkout() {
