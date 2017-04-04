@@ -1,7 +1,7 @@
 <?php
 // Define 'OMISE_USER_AGENT_SUFFIX'
 if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
-    define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.3 OpenCart/'.VERSION);
+    define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.4 OpenCart/'.VERSION);
 
 // Define 'OMISE_API_VERSION'
 if(!defined('OMISE_API_VERSION'))
@@ -30,6 +30,16 @@ class ModelPaymentOmise extends Model
                 `secret_key_test` varchar(45),
                 `test_mode` tinyint NOT NULL DEFAULT 0,
                 PRIMARY KEY `id` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
+
+            /* Install omise_charge table */
+            $this->db->query(
+                "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "omise_charge` (
+                    `id` INT(11) NOT NULL AUTO_INCREMENT,
+                    `order_id` INT(11) NOT NULL,
+                    `omise_charge_id` CHAR(45) NOT NULL,
+                    `date_added` DATETIME NOT NULL,
+                    PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
             // Insert seed data into table.
             $this->db->query("INSERT INTO `" .DB_PREFIX. "omise_gateway` 

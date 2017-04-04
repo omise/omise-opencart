@@ -1,15 +1,30 @@
-form#omise-form-checkout .omise-payment                     { background: #fafafa; padding: 10px; color: #333; text-shadow: 1px 1px #fff; }
+form#omise-form-checkout .omise-payment                  { background: #fafafa; padding: 10px; color: #333; text-shadow: 1px 1px #fff; }
 
-form#omise-form-checkout .omise-payment .left               { width: 13%; padding-left: 2%; }
-form#omise-form-checkout .omise-payment .right              { width: 85%; }
+form#omise-form-checkout .omise-payment .left            { width: 13%; padding-left: 2%; }
+form#omise-form-checkout .omise-payment .right           { width: 85%; }
 
 form#omise-form-checkout .omise-payment .clearfix:after,
-form#omise-form-checkout .omise-payment .clearfix:before    { display: table; content: " " }
-form#omise-form-checkout .omise-payment .clearfix:after     { clear: both }
-form#omise-form-checkout .omise-payment .input-group        { margin-bottom: 10px; }
-form#omise-form-checkout .omise-payment .left label         { display: table-cell; vertical-align: middle; height: 34px; }
-form#omise-form-checkout .omise-payment input               { background: #fff; border-color: #eee; width: 30%; height: 26px; padding: 3px 8px; }
+form#omise-form-checkout .omise-payment .clearfix:before { display: table; content: " " }
+form#omise-form-checkout .omise-payment .clearfix:after  { clear: both }
+form#omise-form-checkout .omise-payment .input-group     { margin-bottom: 10px; }
+form#omise-form-checkout .omise-payment .left label      { display: table-cell; vertical-align: middle; height: 34px; }
+form#omise-form-checkout .omise-payment input            { background: #fff; border-color: #eee; width: 30%; height: 26px; padding: 3px 8px; }
 
-form#omise-form-checkout .alert-box                         { display: none; }
-form#omise-form-checkout .show                              { display: block !important; }
-form#omise-form-checkout .overlay                           { background: rgba(0, 0, 0, 0.8); width: 100%; height: 100%; position: fixed; top: 0; left: 0; z-index: 100; display: none; }
+form#omise-form-checkout .alert-box                      { display: none; }
+form#omise-form-checkout .show                           { display: block !important; }
+form#omise-form-checkout .overlay                        { background: rgba(0, 0, 0, 0.8); width: 100%; height: 100%; position: fixed; top: 0; left: 0; z-index: 100; display: none; }
+
+/* Offsite */
+form#omise-form-checkout .omise-payment.offsite .left  { width: auto; padding: 18px 0 0; }
+form#omise-form-checkout .omise-payment.offsite .right { width: 93%; border-bottom: 1px solid #eee; margin: 0 0 6px 0; padding: 4px 0 12px; float: none; }
+form#omise-form-checkout .omise-payment.offsite input  { width: auto; height: auto; }
+
+form#omise-form-checkout .omise-logo-wrapper           { display: inline-block; padding: 5px; margin: 0 10px; border-radius: 2px; vertical-align: top; }
+form#omise-form-checkout .omise-logo-wrapper img       { width: 30px; height: 30px; }
+form#omise-form-checkout .omise-banking-text-wrapper   { display: inline-block; }
+form#omise-form-checkout .secondary-text               { color: #aaa; font-size: 80%; }
+
+form#omise-form-checkout .scb                          { background: #4e2e7f; }
+form#omise-form-checkout .ktb                          { background: #1ba5e1; }
+form#omise-form-checkout .bay                          { background: #fec43b; }
+form#omise-form-checkout .bbl                          { background: #1e4598; }

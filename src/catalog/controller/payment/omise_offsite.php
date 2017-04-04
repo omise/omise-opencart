@@ -1,89 +1,24 @@
 <?php
 
-// Define 'OMISE_USER_AGENT_SUFFIX'
-if (!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION')) {
-    define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.4 OpenCart/' . VERSION);
-}
-
-// Define 'OMISE_API_VERSION'
-if (!defined('OMISE_API_VERSION')) {
-    define('OMISE_API_VERSION', '2014-07-27');
-}
-
-class ControllerPaymentOmise extends Controller {
-    public function checkoutCallback() {
-        if ($this->request->get['order_id']) {
-            // Load `omise-php` library.
-            $this->load->library('omise/omise-php/lib/Omise');
-
-            // Get Omise configuration.
-            $omise = $this->config->get('Omise');
-
-            // If test mode was enabled,
-            // replace Omise live key with test key.
-            if (isset($omise['test_mode']) && $omise['test_mode']) {
-                $omise['public_key'] = $omise['public_key_test'];
-                $omise['secret_key'] = $omise['secret_key_test'];
-            }
-
-            // Create a order history with `Processing` status
-            $this->load->model('checkout/order');
-            $this->load->model('payment/omise');
-
-            $order_id = $this->request->get['order_id'];
-            $transaction = $this->model_payment_omise->getChargeTransaction($order_id);
-            $omise_charge = OmiseCharge::retrieve($transaction->row['omise_charge_id'], $omise['public_key'], $omise['secret_key']);
-            if ($omise_charge && $omise_charge['authorized'] && $omise_charge['captured']) {
-                // Status: processed.
-                $this->model_checkout_order->confirm($order_id, 15);
-                $this->response->redirect($this->url->link('checkout/success', '', 'SSL'));
-            } else {
-                // Status: failed.
-                $this->model_checkout_order->confirm($order_id, 10);
-                $this->response->redirect($this->url->link('payment/omise/failure', '', 'SSL'));
-            }
-        }
-
-        exit;
-    }
-
-    /**
-     * OpenCart 1 does not provide common 'checkout/failure' page, so we need to add one.
-     */
-    public function failure() {
-        $this->language->load('payment/omise');
-
-        $this->document->setTitle($this->language->get('heading_title'));
-
-        $this->data['heading_title']       = $this->language->get('heading_title');
-        $this->data['text_payment_failed'] = $this->language->get('text_payment_failed');
-
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise_failure.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/payment/omise_failure.tpl';
-        } else {
-            $this->template = 'default/template/payment/omise_failure.tpl';
-        }
-
-        $this->children = array(
-            'common/column_left',
-            'common/column_right',
-            'common/content_top',
-            'common/content_bottom',
-            'common/footer',
-            'common/header'
-        );
-
-        $this->response->setOutput($this->render(true));
-    }
-
+class ControllerPaymentOmiseOffsite extends Controller {
     /**
      * Checkout orders and charge a card process
      *
      * @return string(Json)
      */
     public function checkout() {
+        // Define 'OMISE_USER_AGENT_SUFFIX'
+        if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION')) {
+            define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.4 OpenCart/' . VERSION);
+        }
+
+        // Define 'OMISE_API_VERSION'
+        if(!defined('OMISE_API_VERSION')) {
+            define('OMISE_API_VERSION', '2014-07-27');
+        }
+
         // If has a `post['omise_token']` request.
-        if (isset($this->request->post['omise_token'])) {
+        if (!empty($this->request->post['offsite_provider'])) {
             $this->load->helper('omise_currency');
 
             // Load `omise-php` library.
@@ -101,6 +36,8 @@ class ControllerPaymentOmise extends Controller {
 
             // Create a order history with `Processing` status
             $this->load->model('checkout/order');
+            $this->load->model('payment/omise');
+
             $order_id    = $this->session->data['order_id'];
             $order_info  = $this->model_checkout_order->getOrder($order_id);
             $order_total = $this->currency->format(
@@ -118,15 +55,17 @@ class ControllerPaymentOmise extends Controller {
                             'amount'      => formatChargeAmount($order_info['currency_code'], $order_total),
                             'currency'    => $order_info['currency_code'],
                             'description' => $this->request->post['description'],
-                            'card'        => $this->request->post['omise_token']
+                            'return_uri'  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id, '', 'SSL'),
+                            'offsite'     => $this->request->post['offsite_provider']
                         ),
                         $omise['public_key'],
                         $omise['secret_key']
                     );
 
-                    if (is_null($omise_charge['failure_code']) && is_null($omise_charge['failure_code']) && $omise_charge['captured']) {
-                        // Status: processed.
-                        $this->model_checkout_order->confirm($order_id, 15);
+                    if (is_null($omise_charge['failure_code']) && is_null($omise_charge['failure_code'])) {
+                        // Status: processing.
+                        $this->model_payment_omise->addChargeTransaction($order_id, $omise_charge['id']);
+                        $this->model_checkout_order->update($order_id, 2);
                     } else {
                         // Status: failed.
                         $this->model_checkout_order->update($order_id, 10);
@@ -137,7 +76,8 @@ class ControllerPaymentOmise extends Controller {
                             'failure_code'    => $omise_charge['failure_code'],
                             'failure_message' => $omise_charge['failure_message'],
                             'captured'        => $omise_charge['captured'],
-                            'omise'           => $omise_charge
+                            'omise'           => $omise_charge,
+                            'redirect'        => $omise_charge['authorize_uri']
                         )
                     );
                 } catch (Exception $e) {
@@ -149,40 +89,10 @@ class ControllerPaymentOmise extends Controller {
                 echo json_encode(array('error' => 'Cannot find your order, please try again.'));
             }
         } else {
-            return 'not authorized';
+            echo json_encode(array('error' => 'Please select one provider from the list.'));
         }
     }
-
-    /**
-     * Retrieve list of months translation
-     *
-     * @return array
-     */
-    public function getMonths() {
-        $months = array();
-        for ($index = 1; $index <= 12; $index++) {
-            $month = ($index < 10) ? '0' . $index : $index;
-            $months[$month] = $month;
-        }
-        return $months;
-    }
-
-    /**
-     * Retrieve array of available years
-     *
-     * @return array
-     */
-    public function getYears() {
-        $years = array();
-        $first = date('Y');
-
-        for ($index = 0; $index <= 10; $index++) {
-            $year = $first + $index;
-            $years[$year] = $year;
-        }
-        return $years;
-    }
-
+    
     /**
      * Omise card information form
      *
@@ -195,18 +105,10 @@ class ControllerPaymentOmise extends Controller {
          */
         // Load language.
         $this->language->load('payment/omise');
-
-        // Get Omise configuration.
-        $omise = $this->config->get('Omise');
-        
-        // If test mode was enabled, replace Omise public and secret key with test key.
-        if (isset($omise['test_mode']) && $omise['test_mode']) {
-            $omise['public_key'] = $omise['public_key_test'];
-            $omise['secret_key'] = $omise['secret_key_test'];
-        }
+        $this->language->load('payment/omise_offsite');
 
         $this->data['button_confirm'] = $this->language->get('button_confirm');
-        $this->data['checkout_url']   = $this->url->link('payment/omise/checkout', '', 'SSL');
+        $this->data['checkout_url']   = $this->url->link('payment/omise_offsite/checkout', '', 'SSL');
         $this->data['success_url']    = $this->url->link('checkout/success', '', 'SSL');
 
         $this->load->model('checkout/order');
@@ -219,7 +121,7 @@ class ControllerPaymentOmise extends Controller {
             $this->data['callbackurl']      = $this->url->link('payment/custom/callback', '', 'SSL');
             $this->data['orderdate']        = date('YmdHis');
             $this->data['currency']         = $order_info['currency_code'];
-            $this->data['orderamount']      = $this->currency->format($order_info['total'], $this->data['currency'] , false, false);
+            $this->data['orderamount']      = $this->currency->format($order_info['total'], $this->data['currency'], false, false);
             $this->data['billemail']        = $order_info['email'];
             $this->data['billphone']        = html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8');
             $this->data['billaddress']      = html_entity_decode($order_info['payment_address_1'], ENT_QUOTES, 'UTF-8');
@@ -236,12 +138,10 @@ class ControllerPaymentOmise extends Controller {
             $this->data['deliveryphone']    = html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8');
             $this->data['deliverypost']     = html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8');
 
-            $this->data['omise']            = $omise;
-
-            if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise.tpl')) {
-                $this->template = $this->config->get('config_template') . '/template/payment/omise.tpl';
+            if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise_offsite.tpl')) {
+                $this->template = $this->config->get('config_template') . '/template/payment/omise_offsite.tpl';
             } else {
-                $this->template = 'default/template/payment/omise.tpl';
+                $this->template = 'default/template/payment/omise_offsite.tpl';
             }
 
             $this->render();

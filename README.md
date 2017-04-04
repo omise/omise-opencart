@@ -29,7 +29,7 @@ The steps below are the method to install the extension manually. This method re
 <p align="center"><img alt="Payments menu" src="https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-02.png"></p>
 
 4. Look for **Omise Payment Gateway** and click **Install**.
-<p align="center"><img alt="Install Omise Payment Gateway extension menu" src="https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-03.png"></p>
+<p align="center"><img alt="Install Omise Payment Gateway extension menu" src="https://cloud.githubusercontent.com/assets/245383/24483141/43460fda-1520-11e7-80ec-326343a4e12e.png"></p>
 
 ### First Time Setup
 
@@ -57,6 +57,21 @@ The table below is the settings for the extension and the description for each s
 **Note:**
 
 If the setting for `Enable test mode` has been checked, the `Test Keys` will be used. If the setting for `Enable test mode` has not been checked, the `Live Keys` will be used.
+
+**Internet Banking**
+
+1. Login to your administration side. From the top menu, go to **Extensions** > **Payments**.
+<p align="center"><img alt="Payments menu" src="https://omise-cdn.s3.amazonaws.com/assets/omise-opencart/omise-opencart-install-02.png"></p>
+
+2. Look for **Omise Payment Gateway - Internet Banking**, click **Edit** link.
+<p align="center"><img alt="Edit Omise Payment Gateway - Internet Banking" src="https://cloud.githubusercontent.com/assets/245383/24483149/4ac72b7c-1520-11e7-8f57-2a9ba6cda6d6.png"></p>
+
+3. In **Omise Payment Gateway - Internet Banking** setting page, enable the module by changing **Module Status** to **Enabled**
+
+4. Click **Save**.
+<p align="center"><img alt="Enable Omise Payment Gateway Internet Banking" src="https://cloud.githubusercontent.com/assets/245383/24483153/4d05dfa0-1520-11e7-8f4d-cad88778a4b0.png"></p>
+
+> In order to enable **Omise Payment Gateway - Internet Banking**, **Omise Payment Gateway** must be installed and enabled.
 
 ## Contributing
 
