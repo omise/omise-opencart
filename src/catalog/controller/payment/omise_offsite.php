@@ -9,7 +9,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
     public function checkout() {
         // Define 'OMISE_USER_AGENT_SUFFIX'
         if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION')) {
-            define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.3 OpenCart/' . VERSION);
+            define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.4 OpenCart/' . VERSION);
         }
 
         // Define 'OMISE_API_VERSION'
