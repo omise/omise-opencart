@@ -54,18 +54,6 @@
         return false;
     });
 </script>
-<!-- Omise's checkout form -->
-<style>
-.omise-logo-wrapper         { display: inline-block; padding: 5px; margin: 0 10px; border-radius: 2px; vertical-align: top; }
-.omise-logo-wrapper img     { width: 30px; height: 30px; }
-.omise-banking-text-wrapper { display: inline-block; }
-.secondary-text             { color: #aaa; font-size: 80%; }
-
-.scb { background: #4e2e7f; }
-.ktb { background: #1ba5e1; }
-.bay { background: #fec43b; }
-.bbl { background: #1e4598; }
-</style>
 <form id="omise-form-checkout" method="post" action="<?php echo $success_url; ?>">
     <img src="catalog/view/theme/default/image/secured_by_omise.png" width="200">
     <!-- Collect a customer's card -->

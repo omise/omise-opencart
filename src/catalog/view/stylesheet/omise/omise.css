@@ -17,3 +17,15 @@ form#omise-form-checkout .omise-payment input               { background: #fff; 
 form#omise-form-checkout .alert-box                         { display: none; }
 form#omise-form-checkout .show                              { display: block !important; }
 form#omise-form-checkout .overlay                           { background: rgba(0, 0, 0, 0.8); width: 100%; height: 100%; position: fixed; top: 0; left: 0; z-index: 100; display: none; }
+
+/* Offsite */
+form#omise-form-checkout .omise-logo-wrapper         { display: inline-block; padding: 5px; margin: 0 10px; bo
+    rder-radius: 2px; vertical-align: top; }
+form#omise-form-checkout .omise-logo-wrapper img     { width: 30px; height: 30px; }
+form#omise-form-checkout .omise-banking-text-wrapper { display: inline-block; }
+form#omise-form-checkout .secondary-text             { color: #aaa; font-size: 80%; }
+
+form#omise-form-checkout .scb                        { background: #4e2e7f; }
+form#omise-form-checkout .ktb                        { background: #1ba5e1; }
+form#omise-form-checkout .bay                        { background: #fec43b; }
+form#omise-form-checkout .bbl                        { background: #1e4598; }
