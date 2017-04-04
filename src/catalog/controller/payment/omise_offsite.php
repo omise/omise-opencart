@@ -121,7 +121,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
             $this->data['callbackurl']          = $this->url->link('payment/custom/callback', '', 'SSL');
             $this->data['orderdate']            = date('YmdHis');
             $this->data['currency']             = $order_info['currency_code'];
-            $this->data['orderamount']          = $this->currency->format($order_info['total'], $this->data['currency'] , false, false);
+            $this->data['orderamount']          = $this->currency->format($order_info['total'], $this->data['currency'], false, false);
             $this->data['billemail']            = $order_info['email'];
             $this->data['billphone']            = html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8');
             $this->data['billaddress']          = html_entity_decode($order_info['payment_address_1'], ENT_QUOTES, 'UTF-8');
