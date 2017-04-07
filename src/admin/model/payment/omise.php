@@ -1,18 +1,20 @@
 <?php
 // Define 'OMISE_USER_AGENT_SUFFIX'
-if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION'))
+if (!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION')) {
     define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.4 OpenCart/'.VERSION);
+}
 
 // Define 'OMISE_API_VERSION'
-if(!defined('OMISE_API_VERSION'))
+if (!defined('OMISE_API_VERSION')) {
     define('OMISE_API_VERSION', '2014-07-27');
+}
 
 class ModelPaymentOmise extends Model
 {
     /**
      * @var string  Omise table name
      */
-    private $_table = 'omise_gateway';
+    private $table = 'omise_gateway';
 
     /**
      * Install a table that need to use in Omise Payment Gateway module
@@ -22,7 +24,7 @@ class ModelPaymentOmise extends Model
     {
         try {
             // Create new table
-            $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX.$this->_table."` (
+            $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX.$this->table."` (
                 `id` int NOT NULL,
                 `public_key` varchar(45),
                 `secret_key` varchar(45),
@@ -39,7 +41,8 @@ class ModelPaymentOmise extends Model
                     `omise_charge_id` CHAR(45) NOT NULL,
                     `date_added` DATETIME NOT NULL,
                     PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;"
+            );
 
             // Insert seed data into table.
             $this->db->query("INSERT INTO `" .DB_PREFIX. "omise_gateway` 
@@ -59,7 +62,7 @@ class ModelPaymentOmise extends Model
     public function uninstall()
     {
         try {
-            $this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX.$this->_table."`;");
+            $this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX.$this->table."`;");
         } catch (Exception $e) {
             return false;
         }
@@ -74,9 +77,9 @@ class ModelPaymentOmise extends Model
     public function getConfig()
     {
         try {
-            return $this->db->query("SELECT * FROM `".DB_PREFIX.$this->_table."` WHERE `id` = 1")->row;
+            return $this->db->query("SELECT * FROM `".DB_PREFIX.$this->table."` WHERE `id` = 1")->row;
         } catch (Exception $e) {
-            return false;            
+            return false;
         }
     }
 
@@ -89,14 +92,15 @@ class ModelPaymentOmise extends Model
         try {
             $string = "";
 
-            foreach ($update as $key => $value)
+            foreach ($update as $key => $value) {
                 $string .= "`".$key."` = '".$value."', ";
+            }
 
             $string = substr($string, 0, -2);
 
-            $this->db->query("UPDATE ".DB_PREFIX.$this->_table." SET ".$string." WHERE id = 1");
+            $this->db->query("UPDATE ".DB_PREFIX.$this->table." SET ".$string." WHERE id = 1");
         } catch (Exception $e) {
-            return false;            
+            return false;
         }
     }
 
@@ -104,7 +108,7 @@ class ModelPaymentOmise extends Model
      * Get Omise keys from table that set in Omise setting page
      * @return array
      */
-    private function _getOmiseKeys()
+    private function getOmiseKeys()
     {
         $omise = array();
 
@@ -136,7 +140,7 @@ class ModelPaymentOmise extends Model
         $this->language->load('payment/omise');
 
         // Get Omise Keys.
-        if ($keys = $this->_getOmiseKeys()) {
+        if ($keys = $this->getOmiseKeys()) {
             try {
                 $omise = OmiseAccount::retrieve($keys['public_key'], $keys['secret_key']);
 
@@ -145,7 +149,7 @@ class ModelPaymentOmise extends Model
                 return array('error' => $e->getMessage());
             }
         } else {
-            return $this->_error($this->language->get('error_extension_disabled'));
+            return $this->error($this->language->get('error_extension_disabled'));
         }
     }
 
@@ -162,7 +166,7 @@ class ModelPaymentOmise extends Model
         $this->language->load('payment/omise');
 
         // Get Omise Keys.
-        if ($keys = $this->_getOmiseKeys()) {
+        if ($keys = $this->getOmiseKeys()) {
             try {
                 $omise = OmiseBalance::retrieve($keys['public_key'], $keys['secret_key']);
 
@@ -171,7 +175,7 @@ class ModelPaymentOmise extends Model
                 return array('error' => $e->getMessage());
             }
         } else {
-            return $this->_error($this->language->get('error_extension_disabled'));
+            return $this->error($this->language->get('error_extension_disabled'));
         }
     }
 
@@ -188,7 +192,7 @@ class ModelPaymentOmise extends Model
         $this->language->load('payment/omise');
 
         // Get Omise Keys.
-        if ($keys = $this->_getOmiseKeys()) {
+        if ($keys = $this->getOmiseKeys()) {
             try {
                 $omise = OmiseTransaction::retrieve('', $keys['public_key'], $keys['secret_key']);
 
@@ -197,7 +201,7 @@ class ModelPaymentOmise extends Model
                 return array('error' => $e->getMessage());
             }
         } else {
-            return $this->_error($this->language->get('error_extension_disabled'));
+            return $this->error($this->language->get('error_extension_disabled'));
         }
     }
 
@@ -214,7 +218,7 @@ class ModelPaymentOmise extends Model
         $this->language->load('payment/omise');
 
         // Get Omise Keys.
-        if ($keys = $this->_getOmiseKeys()) {
+        if ($keys = $this->getOmiseKeys()) {
             try {
                 $omise = OmiseTransfer::retrieve('', $keys['public_key'], $keys['secret_key']);
 
@@ -223,7 +227,7 @@ class ModelPaymentOmise extends Model
                 return array('error' => $e->getMessage());
             }
         } else {
-            return $this->_error($this->language->get('error_extension_disabled'));
+            return $this->error($this->language->get('error_extension_disabled'));
         }
     }
 
@@ -240,19 +244,20 @@ class ModelPaymentOmise extends Model
         $this->language->load('payment/omise');
         
         // Get Omise Keys.
-        if ($keys = $this->_getOmiseKeys()) {
+        if ($keys = $this->getOmiseKeys()) {
             try {
                 $omise = OmiseTransfer::create(array('amount' => $amount), $keys['public_key'], $keys['secret_key']);
 
-                if (isset($omise['object']) && $omise['object'] == "transfer")
+                if (isset($omise['object']) && $omise['object'] == "transfer") {
                     return true;
-                else
+                } else {
                     return array('error' => 'Something went wrong.');
+                }
             } catch (Exception $e) {
                 return array('error' => $e->getMessage());
             }
         } else {
-            return $this->_error($this->language->get('error_extension_disabled'));
+            return $this->error($this->language->get('error_extension_disabled'));
         }
     }
 
@@ -260,9 +265,8 @@ class ModelPaymentOmise extends Model
      * Return error array template
      * @return array
      */
-    private function _error($msg = '')
+    private function error($msg = '')
     {
         return array('error' => $msg);
     }
 }
-?>

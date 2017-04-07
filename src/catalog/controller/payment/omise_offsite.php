@@ -1,19 +1,21 @@
 <?php
 
-class ControllerPaymentOmiseOffsite extends Controller {
+class ControllerPaymentOmiseOffsite extends Controller
+{
     /**
      * Checkout orders and charge a card process
      *
      * @return string(Json)
      */
-    public function checkout() {
+    public function checkout()
+    {
         // Define 'OMISE_USER_AGENT_SUFFIX'
-        if(!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION')) {
+        if (!defined('OMISE_USER_AGENT_SUFFIX') && defined('VERSION')) {
             define('OMISE_USER_AGENT_SUFFIX', 'OmiseOpenCart/1.4 OpenCart/' . VERSION);
         }
 
         // Define 'OMISE_API_VERSION'
-        if(!defined('OMISE_API_VERSION')) {
+        if (!defined('OMISE_API_VERSION')) {
             define('OMISE_API_VERSION', '2014-07-27');
         }
 
@@ -98,7 +100,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
      *
      * @return void
      */
-    protected function index() {
+    protected function index()
+    {
         /**
          * Prepare and loading necessary scripts.
          *
@@ -126,7 +129,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
             $this->data['billphone']        = html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8');
             $this->data['billaddress']      = html_entity_decode($order_info['payment_address_1'], ENT_QUOTES, 'UTF-8');
             $this->data['billcountry']      = html_entity_decode($order_info['payment_iso_code_2'], ENT_QUOTES, 'UTF-8');
-            $this->data['billprovince']     = html_entity_decode($order_info['payment_zone'], ENT_QUOTES, 'UTF-8');;
+            $this->data['billprovince']     = html_entity_decode($order_info['payment_zone'], ENT_QUOTES, 'UTF-8');
+            ;
             $this->data['billcity']         = html_entity_decode($order_info['payment_city'], ENT_QUOTES, 'UTF-8');
             $this->data['billpost']         = html_entity_decode($order_info['payment_postcode'], ENT_QUOTES, 'UTF-8');
             $this->data['deliveryname']     = html_entity_decode($order_info['shipping_firstname'] . $order_info['shipping_lastname'], ENT_QUOTES, 'UTF-8');

@@ -5,4 +5,3 @@ $_['text_omise_offsite']         = '<a href="https://www.omise.co" target="_blan
 
 // Errors
 $_['error_need_omise_extension'] = 'Please install and enable <strong>Omise Payment Gateway</strong> extension before enabling <strong>Omise Payment Gateway - Internet Banking</strong> (check \'Setting\' tab).';
-?>

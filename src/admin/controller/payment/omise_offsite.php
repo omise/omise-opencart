@@ -1,12 +1,14 @@
 <?php
 
-class ControllerPaymentOmiseOffsite extends Controller {
+class ControllerPaymentOmiseOffsite extends Controller
+{
     /**
      * Render Omise Payment Gateway - Internet Banking extension setting page
      *
      * @return void
      */
-    public function index() {
+    public function index()
+    {
         /**
          * Prepare and loading necessary scripts.
          *
@@ -65,8 +67,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
          * Page setup.
          *
          */
-        $this->_setBreadcrumb()
-             ->_getSessionFlash();
+        $this->setBreadcrumb()
+             ->getSessionFlash();
 
         /**
          * Template setup.
@@ -88,7 +90,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
      *
      * @return self
      */
-    private function _setBreadcrumb($current = null) {
+    private function setBreadcrumb($current = null)
+    {
         // Set Breadcrumbs.
         $this->data['breadcrumbs'] = array();
 
@@ -122,7 +125,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
      *
      * @return self
      */
-    private function _getSessionFlash() {
+    private function getSessionFlash()
+    {
         $this->data['success'] = '';
         if (isset($this->session->data['success'])) {
             $this->data['success'] = $this->session->data['success'];
@@ -145,7 +149,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
      *
      * @return void
      */
-    public function install() {
+    public function install()
+    {
         // Set `success` session if it completely done.
         $this->session->data['success'] = 'Installed';
     }
@@ -156,6 +161,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
      *
      * @return void
      */
-    public function uninstall() {
+    public function uninstall()
+    {
     }
 }
