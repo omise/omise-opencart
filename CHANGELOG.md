@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+[1.5] pending
+---
+- *`Updated`* Reformat the PHP files under `src/admin` & `src/catalog` by follow the OpenCart Coding standards
+
 [1.4] 2017-04-04
 ---
 - *`Added`* Support for [Internet Banking](https://www.omise.co/offsite-payment)
