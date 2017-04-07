@@ -46,7 +46,7 @@ $_['text_disabled']                 	= 'Disabled';
 
 
 /**
- * API Response translation 
+ * API Response translation
  *
  */
 $_['api_transfer_success']          	= 'Sent your transfer request already, please waiting for comfirmation from the bank.';
