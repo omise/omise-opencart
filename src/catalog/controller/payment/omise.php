@@ -299,6 +299,53 @@ class ControllerPaymentOmise extends Controller {
         }
     }
 
+	public function webhook() {
+		$event = json_decode(file_get_contents('php://input'), true);
+		if (!isset($event['key'])) {
+			$this->response->addHeader('HTTP/1.1 400 Bad Request');
+			return;
+		}
+
+		if ($event['key'] != 'charge.complete') {
+			return;
+		}
+
+		$this->load->model('payment/omise');
+		$this->load->model('checkout/order');
+
+		$transaction = $this->model_payment_omise->getOrderId($event['data']['id']);
+		if (empty($transaction->row)) {
+			return;
+		}
+
+		$order = $this->model_checkout_order->getOrder($transaction->row['order_id']);
+		if ($order['order_status_id'] != 2) {
+			return;
+		}
+
+		$this->load->library('omise');
+		$this->load->library('omise-php/lib/Omise');
+
+		$omise_keys = $this->model_payment_omise->retrieveOmiseKeys();
+		$charge     = OmiseCharge::retrieve(
+			$event['data']['id'],
+			$omise_keys['pkey'],
+			$omise_keys['skey']
+		);
+
+		if ($charge && $charge['authorized'] && $charge['captured']) {
+			//Status: processed.
+			$this->model_checkout_order->addOrderHistory($transaction->row['order_id'], 15);
+		} else {
+			// Status: failed.
+			$this->model_checkout_order->addOrderHistory(
+				$transaction->row['order_id'],
+				10,
+				$charge['failure_message']
+			);
+		}
+	}
+
     private function renderWaitingPage()
     {
         $omise_waiting = 'omise_waiting_' . $this->request->get['order_id'];
@@ -361,3 +408,4 @@ class ControllerPaymentOmise extends Controller {
         }
     }
 }
+
