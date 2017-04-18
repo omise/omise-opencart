@@ -311,39 +311,70 @@ class ControllerPaymentOmise extends Controller {
 		}
 
 		$this->load->model('payment/omise');
-		$this->load->model('checkout/order');
 
 		$transaction = $this->model_payment_omise->getOrderId($event['data']['id']);
 		if (empty($transaction->row)) {
 			return;
 		}
 
-		$order = $this->model_checkout_order->getOrder($transaction->row['order_id']);
-		if ($order['order_status_id'] != 2) {
-			return;
-		}
+		$this->request->get['order_id'] = $transaction->row['order_id'];
+		return $this->refresh();
+	}
 
-		$this->load->library('omise');
-		$this->load->library('omise-php/lib/Omise');
+	public function refresh() {
+		try {
+			if (! isset($this->request->get['order_id'])) {
+				throw new Exception('order_id is required');
+			}
 
-		$omise_keys = $this->model_payment_omise->retrieveOmiseKeys();
-		$charge     = OmiseCharge::retrieve(
-			$event['data']['id'],
-			$omise_keys['pkey'],
-			$omise_keys['skey']
-		);
+			$this->load->model('checkout/order');
 
-		if ($charge && $charge['authorized'] && $charge['captured']) {
-			//Status: processed.
-			$this->model_checkout_order->addOrderHistory($transaction->row['order_id'], 15);
-		} else {
-			// Status: failed.
-			$this->model_checkout_order->addOrderHistory(
-				$transaction->row['order_id'],
-				10,
-				$charge['failure_message']
+			$order = $this->model_checkout_order->getOrder($this->request->get['order_id']);
+			if ($order['order_status_id'] != 2) {
+				throw new Exception('Order status MUST be `Processing` to be updated.');
+			}
+
+			$this->load->model('payment/omise');
+			$this->load->library('omise');
+			$this->load->library('omise-php/lib/Omise');
+
+			$transaction = $this->model_payment_omise->getChargeTransaction($this->request->get['order_id']);
+			if (empty($transaction->row)) {
+				throw new Exception('Order not found');
+			}
+
+			$omise_keys = $this->model_payment_omise->retrieveOmiseKeys();
+			$charge     = OmiseCharge::retrieve(
+				$transaction->row['omise_charge_id'],
+				$omise_keys['pkey'],
+				$omise_keys['skey']
 			);
+
+			if ($charge && $charge['authorized'] && $charge['captured']) {
+				// Status: processed.
+				$this->model_checkout_order->addOrderHistory($this->request->get['order_id'], 15);
+				$new_order = $this->model_checkout_order->getOrder($this->request->get['order_id']);
+			} else {
+				// Status: failed.
+				$this->model_checkout_order->addOrderHistory(
+					$this->request->get['order_id'],
+					10,
+					$charge['failure_message']
+				);
+				$new_order = $this->model_checkout_order->getOrder($this->request->get['order_id']);
+			}
+
+			$output = array(
+				'success'       => 'Order status has been updated.',
+				'new_status'    => $new_order['order_status'],
+				'new_status_id' => $new_order['order_status_id'],
+			);
+		} catch (Exception $e) {
+			$output = array('error' => $e->getMessage());
 		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($output));
 	}
 
     private function renderWaitingPage()
