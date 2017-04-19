@@ -30,7 +30,7 @@ $_['button_cancel']                                            = 'キャンセ�
 
 
 // Errors
-$_['error_need_omise_extension']                               = 'Please install and enable <strong>Omise Payment Gateway</strong> extension before enabling <strong>Omise Payment Gateway - Internet Banking</strong> (check \'Setting\' tab).';
+$_['error_need_omise_extension']                               = '<strong>Omise Payment Gateway - Internet Banking</strong>を有効化する前に、<strong>Omise Payment Gateway</strong>拡張をインストール・有効化してください(\'設定\'タブをご確認ください)。';
 
 
 ?>
