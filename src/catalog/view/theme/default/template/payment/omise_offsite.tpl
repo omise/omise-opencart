@@ -20,7 +20,7 @@ img.bbl { background: url('catalog/view/theme/default/image/omise-offsite-bbl.sv
 <form id="omise-form-checkout" method="post" action="<?php echo $success_url; ?>">
     <!-- Collect a customer's card -->
     <div class="omise-payment">
-        <h3>Internet Banking</h3>
+        <h3><?php echo $payment_title; ?></h3>
 
         <!-- Alert box -->
         <div class="alert alert-danger alert-box alert-error warning"></div>

@@ -38,7 +38,8 @@ class ControllerPaymentOmiseOffsite extends Controller {
 				'deliveryprovince' => html_entity_decode($order_info['shipping_zone'], ENT_QUOTES, 'UTF-8'),
 				'deliveryemail'    => $order_info['email'],
 				'deliveryphone'    => html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8'),
-				'deliverypost'     => html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8')
+				'deliverypost'     => html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8'),
+				'payment_title'    => empty($this->config->get('omise_offsite_payment_title')) ? $this->language->get('text_title') : $this->config->get('omise_offsite_payment_title')
 			));
 
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise_offsite.tpl')) {
