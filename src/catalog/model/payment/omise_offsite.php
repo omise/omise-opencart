@@ -7,10 +7,11 @@ class ModelPaymentOmiseOffsite extends Model {
 
         $this->load->language('payment/omise_offsite');
 
-        if ($this->config->get('omise_offsite_payment_title') != "")
+        if ($this->config->get('omise_offsite_payment_title') != "") {
             $payment_title = $this->config->get('omise_offsite_payment_title');
-        else
+        } else {
             $payment_title = $this->language->get('text_title');
+        }
 
         return array(
             'code'       => 'omise_offsite',
