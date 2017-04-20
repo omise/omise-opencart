@@ -135,6 +135,36 @@ class ControllerPaymentOmiseOffsite extends Controller
         }
     }
 
+    public function action() {
+        if (empty($this->request->get['order_id'])) {
+            return;
+        }
+
+        $this->load->model('sale/order');
+        $this->load->model('payment/omise');
+
+        $order_info = $this->model_sale_order->getOrder($this->request->get['order_id']);
+
+        if (empty($order_info)) {
+            return;
+        }
+
+        $this->load->model('localisation/order_status');
+        $this->load->language('payment/omise_offsite_action');
+
+        $data = array(
+            'text_loading'   => $this->language->get('text_loading'),
+            'button_refresh' => $this->language->get('button_refresh'),
+
+            'order_id'        => $this->request->get['order_id'],
+            'order_status_id' => $order_info['order_status_id'],
+            'order_status'    => $this->model_localisation_order_status->getOrderStatus($order_info['order_status_id']),
+
+            'token' => $this->session->data['token'],
+        );
+        return $this->load->view('payment/omise_offsite_action.tpl', $data);
+    }
+
     /**
      * This method will fire when user click `install` button from `extension/payment` page
      * It will call `model/payment/omise_offsite.php` file and run `install` method for installl stuff
