@@ -1,9 +1,10 @@
 Change Log
 ==========
 
-[2.3] Pending Release
+[2.3] 2017-04-20
 ---
-- *`Added`* Support for [Internet Banking](https://www.omise.co/offsite-payment)
+- *`Added`* Support [internet banking](https://www.omise.co/offsite-payment) payment
+- *`Fixed`* Generate the SSL URL, if the merchant configure SSL for their web site
 
 [2.2] 2017-03-22
 ---
