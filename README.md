@@ -1,4 +1,4 @@
-<p align="center"><a href='https://www.omise.co'><img src='https://assets.omise.co/assets/omise-logo-ed530feda8c7bf8b0c990d5e4cf8080a0f23d406fa4049a523ae715252d0dc54.svg' height='60'></a></p>
+<p align="center"><a href='https://www.omise.co'><img src='https://cdn.omise.co/assets/omise-logo-with-text.svg' height='60'></a></p>
 
 **Omise OpenCart** is the official payment extension which provides support for Omise payment gateway for store builders working on the OpenCart platform.
 
