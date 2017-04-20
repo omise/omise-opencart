@@ -9,8 +9,9 @@ class ControllerPaymentOmiseOffsite extends Controller {
 		$translate_code = 'error_' . str_replace(' ', '_', strtolower($clue));
 		$translate_msg  = $this->language->get($translate_code);
 
-		if ($translate_code !== $translate_msg)
+		if ($translate_code !== $translate_msg) {
 			return $translate_msg;
+		}
 
 		return $clue;
 	}
