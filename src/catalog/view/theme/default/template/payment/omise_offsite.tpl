@@ -1,3 +1,57 @@
+<!-- Include Omise's javascript -->
+<script type="text/javascript">
+    $("#omise-form-checkout").submit(function() {
+        var form            = $(this),
+            alertSuccess    = form.find(".alert-success"),
+            alertError      = form.find(".alert-error"),
+            spinner         = form.find('.omise-submitting');
+
+        // Show spinner icon.
+        spinner.addClass('loading');
+
+        // Hidden alert box
+        alertError.removeClass('show');
+        alertSuccess.removeClass('show');
+
+        // Disable the submit button to avoid repeated click.
+        form.find("input[type=submit]").prop("disabled", true);
+
+        // Charge with internet banking.
+        var posting = $.post("<?php echo $checkout_url; ?>", {
+            "offsite_provider": form.find("[data-omise=offsite_provider]:checked").val(),
+            "description": "Charge an internet banking from OpenCart that order id is <?php echo $orderid; ?> from <?php echo $billemail; ?>"
+        });
+
+        posting
+            .done(function(resp) {
+                spinner.removeClass('loading');
+                resp = JSON.parse(resp);
+
+                if (typeof resp === "object") {
+                    if (typeof resp.error !== "undefined") {
+                        alertError.html(resp.error).addClass('show');
+                    } else {
+                        if (typeof resp.redirect !== "undefined") {
+                            console.log('redirect');
+                            window.location = resp.redirect;
+                        } else {
+                            form.get(0).submit();
+                        }
+                    }
+                }
+
+                form.find("input[type=submit]").prop("disabled", false);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                spinner.removeClass('loading');
+                alertError.html("Omise "+errorThrown).addClass('show');
+                form.find("input[type=submit]").prop("disabled", false);
+            });
+
+        // Prevent the form from being submitted;
+        return false;
+    });
+</script>
 <!-- Omise's checkout form -->
 <style>
 .omise-logo-wrapper         { display: inline-block; padding: 5px; margin: 0 10px; border-radius: 2px; vertical-align: top; }
@@ -6,16 +60,9 @@
 .secondary-text             { color: #aaa; font-size: 80%; }
 
 .scb { background: #4e2e7f; }
-img.scb { background: url('catalog/view/theme/default/image/omise-offsite-scb.svg') #4e2e7f; }
-
 .ktb { background: #1ba5e1; }
-img.ktb { background: url('catalog/view/theme/default/image/omise-offsite-ktb.svg') #1ba5e1; }
-
 .bay { background: #fec43b; }
-img.bay { background: url('catalog/view/theme/default/image/omise-offsite-bay.svg') #fec43b; }
-
 .bbl { background: #1e4598; }
-img.bbl { background: url('catalog/view/theme/default/image/omise-offsite-bbl.svg') #1e4598; }
 </style>
 <form id="omise-form-checkout" method="post" action="<?php echo $success_url; ?>">
     <!-- Collect a customer's card -->
@@ -33,7 +80,7 @@ img.bbl { background: url('catalog/view/theme/default/image/omise-offsite-bbl.sv
                     <label>
                         <input type="radio" data-omise="offsite_provider" id="omise_offsite_scb" name="offsite_provider" value="internet_banking_scb" />
                         <div class="omise-logo-wrapper scb">
-                            <img class="scb" />
+                            <img src="catalog/view/theme/default/image/omise-offsite-scb.svg" class="scb" />
                         </div>
                         <div class="omise-banking-text-wrapper">
                             <span class="title">Siam Commercial Bank</span><br/>
@@ -50,7 +97,7 @@ img.bbl { background: url('catalog/view/theme/default/image/omise-offsite-bbl.sv
                     <label>
                         <input type="radio" data-omise="offsite_provider" id="omise_offsite_ktb" name="offsite_provider" value="internet_banking_ktb" />
                         <div class="omise-logo-wrapper ktb">
-                            <img class="ktb" />
+                            <img src="catalog/view/theme/default/image/omise-offsite-ktb.svg" class="ktb" />
                         </div>
                         <div class="omise-banking-text-wrapper">
                             <span class="title">Krungthai Bank</span><br/>
@@ -67,7 +114,7 @@ img.bbl { background: url('catalog/view/theme/default/image/omise-offsite-bbl.sv
                     <label>
                         <input type="radio" data-omise="offsite_provider" id="omise_offsite_bay" name="offsite_provider" value="internet_banking_bay" />
                         <div class="omise-logo-wrapper bay">
-                            <img class="bay" />
+                            <img src="catalog/view/theme/default/image/omise-offsite-bay.svg" class="bay" />
                         </div>
                         <div class="omise-banking-text-wrapper">
                             <span class="title">Krungsri Bank</span><br/>
@@ -84,7 +131,7 @@ img.bbl { background: url('catalog/view/theme/default/image/omise-offsite-bbl.sv
                     <label>
                         <input type="radio" data-omise="offsite_provider" id="omise_offsite_bbl" name="offsite_provider" value="internet_banking_bbl" />
                         <div class="omise-logo-wrapper bbl">
-                            <img class="bbl" />
+                            <img src="catalog/view/theme/default/image/omise-offsite-bbl.svg" class="bbl" />
                         </div>
                         <div class="omise-banking-text-wrapper">
                             <span class="title">Bangkok Bank</span><br/>
