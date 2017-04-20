@@ -31,13 +31,13 @@ class ControllerPaymentOmise extends Controller {
 			if ($charge && $charge['authorized'] && $charge['captured']) {
 				// Status: processed.
 				$this->model_checkout_order->addOrderHistory($order_id, 15);
-				$this->response->redirect($this->url->link('checkout/success'));
+				$this->response->redirect($this->url->link('checkout/success', '', 'SSL'));
 			} elseif ($charge && $charge['status'] == 'pending') {
 				$this->renderWaitingPage();
 			} else {
 				// Status: failed.
 				$this->model_checkout_order->addOrderHistory($order_id, 10, $charge['failure_message']);
-				$this->response->redirect($this->url->link('checkout/failure'));
+				$this->response->redirect($this->url->link('checkout/failure', '', 'SSL'));
 			}
 		} else {
 			$this->response->redirect($this->url->link('common/home'));
@@ -77,7 +77,7 @@ class ControllerPaymentOmise extends Controller {
 							"amount"      => OmisePluginHelperCharge::amount($order_info['currency_code'], $order_total),
 							"currency"    => $this->currency->getCode(),
 							"description" => $this->request->post['description'],
-							"return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id),
+							"return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id, '', 'SSL'),
 							"card"        => $this->request->post['omise_token'],
 							"capture"     => $this->config->get('omise_auto_capture')
 						),
@@ -181,12 +181,12 @@ class ControllerPaymentOmise extends Controller {
 		if ($order_info) {
 			$data = array_merge($data, array(
 				'button_confirm'   => $this->language->get('button_confirm'),
-				'checkout_url'     => $this->url->link('payment/omise/checkout'),
-				'success_url'      => $this->url->link('checkout/success'),
+				'checkout_url'     => $this->url->link('payment/omise/checkout', '', 'SSL'),
+				'success_url'      => $this->url->link('checkout/success', '', 'SSL'),
 				'text_config_one'  => trim($this->config->get('text_config_one')),
 				'text_config_two'  => trim($this->config->get('text_config_two')),
 				'orderid'          => date('His') . $this->session->data['order_id'],
-				'callbackurl'      => $this->url->link('payment/custom/callback'),
+				'callbackurl'      => $this->url->link('payment/custom/callback', '', 'SSL'),
 				'orderdate'        => date('YmdHis'),
 				'currency'         => $order_info['currency_code'],
 				'orderamount'      => $this->currency->format($order_info['total'], $order_info['currency_code'] , false, false),
