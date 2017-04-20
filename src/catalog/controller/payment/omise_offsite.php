@@ -84,7 +84,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
 				echo json_encode(array('error' => 'Cannot find your order, please try again.'));
 			}
 		} else {
-			echo json_encode(array('error' => 'Please select one provider from the list.'));
+			echo json_encode(array('error' => 'Please select a bank from the list.'));
 		}
 	}
 
