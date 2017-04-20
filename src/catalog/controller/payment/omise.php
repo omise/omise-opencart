@@ -268,7 +268,7 @@ class ControllerPaymentOmise extends Controller {
             $data['text_message'] = sprintf(
                 $this->language->get('text_customer'),
                 $this->url->link('account/account', '', 'SSL'),
-                $this->url->link('account/order', '', '    SSL'),
+                $this->url->link('account/order', '', 'SSL'),
                 $this->url->link('account/download', '', 'SSL'),
                 $this->url->link('information/contact')
             );
