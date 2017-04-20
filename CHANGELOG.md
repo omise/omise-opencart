@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+[2.3] Pending Release
+---
+- *`Added`* Support for [Internet Banking](https://www.omise.co/offsite-payment)
+
+[2.2] 2017-03-22
+---
+- *`Added`* Support `IDR` and `SGD` currencies
+
 [2.0.0.1] 2016-07-01
 ---
 - *`Added`* A configuration for manual capture

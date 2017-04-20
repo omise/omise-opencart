@@ -3,22 +3,22 @@ if (! class_exists('OmisePluginHelperCharge')) {
     class OmisePluginHelperCharge
     {
         /**
-         * @param string  $currency
-         * @param integer $amount
+         * Format an order's amount to be a small-unit that Omise's API accept.
+         * Note, no specific format for JPY currency.
+         *
+         * @param  string  $currency
+         * @param  integer $amount
+         *
          * @return string
          */
         public static function amount($currency, $amount)
         {
             switch (strtoupper($currency)) {
                 case 'THB':
-                    // Convert to satang unit
+                case 'IDR':
+                case 'SGD':
+                    // Convert to a small unit
                     $amount = $amount * 100;
-                    break;
-
-                case 'JPY':
-                    break;
-
-                default:
                     break;
             }
 

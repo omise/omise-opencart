@@ -125,17 +125,11 @@ class ControllerPaymentOmise extends Controller {
 
                 // Check currency supports
                 if (! OmisePluginHelperCurrency::isSupport($this->config->get('config_currency'))) {
-                    // THB currency
-                    $thb_currency = $this->model_localisation_currency->getCurrencyByCode('THB');
-                    if (strtoupper($omise_balance['currency']) === "THB" && empty($thb_currency))
-                        $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_thb_not_found'), $this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL'));
-
-                    // JPY currency
-                    $jpy_currency = $this->model_localisation_currency->getCurrencyByCode('JPY');
-                    if (strtoupper($omise_balance['currency']) === "JPY" && empty($jpy_currency))
-                        $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_jpy_not_found'), $this->url->link('localisation/currency', 'token=' . $this->session->data['token'], 'SSL'));
-
-                    $data['omise_dashboard']['warning'][] = sprintf($this->language->get('error_currency_not_support'), $this->config->get('config_currency'), $this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL'));
+                    $data['omise_dashboard']['warning'][] = sprintf(
+                        $this->language->get('error_currency_not_support'),
+                        $this->config->get('config_currency'),
+                        $this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL')
+                    );
                 }
             } catch (Exception $e) {
                 $data['omise_dashboard']['error'][] = $this->searchErrorTranslation($e->getMessage());

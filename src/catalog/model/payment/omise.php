@@ -51,6 +51,10 @@ class ModelPaymentOmise extends Model {
         else
             return $this->db->query("SELECT * FROM `" . DB_PREFIX . "omise_charge`");
     }
+
+    public function getOrderId($charge_id) {
+        return $this->db->query("SELECT * FROM `" . DB_PREFIX . "omise_charge` WHERE omise_charge_id = '" . $charge_id. "'");
+    }
 }
 
 

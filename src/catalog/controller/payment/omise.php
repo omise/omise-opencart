@@ -16,7 +16,7 @@ class ControllerPaymentOmise extends Controller {
 	}
 
 	public function checkoutCallback() {
-		if ($this->request->get['order_id']) {
+		if (isset($this->request->get['order_id'])) {
 			$this->load->library('omise');
 			$this->load->library('omise-php/lib/Omise');
 			$this->load->model('payment/omise');
@@ -27,18 +27,21 @@ class ControllerPaymentOmise extends Controller {
 			$transaction = $this->model_payment_omise->getChargeTransaction($this->request->get['order_id']);
 
 			$charge = OmiseCharge::retrieve($transaction->row['omise_charge_id'], $omise_keys['pkey'], $omise_keys['skey']);
+
 			if ($charge && $charge['authorized'] && $charge['captured']) {
 				// Status: processed.
 				$this->model_checkout_order->addOrderHistory($order_id, 15);
 				$this->response->redirect($this->url->link('checkout/success', '', 'SSL'));
+			} elseif ($charge && $charge['status'] == 'pending') {
+				$this->renderWaitingPage();
 			} else {
 				// Status: failed.
-				$this->model_checkout_order->addOrderHistory($order_id, 10);
+				$this->model_checkout_order->addOrderHistory($order_id, 10, $charge['failure_message']);
 				$this->response->redirect($this->url->link('checkout/failure', '', 'SSL'));
 			}
+		} else {
+			$this->response->redirect($this->url->link('common/home'));
 		}
-
-		exit;
 	}
 
 	/**
@@ -214,4 +217,226 @@ class ControllerPaymentOmise extends Controller {
 			}
 		}
 	}
+
+    public function processing()
+    {
+        if (! isset($this->request->get['order_id'])) {
+            return;
+        }
+
+        if (isset($this->session->data['order_id'])) {
+            $backup_order_id = $this->session->data['order_id'];
+        }
+
+        // Reuse success logic from OpenCart to cleanup current cart.
+        // And checkout/success only works with session->data['order_id'].
+        $this->session->data['order_id'] = $this->request->get['order_id'];
+        $this->load->controller('checkout/success');
+        if (isset($backup_order_id)) {
+            $this->session->data['order_id'] = $backup_order_id;
+        }
+
+        // But display our page.
+        $this->load->language('payment/omise_processing');
+        $this->document->setTitle($this->language->get('heading_title'));
+
+        $data['breadcrumbs'] = array();
+
+        $data['breadcrumbs'][] = array(
+            'text' => $this->language->get('text_home'),
+            'href' => $this->url->link('common/home')
+        );
+
+        $data['breadcrumbs'][] = array(
+            'text' => $this->language->get('text_basket'),
+            'href' => $this->url->link('checkout/cart')
+        );
+
+        $data['breadcrumbs'][] = array(
+            'text' => $this->language->get('text_checkout'),
+            'href' => $this->url->link('checkout/checkout', '', 'SSL')
+        );
+
+        $data['breadcrumbs'][] = array(
+            'text' => $this->language->get('text_processing'),
+            'href' => $this->url->link('payment/omise/processing')
+        );
+
+        $data['heading_title'] = $this->language->get('heading_title');
+
+        if ($this->customer->isLogged()) {
+            $data['text_message'] = sprintf(
+                $this->language->get('text_customer'),
+                $this->url->link('account/account', '', 'SSL'),
+                $this->url->link('account/order', '', 'SSL'),
+                $this->url->link('account/download', '', 'SSL'),
+                $this->url->link('information/contact')
+            );
+        } else {
+            $data['text_message'] = sprintf(
+                $this->language->get('text_guest'),
+                $this->url->link('information/contact')
+            );
+        }
+
+        $data['button_continue'] = $this->language->get('button_continue');
+
+        $data['continue'] = $this->url->link('common/home');
+
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['column_right'] = $this->load->controller('common/column_right');
+        $data['content_top'] = $this->load->controller('common/content_top');
+        $data['content_bottom'] = $this->load->controller('common/content_bottom');
+        $data['footer'] = $this->load->controller('common/footer');
+        $data['header'] = $this->load->controller('common/header');
+
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/success.tpl')) {
+            $this->response->setOutput(
+                $this->load->view($this->config->get('config_template') . '/template/common/success.tpl', $data)
+            );
+        } else {
+            $this->response->setOutput($this->load->view('default/template/common/success.tpl', $data));
+        }
+    }
+
+	public function webhook() {
+		$event = json_decode(file_get_contents('php://input'), true);
+		if (!isset($event['key'])) {
+			$this->response->addHeader('HTTP/1.1 400 Bad Request');
+			return;
+		}
+
+		if ($event['key'] != 'charge.complete') {
+			return;
+		}
+
+		$this->load->model('payment/omise');
+
+		$transaction = $this->model_payment_omise->getOrderId($event['data']['id']);
+		if (empty($transaction->row)) {
+			return;
+		}
+
+		$this->request->get['order_id'] = $transaction->row['order_id'];
+		return $this->refresh();
+	}
+
+	public function refresh() {
+		try {
+			if (! isset($this->request->get['order_id'])) {
+				throw new Exception('order_id is required');
+			}
+
+			$this->load->model('checkout/order');
+
+			$order = $this->model_checkout_order->getOrder($this->request->get['order_id']);
+			if ($order['order_status_id'] != 2) {
+				throw new Exception('Order status MUST be `Processing` to be updated.');
+			}
+
+			$this->load->model('payment/omise');
+			$this->load->library('omise');
+			$this->load->library('omise-php/lib/Omise');
+
+			$transaction = $this->model_payment_omise->getChargeTransaction($this->request->get['order_id']);
+			if (empty($transaction->row)) {
+				throw new Exception('Order not found');
+			}
+
+			$omise_keys = $this->model_payment_omise->retrieveOmiseKeys();
+			$charge     = OmiseCharge::retrieve(
+				$transaction->row['omise_charge_id'],
+				$omise_keys['pkey'],
+				$omise_keys['skey']
+			);
+
+			if ($charge && $charge['authorized'] && $charge['captured']) {
+				// Status: processed.
+				$this->model_checkout_order->addOrderHistory($this->request->get['order_id'], 15);
+				$new_order = $this->model_checkout_order->getOrder($this->request->get['order_id']);
+			} else {
+				// Status: failed.
+				$this->model_checkout_order->addOrderHistory(
+					$this->request->get['order_id'],
+					10,
+					$charge['failure_message']
+				);
+				$new_order = $this->model_checkout_order->getOrder($this->request->get['order_id']);
+			}
+
+			$output = array(
+				'success'       => 'Order status has been updated.',
+				'new_status'    => $new_order['order_status'],
+				'new_status_id' => $new_order['order_status_id'],
+			);
+		} catch (Exception $e) {
+			$output = array('error' => $e->getMessage());
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($output));
+	}
+
+    private function renderWaitingPage()
+    {
+        $omise_waiting = 'omise_waiting_' . $this->request->get['order_id'];
+
+        if (! isset($this->session->data[$omise_waiting])) {
+            $this->session->data[$omise_waiting] = 1;
+        } else {
+            $this->session->data[$omise_waiting]++;
+            if ($this->session->data[$omise_waiting] > 5) {
+                $this->response->redirect(
+                    $this->url->link('payment/omise/processing', 'order_id=' . $this->request->get['order_id'])
+                );
+                return;
+            }
+        }
+
+        $this->load->language('checkout/success');
+        $this->load->language('payment/omise_waiting');
+        $this->document->setTitle($this->language->get('heading_title'));
+
+        $data['breadcrumbs'] = array();
+
+        $data['breadcrumbs'][] = array(
+            'text' => $this->language->get('text_home'),
+            'href' => $this->url->link('common/home')
+        );
+
+        $data['breadcrumbs'][] = array(
+            'text' => $this->language->get('text_basket'),
+            'href' => $this->url->link('checkout/cart')
+        );
+
+        $data['breadcrumbs'][] = array(
+            'text' => $this->language->get('text_checkout'),
+            'href' => $this->url->link('checkout/checkout', '', 'SSL')
+        );
+
+        $data['breadcrumbs'][] = array(
+            'text' => $this->language->get('text_waiting'),
+            'href' => $this->url->link('payment/omise/checkoutcallback', 'order_id=' . $this->request->get['order_id'])
+        );
+
+        $data['heading_title'] = $this->language->get('heading_title');
+
+        $data['text_message'] = $this->language->get('text_message');
+
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['column_right'] = $this->load->controller('common/column_right');
+        $data['content_top'] = $this->load->controller('common/content_top');
+        $data['content_bottom'] = $this->load->controller('common/content_bottom');
+        $data['footer'] = $this->load->controller('common/footer');
+        $data['header'] = $this->load->controller('common/header');
+
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise_waiting.tpl')) {
+            $this->response->setOutput(
+                $this->load->view($this->config->get('config_template') . '/template/payment/omise_waiting.tpl', $data)
+            );
+        } else {
+            $this->response->setOutput($this->load->view('default/template/payment/omise_waiting.tpl', $data));
+        }
+    }
 }
+
