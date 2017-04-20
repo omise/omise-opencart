@@ -20,6 +20,7 @@ class MockRegistry
         $this->data['language'] = $this->getLanguage();
         $this->data['url'] = $this->getURL();
         $this->data['currency'] = $this->getCurrency();
+        $this->data['customer'] = $this->getCustomer();
         $this->data['db'] = $this->getDB();
     }
 
@@ -126,7 +127,7 @@ class MockRegistry
 
     private function getResponse()
     {
-        return $this->getMock('stdClass', array('setOutput', 'redirect'));
+        return $this->getMock('stdClass', array('setOutput', 'redirect', 'addHeader'));
     }
 
     private function getConfig()
@@ -178,6 +179,12 @@ class MockRegistry
     {
         $currency = $this->getMock('stdClass', array('format', 'getCode'));
         return $currency;
+    }
+
+    private function getCustomer()
+    {
+        $customer = $this->getMock('stdClass', array('isLogged'));
+        return $customer;
     }
 
     private function getDB()
