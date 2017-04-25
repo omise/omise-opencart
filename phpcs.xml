@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<ruleset name="OpenCart">
+    <exclude-pattern>src/system/*</exclude-pattern>
+    <rule ref=".phpcs/OpenCart"/>
+</ruleset>

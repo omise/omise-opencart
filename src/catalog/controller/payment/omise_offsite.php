@@ -111,7 +111,7 @@ class ControllerPaymentOmiseOffsite extends Controller {
 				'orderid'          => date('His') . $this->session->data['order_id'],
 				'orderdate'        => date('YmdHis'),
 				'currency'         => $order_info['currency_code'],
-				'orderamount'      => $this->currency->format($order_info['total'], $order_info['currency_code'] , false, false),
+				'orderamount'      => $this->currency->format($order_info['total'], $order_info['currency_code'], false, false),
 				'billemail'        => $order_info['email'],
 				'billphone'        => html_entity_decode($order_info['telephone'], ENT_QUOTES, 'UTF-8'),
 				'billaddress'      => html_entity_decode($order_info['payment_address_1'], ENT_QUOTES, 'UTF-8'),

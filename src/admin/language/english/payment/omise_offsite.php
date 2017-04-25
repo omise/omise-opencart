@@ -33,4 +33,3 @@ $_['button_cancel']                                            = 'Cancel';
 $_['error_need_omise_extension']                               = 'Please install and enable <strong>Omise Payment Gateway</strong> extension before enabling <strong>Omise Payment Gateway - Internet Banking</strong> (check \'Setting\' tab).';
 
 
-?>

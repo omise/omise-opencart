@@ -105,4 +105,3 @@ $_['text_session_error']                = 'Something wrong.';
 $_['error_omise_table_install_failed']  = 'Can not create Omise table now, something wrong.';
 
 
-?>
