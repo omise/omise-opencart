@@ -79,8 +79,8 @@ class ControllerPaymentOmise extends Controller {
         $data = array();
         $data['omise_dashboard'] = array(
             'enabled' => $this->config->get('omise_status'),
-            'error'   => '',
-            'warning' => '',
+            'error'   => array(),
+            'warning' => array(),
         );
 
         if (! $data['omise_dashboard']['enabled']) {
