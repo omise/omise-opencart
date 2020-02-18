@@ -248,7 +248,7 @@ class OmiseApiResource extends OmiseObject {
       $options += array(CURLOPT_USERAGENT => $user_agent);
 
     // Also merge POST parameters with the option.
-    if(count($params) > 0) $options += array(CURLOPT_POSTFIELDS => http_build_query($params));
+    if(is_array($params) && count($params) > 0) $options += array(CURLOPT_POSTFIELDS => http_build_query($params));
 
     return $options;
   }
