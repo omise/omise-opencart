@@ -42,7 +42,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
      */
     private function setBreadcrumb($current = null)
     {
-        $this->load->language('payment/omise_offsite');
+        $this->load->language('extension/payment/omise_offsite');
 
         // Set Breadcrumbs.
         $breadcrumbs = array();
@@ -61,7 +61,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
 
         $breadcrumbs[] = array(
             'text'      => $this->language->get('heading_title'),
-            'href'      => $this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'),
+            'href'      => $this->url->link('extension/payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => ' :: '
         );
 
@@ -88,7 +88,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
      */
     private function pageTranslation()
     {
-        $this->load->language('payment/omise_offsite');
+        $this->load->language('extension/payment/omise_offsite');
 
         return array(
             'heading_title'                     => $this->language->get('heading_title'),
@@ -107,7 +107,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
      */
     private function searchErrorTranslation($clue)
     {
-        $this->load->language('payment/omise_offsite');
+        $this->load->language('extension/payment/omise_offsite');
 
         $translate_code = 'error_' . str_replace(' ', '_', strtolower($clue));
         $translate_msg  = $this->language->get($translate_code);
@@ -126,11 +126,11 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
     {
         switch ($destination) {
             case 'omise_dashboard':
-                $this->response->redirect($this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'));
+                $this->response->redirect($this->url->link('extension/payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'));
                 break;
 
             default:
-                $this->response->redirect($this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'));
+                $this->response->redirect($this->url->link('extension/payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'));
                 break;
         }
     }
@@ -141,7 +141,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
         }
 
         $this->load->model('sale/order');
-        $this->load->model('payment/omise');
+        $this->load->model('extension/payment/omise');
 
         $order_info = $this->model_sale_order->getOrder($this->request->get['order_id']);
 
@@ -150,7 +150,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
         }
 
         $this->load->model('localisation/order_status');
-        $this->load->language('payment/omise_offsite_action');
+        $this->load->language('extension/payment/omise_offsite_action');
 
         $data = array(
             'text_loading'   => $this->language->get('text_loading'),
@@ -162,7 +162,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
 
             'token' => $this->session->data['token'],
         );
-        return $this->load->view('payment/omise_offsite_action.tpl', $data);
+        return $this->load->view('extension/payment/omise_offsite_action.tpl', $data);
     }
 
     /**
@@ -173,7 +173,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
      */
     public function install()
     {
-        $this->load->model('payment/omise_offsite');
+        $this->load->model('extension/payment/omise_offsite');
 
         try {
             // Install the extension
@@ -205,7 +205,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
             $this->updateConfig();
         }
 
-        $this->load->language('payment/omise_offsite');
+        $this->load->language('extension/payment/omise_offsite');
         $this->document->setTitle($this->language->get('heading_title'));
 
         // Manipulate page's data
@@ -215,7 +215,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
             array(
                 'success'            => $this->flashSuccessMessages(),
                 'error_warning'      => $this->flashErrorMessages(),
-                'action'             => $this->url->link('payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'),
+                'action'             => $this->url->link('extension/payment/omise_offsite', 'token=' . $this->session->data['token'], 'SSL'),
                 'cancel'             => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
             )
         );
@@ -228,7 +228,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
             'footer'      => $this->load->controller('common/footer')
         ));
 
-        $this->response->setOutput($this->load->view('payment/omise_offsite.tpl', $data));
+        $this->response->setOutput($this->load->view('extension/payment/omise_offsite.tpl', $data));
     }
 
     /**
@@ -238,7 +238,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
     public function updateConfig()
     {
         $this->load->model('setting/setting');
-        $this->load->language('payment/omise_offsite');
+        $this->load->language('extension/payment/omise_offsite');
 
         try {
             // Allowed only POST method

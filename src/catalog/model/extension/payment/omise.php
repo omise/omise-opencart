@@ -1,7 +1,7 @@
 <?php
 class ModelExtensionPaymentOmise extends Model {
     public function getMethod($address, $total) {
-        $this->load->language('payment/omise');
+        $this->load->language('extension/payment/omise');
 
         if ($this->config->get('omise_payment_title') != "")
             $payment_title = $this->config->get('omise_payment_title');

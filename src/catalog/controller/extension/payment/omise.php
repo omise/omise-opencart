@@ -4,7 +4,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 	 * @return string
 	 */
 	private function searchErrorTranslation($clue) {
-	    $this->load->language('payment/omise');
+	    $this->load->language('extension/payment/omise');
 
 	    $translate_code = 'error_' . str_replace(' ', '_', strtolower($clue));
 	    $translate_msg  = $this->language->get($translate_code);
@@ -19,7 +19,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 		if (isset($this->request->get['order_id'])) {
 			$this->load->library('omise');
 			$this->load->library('omise-php/lib/Omise');
-			$this->load->model('payment/omise');
+			$this->load->model('extension/payment/omise');
 			$this->load->model('checkout/order');
 
 			$order_id    = $this->request->get['order_id'];
@@ -52,7 +52,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 		if (isset($this->request->post['omise_token'])) {
 			$this->load->library('omise');
 			$this->load->library('omise-php/lib/Omise');
-			$this->load->model('payment/omise');
+			$this->load->model('extension/payment/omise');
 			$this->load->model('checkout/order');
 
 			// Get Omise configuration.
@@ -77,7 +77,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 							"amount"      => OmisePluginHelperCharge::amount($order_info['currency_code'], $order_total),
 							"currency"    => $this->currency->getCode(),
 							"description" => $this->request->post['description'],
-							"return_uri"  => $this->url->link('payment/omise/checkoutcallback&order_id='.$order_id, '', 'SSL'),
+							"return_uri"  => $this->url->link('extension/payment/omise/checkoutcallback&order_id='.$order_id, '', 'SSL'),
 							"card"        => $this->request->post['omise_token'],
 							"capture"     => $this->config->get('omise_auto_capture')
 						),
@@ -171,8 +171,8 @@ class ControllerExtensionPaymentOmise extends Controller {
 	 */
 	public function index() {
 		$this->load->model('checkout/order');
-		$this->load->model('payment/omise');
-		$this->load->language('payment/omise');
+		$this->load->model('extension/payment/omise');
+		$this->load->language('extension/payment/omise');
 
 		$data = array();
 
@@ -181,7 +181,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 		if ($order_info) {
 			$data = array_merge($data, array(
 				'button_confirm'   => $this->language->get('button_confirm'),
-				'checkout_url'     => $this->url->link('payment/omise/checkout', '', 'SSL'),
+				'checkout_url'     => $this->url->link('extension/payment/omise/checkout', '', 'SSL'),
 				'success_url'      => $this->url->link('checkout/success', '', 'SSL'),
 				'text_config_one'  => trim($this->config->get('text_config_one')),
 				'text_config_two'  => trim($this->config->get('text_config_two')),
@@ -237,7 +237,7 @@ class ControllerExtensionPaymentOmise extends Controller {
         }
 
         // But display our page.
-        $this->load->language('payment/omise_processing');
+        $this->load->language('extension/payment/omise_processing');
         $this->document->setTitle($this->language->get('heading_title'));
 
         $data['breadcrumbs'] = array();
@@ -259,7 +259,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('text_processing'),
-            'href' => $this->url->link('payment/omise/processing')
+            'href' => $this->url->link('extension/payment/omise/processing')
         );
 
         $data['heading_title'] = $this->language->get('heading_title');
@@ -310,7 +310,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 			return;
 		}
 
-		$this->load->model('payment/omise');
+		$this->load->model('extension/payment/omise');
 
 		$transaction = $this->model_payment_omise->getOrderId($event['data']['id']);
 		if (empty($transaction->row)) {
@@ -334,7 +334,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 				throw new Exception('Order status MUST be `Processing` to be updated.');
 			}
 
-			$this->load->model('payment/omise');
+			$this->load->model('extension/payment/omise');
 			$this->load->library('omise');
 			$this->load->library('omise-php/lib/Omise');
 
@@ -387,14 +387,14 @@ class ControllerExtensionPaymentOmise extends Controller {
             $this->session->data[$omise_waiting]++;
             if ($this->session->data[$omise_waiting] > 5) {
                 $this->response->redirect(
-                    $this->url->link('payment/omise/processing', 'order_id=' . $this->request->get['order_id'])
+                    $this->url->link('extension/payment/omise/processing', 'order_id=' . $this->request->get['order_id'])
                 );
                 return;
             }
         }
 
         $this->load->language('checkout/success');
-        $this->load->language('payment/omise_waiting');
+        $this->load->language('extension/payment/omise_waiting');
         $this->document->setTitle($this->language->get('heading_title'));
 
         $data['breadcrumbs'] = array();
@@ -416,7 +416,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('text_waiting'),
-            'href' => $this->url->link('payment/omise/checkoutcallback', 'order_id=' . $this->request->get['order_id'])
+            'href' => $this->url->link('extension/payment/omise/checkoutcallback', 'order_id=' . $this->request->get['order_id'])
         );
 
         $data['heading_title'] = $this->language->get('heading_title');

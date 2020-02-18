@@ -38,7 +38,7 @@ class ControllerExtensionPaymentOmise extends Controller {
      * @return array
      */
     private function setBreadcrumb($current = null) {
-        $this->load->language('payment/omise');
+        $this->load->language('extension/payment/omise');
 
         // Set Breadcrumbs.
         $breadcrumbs = array();
@@ -57,7 +57,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 
         $breadcrumbs[] = array(
             'text'      => $this->language->get('heading_title'),
-            'href'      => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
+            'href'      => $this->url->link('extension/payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
             'separator' => ' :: '
         );
 
@@ -71,16 +71,16 @@ class ControllerExtensionPaymentOmise extends Controller {
      * @return array
      */
     private function pageDataDashboardTab() {
-        $this->load->language('payment/omise');
+        $this->load->language('extension/payment/omise');
         $this->load->library('omise');
         $this->load->model('localisation/currency');
-        $this->load->model('payment/omise');
+        $this->load->model('extension/payment/omise');
 
         $data = array();
         $data['omise_dashboard'] = array(
             'enabled' => $this->config->get('omise_status'),
-            'error'   => '',
-            'warning' => '',
+            'error'   => array(),
+            'warning' => array(),
         );
 
         if (! $data['omise_dashboard']['enabled']) {
@@ -143,7 +143,7 @@ class ControllerExtensionPaymentOmise extends Controller {
      * @return array
      */
     private function pageDataSettingTab() {
-        $this->load->model('payment/omise');
+        $this->load->model('extension/payment/omise');
 
     	if (is_null($this->config->get('omise_auto_capture'))) {
     		$omise_auto_capture = $this->model_payment_omise->getDefaultAutoCapture();
@@ -168,7 +168,7 @@ class ControllerExtensionPaymentOmise extends Controller {
      * @return array
      */
     private function pageTranslation() {
-        $this->load->language('payment/omise');
+        $this->load->language('extension/payment/omise');
 
         return array(
             'heading_title'                           => $this->language->get('heading_title'),
@@ -229,7 +229,7 @@ class ControllerExtensionPaymentOmise extends Controller {
      * @return string
      */
     private function searchErrorTranslation($clue) {
-        $this->load->language('payment/omise');
+        $this->load->language('extension/payment/omise');
 
         $translate_code = 'error_' . str_replace(' ', '_', strtolower($clue));
         $translate_msg  = $this->language->get($translate_code);
@@ -246,11 +246,11 @@ class ControllerExtensionPaymentOmise extends Controller {
     private function redirectTo($destination) {
         switch ($destination) {
             case 'omise_dashboard':
-                $this->response->redirect($this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
+                $this->response->redirect($this->url->link('extension/payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
                 break;
 
             default:
-                $this->response->redirect($this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
+                $this->response->redirect($this->url->link('extension/payment/omise', 'token=' . $this->session->data['token'], 'SSL'));
                 break;
         }
     }
@@ -262,7 +262,7 @@ class ControllerExtensionPaymentOmise extends Controller {
      * @return void
      */
     public function install() {
-        $this->load->model('payment/omise');
+        $this->load->model('extension/payment/omise');
 
         try {
             // Install the extension
@@ -291,7 +291,7 @@ class ControllerExtensionPaymentOmise extends Controller {
         if (($this->request->server['REQUEST_METHOD'] == 'POST'))
             $this->updateConfig();
 
-        $this->load->language('payment/omise');
+        $this->load->language('extension/payment/omise');
         $this->document->setTitle($this->language->get('heading_title'));
 
         // Manipulate page's data
@@ -302,10 +302,10 @@ class ControllerExtensionPaymentOmise extends Controller {
             array(
                 'success'            => $this->flashSuccessMessages(),
                 'error_warning'      => $this->flashErrorMessages(),
-                'action'             => $this->url->link('payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
+                'action'             => $this->url->link('extension/payment/omise', 'token=' . $this->session->data['token'], 'SSL'),
                 'cancel'             => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
-                'transfer_url'       => $this->url->link('payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL'),
-                'versioncheckup_url' => $this->url->link('payment/omise/ajaxversioncheckup', 'token=' . $this->session->data['token'], 'SSL'),
+                'transfer_url'       => $this->url->link('extension/payment/omise/submittransfer', 'token=' . $this->session->data['token'], 'SSL'),
+                'versioncheckup_url' => $this->url->link('extension/payment/omise/ajaxversioncheckup', 'token=' . $this->session->data['token'], 'SSL'),
             )
         );
 
@@ -317,7 +317,7 @@ class ControllerExtensionPaymentOmise extends Controller {
             'footer'      => $this->load->controller('common/footer')
         ));
 
-        $this->response->setOutput($this->load->view('payment/omise.tpl', $data));
+        $this->response->setOutput($this->load->view('extension/payment/omise.tpl', $data));
     }
 
     /**
@@ -326,7 +326,7 @@ class ControllerExtensionPaymentOmise extends Controller {
      */
     public function updateConfig() {
         $this->load->model('setting/setting');
-        $this->load->language('payment/omise');
+        $this->load->language('extension/payment/omise');
 
         try {
             // Allowed only POST method
@@ -353,8 +353,8 @@ class ControllerExtensionPaymentOmise extends Controller {
      * @return void
      */
     public function submitTransfer() {
-        $this->load->model('payment/omise');
-        $this->load->language('payment/omise');
+        $this->load->model('extension/payment/omise');
+        $this->load->language('extension/payment/omise');
 
         try {
             // Allowed only POST method
