@@ -432,4 +432,9 @@ class ControllerExtensionPaymentOmise extends Controller {
             ));
         }
     }
+
+
+    public function validate() {
+      // do nothing
+    }
 }
