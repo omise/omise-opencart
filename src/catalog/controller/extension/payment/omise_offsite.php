@@ -23,7 +23,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller {
 	public function checkout() {
 		if (!empty($this->request->post['offsite_provider'])) {
 			$this->load->library('omise');
-			$this->load->library('omise-php/lib/Omise');
+			
 			$this->load->model('extension/payment/omise');
 			$this->load->model('checkout/order');
 
@@ -47,7 +47,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller {
 					$omise_charge = OmiseCharge::create(
 						array(
 							"amount"      => OmisePluginHelperCharge::amount($order_info['currency_code'], $order_total),
-							"currency"    => $this->currency->getCode(),
+							"currency"    =>$this->config->get('config_currency'),
 							"description" => $this->request->post['description'],
 							"return_uri"  => $this->url->link('extension/payment/omise/checkoutcallback&order_id='.$order_id, '', 'SSL'),
 							"offsite"     => $this->request->post['offsite_provider']
@@ -61,7 +61,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller {
 						throw new Exception($omise_charge['failure_code'].': '.$omise_charge['failure_code'], 1);
 					}
 
-					$this->model_payment_omise->addChargeTransaction($order_id, $omise_charge['id']);
+					$this->model_extension_payment_omise->addChargeTransaction($order_id, $omise_charge['id']);
 
 					// Status: processing.
 					$this->model_checkout_order->addOrderHistory($order_id, 2);
@@ -130,10 +130,10 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller {
 				'payment_title'    => empty($this->config->get('omise_offsite_payment_title')) ? $this->language->get('text_title') : $this->config->get('omise_offsite_payment_title')
 			));
 
-			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise_offsite.tpl')) {
-				return $this->load->view($this->config->get('config_template') . '/template/payment/omise_offsite.tpl', $data);
+			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/omise_offsite.tpl')) {
+				return $this->load->view($this->config->get('config_template') . '/template/extension/payment/omise_offsite.tpl', $data);
 			} else {
-				return $this->load->view('default/template/payment/omise_offsite.tpl', $data);
+				return $this->load->view('extension/payment/omise_offsite.tpl', $data);
 			}
 		}
 	}

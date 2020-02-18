@@ -82,7 +82,7 @@ class ModelExtensionPaymentOmise extends Model {
      */
     public function getOmiseAccount() {
         $this->load->library('omise');
-        $this->load->library('omise-php/lib/Omise');
+        
         $this->load->language('extension/payment/omise');
 
         // Get Omise Keys.
@@ -103,7 +103,7 @@ class ModelExtensionPaymentOmise extends Model {
      */
     public function getOmiseBalance() {
         $this->load->library('omise');
-        $this->load->library('omise-php/lib/Omise');
+        
         $this->load->language('extension/payment/omise');
 
         // Get Omise Keys.
@@ -124,7 +124,7 @@ class ModelExtensionPaymentOmise extends Model {
      */
     public function getOmiseChargeList() {
         $this->load->library('omise');
-        $this->load->library('omise-php/lib/Omise');
+        
         $this->load->language('extension/payment/omise');
 
         // Get Omise Keys.
@@ -145,7 +145,7 @@ class ModelExtensionPaymentOmise extends Model {
      */
     public function getOmiseTransferList() {
         $this->load->library('omise');
-        $this->load->library('omise-php/lib/Omise');
+        
         $this->load->language('extension/payment/omise');
 
         // Get Omise Keys.
@@ -166,7 +166,7 @@ class ModelExtensionPaymentOmise extends Model {
      */
     public function createOmiseTransfer($amount) {
         $this->load->library('omise');
-        $this->load->library('omise-php/lib/Omise');
+        
         $this->load->language('extension/payment/omise');
 
         // Get Omise Keys.

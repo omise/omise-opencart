@@ -18,13 +18,13 @@ class ControllerExtensionPaymentOmise extends Controller {
 	public function checkoutCallback() {
 		if (isset($this->request->get['order_id'])) {
 			$this->load->library('omise');
-			$this->load->library('omise-php/lib/Omise');
+			
 			$this->load->model('extension/payment/omise');
 			$this->load->model('checkout/order');
 
 			$order_id    = $this->request->get['order_id'];
-			$omise_keys  = $this->model_payment_omise->retrieveOmiseKeys();
-			$transaction = $this->model_payment_omise->getChargeTransaction($this->request->get['order_id']);
+			$omise_keys  = $this->model_extension_payment_omise->retrieveOmiseKeys();
+			$transaction = $this->model_extension_payment_omise->getChargeTransaction($this->request->get['order_id']);
 
 			$charge = OmiseCharge::retrieve($transaction->row['omise_charge_id'], $omise_keys['pkey'], $omise_keys['skey']);
 
@@ -51,7 +51,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 	public function checkout() {
 		if (isset($this->request->post['omise_token'])) {
 			$this->load->library('omise');
-			$this->load->library('omise-php/lib/Omise');
+			
 			$this->load->model('extension/payment/omise');
 			$this->load->model('checkout/order');
 
@@ -75,7 +75,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 					$omise_charge = OmiseCharge::create(
 						array(
 							"amount"      => OmisePluginHelperCharge::amount($order_info['currency_code'], $order_total),
-							"currency"    => $this->currency->getCode(),
+							"currency"    =>$this->config->get('config_currency'),
 							"description" => $this->request->post['description'],
 							"return_uri"  => $this->url->link('extension/payment/omise/checkoutcallback&order_id='.$order_id, '', 'SSL'),
 							"card"        => $this->request->post['omise_token'],
@@ -90,7 +90,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 						throw new Exception($omise_charge['failure_code'].': '.$omise_charge['failure_code'], 1);
 					}
 
-					$this->model_payment_omise->addChargeTransaction($order_id, $omise_charge['id']);
+					$this->model_extension_payment_omise->addChargeTransaction($order_id, $omise_charge['id']);
 
 					if ($this->config->get('omise_3ds')) {
 						// Status: processing.
@@ -207,13 +207,13 @@ class ControllerExtensionPaymentOmise extends Controller {
 				'deliverypost'     => html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8'),
 				'loop_months'      => $this->getMonths(),
 				'loop_years'       => $this->getYears(),
-				'omise'            => $this->model_payment_omise->retrieveOmiseKeys()
+				'omise'            => $this->model_extension_payment_omise->retrieveOmiseKeys()
 			));
 
-			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise.tpl')) {
-				return $this->load->view($this->config->get('config_template') . '/template/payment/omise.tpl', $data);
+			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/omise.tpl')) {
+				return $this->load->view($this->config->get('config_template') . '/template/extension/payment/omise.tpl', $data);
 			} else {
-				return $this->load->view('default/template/payment/omise.tpl', $data);
+				return $this->load->view('extension/payment/omise.tpl', $data);
 			}
 		}
 	}
@@ -295,7 +295,7 @@ class ControllerExtensionPaymentOmise extends Controller {
                 $this->load->view($this->config->get('config_template') . '/template/common/success.tpl', $data)
             );
         } else {
-            $this->response->setOutput($this->load->view('default/template/common/success.tpl', $data));
+            $this->response->setOutput($this->load->view('common/success.tpl', $data));
         }
     }
 
@@ -312,7 +312,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 
 		$this->load->model('extension/payment/omise');
 
-		$transaction = $this->model_payment_omise->getOrderId($event['data']['id']);
+		$transaction = $this->model_extension_payment_omise->getOrderId($event['data']['id']);
 		if (empty($transaction->row)) {
 			return;
 		}
@@ -336,14 +336,14 @@ class ControllerExtensionPaymentOmise extends Controller {
 
 			$this->load->model('extension/payment/omise');
 			$this->load->library('omise');
-			$this->load->library('omise-php/lib/Omise');
+			
 
-			$transaction = $this->model_payment_omise->getChargeTransaction($this->request->get['order_id']);
+			$transaction = $this->model_extension_payment_omise->getChargeTransaction($this->request->get['order_id']);
 			if (empty($transaction->row)) {
 				throw new Exception('Order not found');
 			}
 
-			$omise_keys = $this->model_payment_omise->retrieveOmiseKeys();
+			$omise_keys = $this->model_extension_payment_omise->retrieveOmiseKeys();
 			$charge     = OmiseCharge::retrieve(
 				$transaction->row['omise_charge_id'],
 				$omise_keys['pkey'],
@@ -430,12 +430,12 @@ class ControllerExtensionPaymentOmise extends Controller {
         $data['footer'] = $this->load->controller('common/footer');
         $data['header'] = $this->load->controller('common/header');
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/omise_waiting.tpl')) {
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/omise_waiting.tpl')) {
             $this->response->setOutput(
-                $this->load->view($this->config->get('config_template') . '/template/payment/omise_waiting.tpl', $data)
+                $this->load->view($this->config->get('config_template') . '/template/extension/payment/omise_waiting.tpl', $data)
             );
         } else {
-            $this->response->setOutput($this->load->view('default/template/payment/omise_waiting.tpl', $data));
+            $this->response->setOutput($this->load->view('extension/payment/omise_waiting.tpl', $data));
         }
     }
 }

@@ -177,7 +177,7 @@ class ControllerExtensionPaymentOmiseOffsite extends Controller
 
         try {
             // Install the extension
-            if (! $this->model_payment_omise_offsite->install()) {
+            if (! $this->model_extension_payment_omise_offsite->install()) {
                 throw new Exception('', 1);
             }
         } catch (Exception $e) {

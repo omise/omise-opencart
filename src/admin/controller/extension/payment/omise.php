@@ -38,7 +38,7 @@ class ControllerExtensionPaymentOmise extends Controller {
      * @return array
      */
     private function setBreadcrumb($current = null) {
-        $this->load->language('extension/payment/omise');
+        $this->load->language('payment/omise');
 
         // Set Breadcrumbs.
         $breadcrumbs = array();
@@ -88,22 +88,22 @@ class ControllerExtensionPaymentOmise extends Controller {
         } else {
             try {
                 // Retrieve Omise Account.
-                $omise_account = $this->model_payment_omise->getOmiseAccount();
+                $omise_account = $this->model_extension_payment_omise->getOmiseAccount();
                 if (isset($omise_account['error']))
                     throw new Exception('Omise Account '.$omise_account['error'], 1);
 
                 // Retrieve Omise Balance.
-                $omise_balance = $this->model_payment_omise->getOmiseBalance();
+                $omise_balance = $this->model_extension_payment_omise->getOmiseBalance();
                 if (isset($omise_balance['error']))
                     throw new Exception('Omise Balance '.$omise_balance['error'], 1);
 
                 // Retrieve Omise Charge List.
-                $omise_charge = $this->model_payment_omise->getOmiseChargeList();
+                $omise_charge = $this->model_extension_payment_omise->getOmiseChargeList();
                 if (isset($omise_charge['error']))
                     throw new Exception('Omise Charge '.$omise_charge['error'], 1);
 
                 // Retrieve Omise Transfer List.
-                $omise_transfer = $this->model_payment_omise->getOmiseTransferList();
+                $omise_transfer = $this->model_extension_payment_omise->getOmiseTransferList();
                 if (isset($omise_transfer['error']))
                     throw new Exception('Omise Transfer '.$omise_transfer['error'], 1);
 
@@ -146,7 +146,7 @@ class ControllerExtensionPaymentOmise extends Controller {
         $this->load->model('extension/payment/omise');
 
     	if (is_null($this->config->get('omise_auto_capture'))) {
-    		$omise_auto_capture = $this->model_payment_omise->getDefaultAutoCapture();
+    		$omise_auto_capture = $this->model_extension_payment_omise->getDefaultAutoCapture();
     	} else {
     		$omise_auto_capture = $this->config->get('omise_auto_capture');
     	}
@@ -266,7 +266,7 @@ class ControllerExtensionPaymentOmise extends Controller {
 
         try {
             // Install the extension
-            if (! $this->model_payment_omise->install())
+            if (! $this->model_extension_payment_omise->install())
                 throw new Exception('', 1);
         } catch (Exception $e) {
             // Uninstall
@@ -365,7 +365,7 @@ class ControllerExtensionPaymentOmise extends Controller {
             if (! isset($this->request->post['transfer_amount']) || $this->request->post['transfer_amount'] <= 0)
                 throw new Exception($this->language->get('error_transfer_amount_is_empty'), 1);
 
-            $transferring = $this->model_payment_omise->createOmiseTransfer($this->request->post['transfer_amount']);
+            $transferring = $this->model_extension_payment_omise->createOmiseTransfer($this->request->post['transfer_amount']);
             if (isset($transferring['error']))
                 throw new Exception('Omise Transfer '.$transferring['error'], 1);
 
