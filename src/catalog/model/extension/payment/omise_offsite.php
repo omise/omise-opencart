@@ -1,5 +1,5 @@
 <?php
-class ModelPaymentOmiseOffsite extends Model {
+class ModelExtensionPaymentOmiseOffsite extends Model {
     public function getMethod($address, $total) {
         if ($this->config->get('omise_status') != 1) {
             return false;

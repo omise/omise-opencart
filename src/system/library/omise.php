@@ -24,4 +24,8 @@ if (!defined('OMISE_USER_AGENT_SUFFIX'))
 if(!defined('OMISE_API_VERSION'))
     define('OMISE_API_VERSION', '2014-07-27');
 
+
+// dummy class
+class Omise { }
+
 ?>

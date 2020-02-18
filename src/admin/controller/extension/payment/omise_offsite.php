@@ -1,5 +1,5 @@
 <?php
-class ControllerPaymentOmiseOffsite extends Controller
+class ControllerExtensionPaymentOmiseOffsite extends Controller
 {
     /**
      * @var array

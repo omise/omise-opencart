@@ -1,5 +1,5 @@
 <?php
-class ModelPaymentOmise extends Model {
+class ModelExtensionPaymentOmise extends Model {
     /**
      * @var string  Omise table name
      */

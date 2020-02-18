@@ -1,5 +1,5 @@
 <?php
-class ModelPaymentOmiseOffsite extends Model {
+class ModelExtensionPaymentOmiseOffsite extends Model {
     private $_group = 'omise_offsite';
 
     /**

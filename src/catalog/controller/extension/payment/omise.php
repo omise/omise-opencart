@@ -1,5 +1,5 @@
 <?php
-class ControllerPaymentOmise extends Controller {
+class ControllerExtensionPaymentOmise extends Controller {
 	/**
 	 * @return string
 	 */
