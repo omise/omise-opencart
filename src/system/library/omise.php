@@ -19,7 +19,7 @@ $opencart_version = defined('VERSION') ? " OpenCart/".VERSION : "";
 
 // Define 'OMISE_USER_AGENT_SUFFIX'
 if (!defined('OMISE_USER_AGENT_SUFFIX'))
-    define('OMISE_USER_AGENT_SUFFIX', "OmiseOpenCart/".OMISE_OPENCART_VERSION.$opencart_version);
+    define('OMISE_USER_AGENT_SUFFIX', "OmiseOpenCart-patch-oc/".OMISE_OPENCART_VERSION.$opencart_version);
 
 // Define 'OMISE_API_VERSION'
 if(!defined('OMISE_API_VERSION'))
