@@ -1,5 +1,5 @@
 <?php
-if (! class_exists('OmisePluginHelperCharge')) {
+if (!class_exists('OmisePluginHelperCharge')) {
     class OmisePluginHelperCharge
     {
         /**
@@ -14,6 +14,15 @@ if (! class_exists('OmisePluginHelperCharge')) {
         public static function amount($currency, $amount)
         {
             switch (strtoupper($currency)) {
+                case 'AUD':
+                case 'CAD':
+                case 'CHF':
+                case 'CNY':
+                case 'DKK':
+                case 'EUR':
+                case 'GBP':
+                case 'HKD':
+                case 'MYR':
                 case 'USD':
                 case 'THB':
                 case 'IDR':
