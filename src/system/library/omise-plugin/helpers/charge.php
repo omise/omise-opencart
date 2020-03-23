@@ -14,6 +14,7 @@ if (! class_exists('OmisePluginHelperCharge')) {
         public static function amount($currency, $amount)
         {
             switch (strtoupper($currency)) {
+                case 'USD':
                 case 'THB':
                 case 'IDR':
                 case 'SGD':

@@ -9,6 +9,7 @@ if (! class_exists('OmisePluginHelperCurrency')) {
         public static function isSupport($currency_code)
         {
             switch (strtoupper($currency_code)) {
+                case 'USD':
                 case 'THB':
                 case 'IDR':
                 case 'JPY':
@@ -52,6 +53,13 @@ if (! class_exists('OmisePluginHelperCurrency')) {
                         $amount = substr($amount, 0, -3);
                     }
                     break;
+                
+                case 'USD':
+                  $amount = "$" . number_format(($amount / 100), 2);
+                  if (preg_match('/\.00$/', $amount)) {
+                      $amount = substr($amount, 0, -3);
+                  }
+                  break;
             }
 
             return $amount;
