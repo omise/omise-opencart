@@ -84,7 +84,7 @@ class ControllerPaymentOmise extends Controller {
         );
 
         if (! $data['omise_dashboard']['enabled']) {
-            $data['omise_dashboard']['error'][] = $this->language->get('error_extension_disabled');
+            $data['omise_dashboard']['error'] = $this->language->get('error_extension_disabled');
         } else {
             try {
                 // Retrieve Omise Account.
@@ -125,14 +125,14 @@ class ControllerPaymentOmise extends Controller {
 
                 // Check currency supports
                 if (! OmisePluginHelperCurrency::isSupport($this->config->get('config_currency'))) {
-                    $data['omise_dashboard']['warning'][] = sprintf(
+                    $data['omise_dashboard']['warning'] = sprintf(
                         $this->language->get('error_currency_not_support'),
                         $this->config->get('config_currency'),
                         $this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL')
                     );
                 }
             } catch (Exception $e) {
-                $data['omise_dashboard']['error'][] = $this->searchErrorTranslation($e->getMessage());
+                $data['omise_dashboard']['error'] = $this->searchErrorTranslation($e->getMessage());
             }
         }
 
@@ -154,7 +154,6 @@ class ControllerPaymentOmise extends Controller {
         return array(
             'omise_status'        => $this->config->get('omise_status'),
             'omise_test_mode'     => $this->config->get('omise_test_mode'),
-            'omise_3ds'           => $this->config->get('omise_3ds'),
             'omise_pkey_test'     => $this->config->get('omise_pkey_test'),
             'omise_skey_test'     => $this->config->get('omise_skey_test'),
             'omise_pkey'          => $this->config->get('omise_pkey'),
@@ -208,7 +207,6 @@ class ControllerPaymentOmise extends Controller {
             'label_omise_skey'                        => $this->language->get('label_omise_skey'),
             'label_omise_mode_test'                   => $this->language->get('label_omise_mode_test'),
             'label_omise_mode_live'                   => $this->language->get('label_omise_mode_live'),
-            'label_omise_3ds'                         => $this->language->get('label_omise_3ds'),
             'label_omise_payment_title'               => $this->language->get('label_omise_payment_title'),
             'label_omise_payment_action'              => $this->language->get('label_omise_payment_action'),
             'text_mode_test'                          => $this->language->get('text_mode_test'),
@@ -335,8 +333,6 @@ class ControllerPaymentOmise extends Controller {
 
             $update = $this->request->post;
             if (! empty($update)) {
-                $update['omise_3ds'] = isset($update['omise_3ds']) ? $update['omise_3ds'] : 0;
-
                 // Update
                 $this->model_setting_setting->editSetting('omise', $update);
                 $this->session->data['success'] = $this->language->get('text_session_save');

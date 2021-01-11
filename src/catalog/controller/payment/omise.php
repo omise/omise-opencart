@@ -91,8 +91,8 @@ class ControllerPaymentOmise extends Controller {
 					}
 
 					$this->model_payment_omise->addChargeTransaction($order_id, $omise_charge['id']);
-
-					if ($this->config->get('omise_3ds')) {
+					$authorizeUri = $omise_charge['authorize_uri'];
+					if ($omise_charge['status'] === "pending" && !$omise_charge['authorized'] && !$omise_charge['paid'] && !empty($authorizeUri)) {
 						// Status: processing.
 						$this->model_checkout_order->addOrderHistory($order_id, 2);
 

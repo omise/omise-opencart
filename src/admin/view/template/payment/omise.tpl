@@ -300,15 +300,6 @@ echo $header; ?><?php echo $column_left; ?>
               <h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $label_setting_omise_config; ?></h3>
             </div>
             <div class="panel-body">
-              <!-- 3D-Secure -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label" for="omise_payments_3ds"><?php echo $label_omise_3ds; ?></label>
-                <div class="col-sm-10">
-                  <div class="checkbox-inline">
-                    <input type="checkbox" name="omise_3ds" id="omise_payments_3ds" value="1" class="form-control" <?php echo $omise_3ds ? 'checked="checked"' : ''; ?> />
-                  </div>
-                </div>
-              </div> <!-- /END .3D-Secure -->
               <!-- Payment Action -->
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="omise_auto_capture"><?php echo $label_omise_payment_action; ?></label>
