@@ -1,19 +1,17 @@
 <?php
 
-require_once __DIR__ . '/res/OmiseVaultResource.php';
-
-class OmiseToken extends OmiseVaultResource
+class OmiseSource extends OmiseApiResource
 {
-    const ENDPOINT = 'tokens';
+    const ENDPOINT = 'sources';
 
     /**
-     * Retrieves a token.
+     * Retrieves a source.
      *
      * @param  string $id
      * @param  string $publickey
      * @param  string $secretkey
      *
-     * @return OmiseToken
+     * @return OmiseSource
      */
     public static function retrieve($id, $publickey = null, $secretkey = null)
     {
@@ -21,28 +19,17 @@ class OmiseToken extends OmiseVaultResource
     }
 
     /**
-     * Creates a new token. Please note that this method should be used only
-     * in development. In production please use Omise.js!
+     * Creates a new source.
      *
      * @param  array  $params
      * @param  string $publickey
      * @param  string $secretkey
      *
-     * @return OmiseToken
+     * @return OmiseSource
      */
     public static function create($params, $publickey = null, $secretkey = null)
     {
         return parent::g_create(self::getUrl(), $params, $publickey, $secretkey);
-    }
-
-    /**
-     * (non-PHPdoc)
-     *
-     * @see OmiseApiResource::g_reload()
-     */
-    public function reload()
-    {
-        parent::g_reload(self::getUrl($this['id']));
     }
 
     /**
@@ -52,6 +39,6 @@ class OmiseToken extends OmiseVaultResource
      */
     private static function getUrl($id = '')
     {
-        return OMISE_VAULT_URL . self::ENDPOINT . '/' . $id;
+        return OMISE_API_URL . self::ENDPOINT . '/' . $id;
     }
 }

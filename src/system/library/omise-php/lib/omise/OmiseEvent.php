@@ -1,17 +1,17 @@
 <?php
 
-class OmiseTransaction extends OmiseApiResource
+class OmiseEvent extends OmiseApiResource
 {
-    const ENDPOINT = 'transactions';
+    const ENDPOINT = 'events';
 
     /**
-     * Retrieves a transaction.
+     * Retrieves an event.
      *
      * @param  string $id
      * @param  string $publickey
      * @param  string $secretkey
      *
-     * @return OmiseTransaction
+     * @return OmiseEvent
      */
     public static function retrieve($id = '', $publickey = null, $secretkey = null)
     {
@@ -25,7 +25,7 @@ class OmiseTransaction extends OmiseApiResource
      */
     public function reload()
     {
-        if ($this['object'] === 'transaction') {
+        if ($this['object'] === 'event') {
             parent::g_reload(self::getUrl($this['id']));
         } else {
             parent::g_reload(self::getUrl());
@@ -33,6 +33,8 @@ class OmiseTransaction extends OmiseApiResource
     }
 
     /**
+     * Generate request url.
+     *
      * @param  string $id
      *
      * @return string

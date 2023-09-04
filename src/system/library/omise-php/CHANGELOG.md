@@ -1,4 +1,167 @@
-# Change Log
+# CHANGELOG
+
+### [v2.16.1 _(April 20, 2023)_](https://github.com/omise/omise-php/releases/tag/v2.16.1)
+- Removed the predefined installment minimum value ([#151](https://github.com/omise/omise-php/pull/151))
+- Bug fixed on `OmiseSearch::scope` public key and secret key override as null ([#149](https://github.com/omise/omise-php/pull/149))
+- Sonarcloud integration for code coverage ([#148](https://github.com/omise/omise-php/pull/148))
+  
+### [v2.16.0 _(August 25, 2022)_](https://github.com/omise/omise-php/releases/tag/v2.16.0)
+- Made compatible with PHP 5.6 to 8.1 ([#141](https://github.com/omise/omise-php/pull/144))
+
+### [v2.15.0 _(August 2, 2022)_](https://github.com/omise/omise-php/releases/tag/v2.15.0)
+
+- Replace Curl with Guzzle Client ([#141](https://github.com/omise/omise-php/pull/141))
+
+### [v2.14.0 _(July 25, 2022)_](https://github.com/omise/omise-php/releases/tag/v2.14.0)
+
+- Add Support php version 8.1 ([#140](https://github.com/omise/omise-php/pull/140))
+
+### [v2.13.0 _(April 7, 2021)_](https://github.com/omise/omise-php/releases/tag/v2.13.0)
+
+- Change installment minimum to 200000 subunits ([#132](https://github.com/omise/omise-php/pull/132))
+- Add Receipt API ([#126](https://github.com/omise/omise-php/pull/126))
+- Add Chain API ([#127](https://github.com/omise/omise-php/pull/127))
+- Add expire method for Charge ([#130](https://github.com/omise/omise-php/pull/130))
+- Add accept method for Dispute ([#125](https://github.com/omise/omise-php/pull/125))
+- Add destroy method for Link ([#124](https://github.com/omise/omise-php/pull/124))
+- Add update method for Account ([#123](https://github.com/omise/omise-php/pull/123))
+- Add a `retrieve` method to OmiseSource ([#121](https://github.com/omise/omise-php/pull/121))
+
+### [v2.12.0 _(July 31, 2020)_](https://github.com/omise/omise-php/releases/tag/v2.12.0)
+
+- Removed certificate pinning (PR [#118](https://github.com/omise/omise-php/pull/118))
+
+### [v2.11.2 _(May 8, 2019)_](https://github.com/omise/omise-php/releases/tag/v2.11.2)
+
+#### 🚀 Enhancements
+
+- Changes hacked instalment minimum to 300000 subunits. (PR [#113](https://github.com/omise/omise-php/pull/113))
+
+#### 📝 Documents
+
+- Removing Omise (demo) keys out from README document. (PR [#111](https://github.com/omise/omise-php/pull/111))
+
+---
+
+### [v2.11.1 _(Jan 16, 2019)_](https://github.com/omise/omise-php/releases/tag/v2.11.1)
+
+#### 👾 Bug Fixes
+
+- Fixes issue with use of array constant (mandated PHP 5.6+). (PR [#106](https://github.com/omise/omise-php/pull/106))
+
+---
+
+### [v2.11.0 _(Jan 9, 2019)_](https://github.com/omise/omise-php/releases/tag/v2.11.0)
+
+#### ✨ Highlights
+
+- Introducing Capability API. (PR [#100](https://github.com/omise/omise-php/pull/100))
+- Officially dropping support of PHP v5.3. (PR [#101](https://github.com/omise/omise-php/pull/101))
+
+---
+
+### [v2.10.0 _(December 2, 2018)_](https://github.com/omise/omise-php/releases/tag/v2.10.0)
+
+#### ✨ Highlights
+
+- Refundable within charge class. (PR [#92](https://github.com/omise/omise-php/pull/92))
+
+#### 🚀 Enhancements
+
+- Be able to filter when retrieving a Refund List from a Charge object. (PR [#91](https://github.com/omise/omise-php/pull/91))
+- OmiseCardList, relocate the card-fetching logic back to its parent class (OmiseCustomer). (PR [#90](https://github.com/omise/omise-php/pull/90))
+- Apply PSR Code Styling Standard to the library. (PR [#89](https://github.com/omise/omise-php/pull/89))
+- Add PHP Code Sniffer 3.x to the composer package. (PR [#88](https://github.com/omise/omise-php/pull/88))
+- Update Composer Spec. (PR [#87](https://github.com/omise/omise-php/pull/87))
+- Upgrade CircleCI to v2. (PR [#82](https://github.com/omise/omise-php/pull/82))
+- Centralising all loaders into one file, `lib/Omise.php`. (PR [#81](https://github.com/omise/omise-php/pull/81))
+- README.md: enhancing 'how-to' and other contents, make it clearer and easy to follow. (PR [#77](https://github.com/omise/omise-php/pull/77))
+
+#### 👾 Bug Fixes
+
+- Fix bug "authentication failed" when executing OmiseTransfer::search(). (PR [#94](https://github.com/omise/omise-php/pull/94))
+
+---
+
+### [v2.9.1 _(March 21, 2018)_](https://github.com/omise/omise-php/releases/tag/v2.9.1)
+
+#### 🚀 Enhancements
+
+- Be able to limit items that will be shown at the Search Object. (PR [#75](https://github.com/omise/omise-php/pull/75))
+
+#### 👾 Bug Fixes
+
+- Fix PHP v7.2 raise a warning message when execute OmiseApiResource::execute() with non-array assigned at the first argument. (PR [#71](https://github.com/omise/omise-php/pull/71), thanks @forfunza)
+
+### [v2.9.0 _(November 6, 2017)_](https://github.com/omise/omise-php/releases/tag/v2.9.0)
+
+#### ✨ Highlights
+
+- Support Omise [Source API](https://www.omise.co/source-api). (PR [#68](https://github.com/omise/omise-php/pull/68))
+- Link to Omise Forum instead of Gitter (deprecate Gitter channel). (PR [#67](https://github.com/omise/omise-php/pull/67))
+
+For more information, please visit https://github.com/omise/omise-php/releases/tag/v2.9.0
+
+---
+
+### [v2.8.0 _(June 24, 2017)_](https://github.com/omise/omise-php/releases/tag/v2.8.0)
+
+#### ✨ Highlights
+
+- Support Omise [Forex API](https://www.omise.co/forex-api). (PR [#64](https://github.com/omise/omise-php/pull/64))
+- Support Omise [Schedule APIs](https://www.omise.co/schedules-api). (PR [#63](https://github.com/omise/omise-php/pull/63))
+- Support Omise [Search APIs](https://www.omise.co/search-api). (PR [#58](https://github.com/omise/omise-php/pull/58))
+
+#### 🚀 Enhancements
+
+- Provide exception classes for `invalid_link`, `failed_refund` and `bad_request` error code.  (PR [#61](https://github.com/omise/omise-php/pull/61))
+
+For more information, please visit https://github.com/omise/omise-php/releases/tag/v2.8.0
+
+---
+
+### [v2.7.1 _(March 22, 2017)_](https://github.com/omise/omise-php/releases/tag/v2.7.1)
+
+#### 👾 Bug Fixes
+
+- Update library's version number.
+
+For more information, please visit https://github.com/omise/omise-php/releases/tag/v2.7.1
+
+---
+
+### [v2.7.0 _(March 21, 2017)_](https://github.com/omise/omise-php/releases/tag/v2.7.0)
+
+#### 🚀 Enhancements
+
+- Correct the Docblock at OmiseApiResource::isDestroy() method. (PR [#57](https://github.com/omise/omise-php/pull/57))
+- Include PHP Version to the `USER-AGENT` header when make a request to Omise API. (PR [#56](https://github.com/omise/omise-php/pull/56))
+
+#### 👾 Bug Fixes
+
+- Remove questionmark from fixture filename. (PR [#55](https://github.com/omise/omise-php/pull/55))
+- Remove unreasonable conditional block from OmiseCustomer lib. (PR [#51](https://github.com/omise/omise-php/pull/51))
+
+For more information, please visit https://github.com/omise/omise-php/releases/tag/v2.7.0
+
+---
+
+## [2.6.0] 2016-12-15
+- [added] OmiseLink api is now available. (@turboza)
+- [added] OmiseRecipient object be able to reload resource itself (@guzzilar)
+- [added] OmiseEvent api is now available. (@guzzilar)
+- [updated]  phpunit configuration file. (@oaattia)
+- [updated] Revised code style to match with PSR-2 (http://www.php-fig.org/psr/psr-2) spec. (@guzzilar)
+- [fixed] Autoload OmiseDispute class in lib/Omise.php file (@guzzilar)
+
+For more information, please visit https://github.com/omise/omise-php/releases/tag/v2.6.0
+
+## [2.5.0] 2016-07-01
+- [Added] Add charge reverse method (@zentetsukenz)
+- [Fixed] Change condition when matching phpunit from using fixed string to regex (@zentetsukenz)
+
+## [2.4.1] 2015-12-03
+- [Added] Add fetching options to customer cards (bde7986)
 
 ## [2.4.0] 2015-11-13
 - [Added] Add Omise-Version header to request.
