@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+[2.5] 2023-09-05
+---
+- *`Updated`* Update omise-php to latest version that remove usage of hard coded certificate
+
+[2.4] 2022-11-15
+---
+- *`Removed`* Move usage docs to [website](https://www.omise.co/opencart-plugin)
+- *`Improved`* Handle payment with authorized uri
+
 [2.3] 2017-04-20
 ---
 - *`Added`* Support [internet banking](https://www.omise.co/offsite-payment) payment
