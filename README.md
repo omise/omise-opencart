@@ -9,7 +9,7 @@ Omise provides a set of APIs that help merchants of any size accept payments onl
 
 ## Usage
 
-See our [official docs](https://www.omise.co/opencart-plugin) for details on installation and configuration.
+See our [official docs](https://docs.opn.ooo/opencart-plugin) for details on installation and configuration.
 
 ## Contributing
 
