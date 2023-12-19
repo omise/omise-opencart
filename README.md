@@ -5,7 +5,7 @@
 Opn Payments provides a set of APIs that help merchants of any size accept payments online.  
 <!--- KEEP END --->
 
-**Opn Payments OpenCart** is our official plugin providing support for processing payments on OpenCart through Opn Payments.
+**Omise OpenCart** is our official plugin providing support for processing payments on OpenCart through Opn Payments.
 
 ## Usage
 
