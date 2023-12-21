@@ -1,15 +1,15 @@
 <!--- KEEP START --->
-[![Omise](https://cdn.omise.co/assets/omise.png)](https://www.omise.co/developers)
+[![Opn Payments](https://www.opn.ooo/assets/svg/logo-opn-full.svg)](https://www.opn.ooo)
 
-[Omise](https://www.omise.co/) is a payment service provider operating in Thailand, Japan, and Singapore. 
-Omise provides a set of APIs that help merchants of any size accept payments online.  
+[Opn Payments](https://www.opn.ooo/) is a payment service provider operating in Thailand, Japan, and Singapore. 
+Opn Payments provides a set of APIs that help merchants of any size accept payments online.  
 <!--- KEEP END --->
 
-**Omise OpenCart** is our official plugin providing support for processing payments on OpenCart through Omise.
+**Omise OpenCart** is our official plugin providing support for processing payments on OpenCart through Opn Payments.
 
 ## Usage
 
-See our [official docs](https://www.omise.co/opencart-plugin) for details on installation and configuration.
+See our [official docs](https://docs.opn.ooo/opencart-plugin) for details on installation and configuration.
 
 ## Contributing
 
