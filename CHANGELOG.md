@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+[2.6] 2026-04-22
+---
+- *`Removed`* Remove Internet Banking
+
 [2.5] 2023-09-05
 ---
 - *`Updated`* Update omise-php to latest version that remove usage of hard coded certificate
